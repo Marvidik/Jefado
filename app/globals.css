@@ -482,3 +482,46 @@ button {
     font-size: 18px !important;
   }
 }
+
+/* ═══════════════════════════════════════════
+   CHECKOUT RESPONSIVE
+═══════════════════════════════════════════ */
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .checkout-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* move summary above the form on mobile */
+  .checkout-layout>div:last-child {
+    order: -1;
+  }
+}
+
+@media (max-width: 600px) {
+
+  /* Shipping: name row stacks */
+  .checkout-layout .ship-name-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Payment method: 2 cols instead of 4 */
+  .pay-methods {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Card/expiry row stacks */
+  .card-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* City/state/zip stacks to 2 cols */
+  .addr-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
