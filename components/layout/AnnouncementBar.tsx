@@ -9,47 +9,17 @@ const announcements = [
 
 export default function AnnouncementBar() {
     const [visible, setVisible] = useState(true);
-
     if (!visible) return null;
-
     return (
-        <div style={{
-            background: 'var(--announce-bg)',
-            color: 'var(--announce-text)',
-            fontSize: '13px',
-            fontFamily: 'var(--font-body)',
-            padding: '9px 0',
-            position: 'relative',
-            overflow: 'hidden',
-        }}>
+        <div style={{ background: 'var(--announce-bg)', color: 'var(--announce-text)', fontSize: '13px', fontFamily: 'var(--font-body)', padding: '9px 0', position: 'relative', overflow: 'hidden' }}>
             <div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                <div style={{
-                    display: 'inline-block',
-                    animation: 'ticker 28s linear infinite',
-                    paddingLeft: '100%',
-                }}>
+                <div style={{ display: 'inline-block', animation: 'ticker 28s linear infinite', paddingLeft: '100%' }}>
                     {[...announcements, ...announcements].map((msg, i) => (
                         <span key={i} style={{ marginRight: '80px', opacity: 0.9 }}>{msg}</span>
                     ))}
                 </div>
             </div>
-
-            <button
-                onClick={() => setVisible(false)}
-                style={{
-                    position: 'absolute',
-                    right: '16px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: '#94a3b8',
-                    fontSize: '16px',
-                    lineHeight: 1,
-                    padding: '0 4px',
-                }}
-                aria-label="Close"
-            >
-                ×
-            </button>
+            <button onClick={() => setVisible(false)} style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: '18px', padding: '0 4px' }} aria-label="Close">×</button>
         </div>
     );
 }

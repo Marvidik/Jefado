@@ -1,34 +1,54 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
 :root {
-  --primary: #1a56db;
-  --primary-dark: #1341b5;
-  --primary-light: #e8f0fe;
-  --accent: #f97316;
-  --danger: #ef4444;
-  --success: #22c55e;
-  --warning: #eab308;
-  --bg: #f4f6f9;
+  /* ── Brand Palette ── */
+  --primary: #C05800;
+  /* main — burnt orange */
+  --primary-dark: #713600;
+  /* deep brown */
+  --primary-light: #fff4e6;
+  /* warm cream tint */
+  --accent: #713600;
+  /* dark brown accent */
+  --cream: #FDFBD4;
+  /* warm off-white bg */
+  --dark: #38240D;
+  /* near-black brown */
+
+  --danger: #dc2626;
+  --success: #16a34a;
+  --warning: #d97706;
+
+  /* ── Neutrals (warm-tinted) ── */
+  --bg: #faf8f2;
   --surface: #ffffff;
-  --surface-2: #f8fafc;
-  --border: #e2e8f0;
-  --border-light: #f1f5f9;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --announce-bg: #0f172a;
-  --announce-text: #e2e8f0;
+  --surface-2: #fdf9f0;
+  --border: #e8d9c4;
+  --border-light: #f3ece0;
+  --text-primary: #38240D;
+  --text-secondary: #6b4c2a;
+  --text-muted: #a07850;
+
+  /* ── Announcement bar ── */
+  --announce-bg: #38240D;
+  --announce-text: #FDFBD4;
+
+  /* ── Typography ── */
   --font-display: 'Syne', sans-serif;
   --font-body: 'DM Sans', sans-serif;
+
+  /* ── Layout ── */
   --container: 1280px;
   --gutter: 24px;
   --radius: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
-  --shadow-hover: 0 12px 40px rgba(26, 86, 219, 0.15);
+
+  /* ── Shadows (warm-tinted) ── */
+  --shadow-sm: 0 1px 3px rgba(56, 36, 13, 0.08), 0 1px 2px rgba(56, 36, 13, 0.05);
+  --shadow: 0 4px 12px rgba(56, 36, 13, 0.10);
+  --shadow-lg: 0 8px 30px rgba(56, 36, 13, 0.14);
+  --shadow-hover: 0 12px 40px rgba(192, 88, 0, 0.20);
 }
 
 *,
@@ -120,45 +140,38 @@ button {
 }
 
 /* ═══════════════════════════════════════════
-   HOMEPAGE RESPONSIVE
+   HOME GRID CLASSES
 ═══════════════════════════════════════════ */
-
-/* Flash sale 6-col */
 .flash-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 12px;
 }
 
-/* Category 10-col */
 .cat-grid {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   gap: 10px;
 }
 
-/* Trust 4-col */
 .trust-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
 
-/* Promo dual */
 .promo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
-/* Best sellers 4-col */
 .bs-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
-/* Product grid 4-col */
 .pg-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -167,7 +180,7 @@ button {
 }
 
 /* ═══════════════════════════════════════════
-   PRODUCTS PAGE RESPONSIVE
+   PRODUCTS PAGE
 ═══════════════════════════════════════════ */
 .products-layout {
   display: flex;
@@ -188,7 +201,7 @@ button {
 }
 
 /* ═══════════════════════════════════════════
-   PRODUCT DETAIL RESPONSIVE
+   PRODUCT DETAIL
 ═══════════════════════════════════════════ */
 .detail-grid {
   display: grid;
@@ -197,7 +210,7 @@ button {
 }
 
 /* ═══════════════════════════════════════════
-   CART RESPONSIVE
+   CART
 ═══════════════════════════════════════════ */
 .cart-layout {
   display: grid;
@@ -213,6 +226,26 @@ button {
 }
 
 /* ═══════════════════════════════════════════
+   CHECKOUT
+═══════════════════════════════════════════ */
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 370px;
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ═══════════════════════════════════════════
+   AUTH (login/register)
+═══════════════════════════════════════════ */
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════
    TABLET  ≤ 1024px
 ═══════════════════════════════════════════ */
 @media (max-width: 1024px) {
@@ -220,7 +253,6 @@ button {
     --gutter: 18px;
   }
 
-  /* Hero */
   .hero-sidebar {
     display: none !important;
   }
@@ -242,7 +274,6 @@ button {
     font-size: 30px !important;
   }
 
-  /* Home grids */
   .flash-grid {
     grid-template-columns: repeat(3, 1fr) !important;
   }
@@ -267,24 +298,32 @@ button {
     display: none !important;
   }
 
-  /* Products page */
   .products-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* Cart */
   .cart-layout {
     grid-template-columns: 1fr !important;
   }
 
-  /* Detail */
+  .checkout-layout {
+    grid-template-columns: 1fr !important;
+  }
+
   .detail-grid {
     grid-template-columns: 1fr !important;
   }
 
-  /* Footer */
   .footer-grid {
     grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  .auth-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .auth-hero {
+    display: none !important;
   }
 }
 
@@ -296,7 +335,6 @@ button {
     --gutter: 14px;
   }
 
-  /* Navbar */
   .nav-links {
     display: none !important;
   }
@@ -310,7 +348,6 @@ button {
     gap: 8px !important;
   }
 
-  /* Hero */
   .hero-layout {
     flex-direction: column !important;
   }
@@ -332,7 +369,6 @@ button {
     font-size: 13px !important;
   }
 
-  /* Home */
   .flash-header {
     flex-direction: column !important;
     align-items: flex-start !important;
@@ -377,7 +413,6 @@ button {
     font-size: 20px !important;
   }
 
-  /* Products page */
   .products-layout {
     flex-direction: column !important;
   }
@@ -390,7 +425,6 @@ button {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* Product detail */
   .detail-grid {
     grid-template-columns: 1fr !important;
     gap: 20px !important;
@@ -405,11 +439,6 @@ button {
     gap: 10px !important;
   }
 
-  .specs-table {
-    font-size: 12px !important;
-  }
-
-  /* Cart */
   .cart-layout {
     grid-template-columns: 1fr !important;
   }
@@ -418,23 +447,21 @@ button {
     flex-wrap: wrap !important;
   }
 
-  .cart-item-img {
-    width: 80px !important;
-    height: 80px !important;
-    font-size: 36px !important;
+  .checkout-layout {
+    grid-template-columns: 1fr !important;
   }
 
-  .cart-item-price {
-    text-align: left !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 12px !important;
-  }
-
-  /* Footer */
   .footer-grid {
     grid-template-columns: 1fr 1fr !important;
     gap: 24px !important;
+  }
+
+  .auth-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .auth-hero {
+    display: none !important;
   }
 }
 
@@ -484,44 +511,60 @@ button {
 }
 
 /* ═══════════════════════════════════════════
-   CHECKOUT RESPONSIVE
+   ACCOUNT PAGE
 ═══════════════════════════════════════════ */
-.checkout-layout {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 24px;
+.account-layout {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
 }
 
 @media (max-width: 900px) {
-  .checkout-layout {
-    grid-template-columns: 1fr !important;
+  .account-layout {
+    flex-direction: column !important;
   }
 
-  /* move summary above the form on mobile */
-  .checkout-layout>div:last-child {
-    order: -1;
+  .account-layout>aside {
+    width: 100% !important;
   }
+
+  .account-layout>aside>div:first-child {
+    display: none !important;
+  }
+
+  /* hide profile card, shown inline */
 }
 
 @media (max-width: 600px) {
-
-  /* Shipping: name row stacks */
-  .checkout-layout .ship-name-row {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Payment method: 2 cols instead of 4 */
-  .pay-methods {
+  .account-layout>div>div[style*="repeat(3"] {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* Card/expiry row stacks */
-  .card-row {
+  .account-layout>div>div[style*="repeat(2"] {
     grid-template-columns: 1fr !important;
   }
+}
 
-  /* City/state/zip stacks to 2 cols */
-  .addr-row {
-    grid-template-columns: 1fr 1fr !important;
+/* ═══════════════════════════════════════════
+   ACCOUNT PAGE RESPONSIVE
+═══════════════════════════════════════════ */
+.account-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.account-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .account-layout {
+    flex-direction: column !important;
+  }
+
+  .account-sidebar {
+    width: 100% !important;
   }
 }
