@@ -15,7 +15,7 @@ const categories = [
 ];
 
 export default function CategoryStrip() {
-    const [active, setActive] = useState(null);
+    const [active, setActive] = useState<string | null>(null);
     return (
         <section className="container" style={{ padding: '0 var(--gutter) 28px' }}>
             <div style={{ marginBottom: '18px' }}>
