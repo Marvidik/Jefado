@@ -38,7 +38,7 @@ const RELATED = [
 const ratingDist = [{ star: 5, count: 4320 }, { star: 4, count: 890 }, { star: 3, count: 265 }, { star: 2, count: 98 }, { star: 1, count: 48 }];
 
 function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
-    return <span style={{ display: 'inline-flex', gap: '2px' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ fontSize: size, color: i <= Math.round(rating) ? '#f59e0b' : '#e2e8f0' }}>★</span>)}</span>;
+    return <span style={{ display: 'inline-flex', gap: '2px' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ fontSize: size, color: i <= Math.round(rating) ? 'var(--secondary)' : '#e2e8f0' }}>★</span>)}</span>;
 }
 
 export default function ProductDetailPage() {
@@ -139,7 +139,7 @@ export default function ProductDetailPage() {
                             <button onClick={() => setWishlisted(!wishlisted)} style={{ width: '42px', height: '42px', border: `1.5px solid ${wishlisted ? 'var(--danger)' : 'var(--border)'}`, borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', background: wishlisted ? '#fff5f5' : 'transparent', flexShrink: 0 }}>{wishlisted ? '❤️' : '🤍'}</button>
                         </div>
 
-                        <button style={{ width: '100%', padding: '12px', border: '1.5px solid var(--primary)', color: 'var(--primary)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '14px', marginBottom: '20px' }}>⚡ Buy Now</button>
+                        <button style={{ width: '100%', padding: '12px', border: '1.5px solid var(--primary)', color: 'var(--primary)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '14px', marginBottom: '20px' }} onClick={() => { window.location.href = '/checkout'; }}>⚡ Buy Now</button>
 
                         {/* Seller */}
                         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '14px', marginBottom: '14px' }}>
@@ -221,9 +221,9 @@ export default function ProductDetailPage() {
                                         {ratingDist.map(r => (
                                             <div key={r.star} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', marginBottom: '4px' }}>
                                                 <span style={{ width: '10px', textAlign: 'right' }}>{r.star}</span>
-                                                <span style={{ color: '#f59e0b' }}>★</span>
+                                                <span style={{ color: 'var(--secondary)' }}>★</span>
                                                 <div style={{ flex: 1, height: '7px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
-                                                    <div style={{ width: `${(r.count / PRODUCT.reviews) * 100}%`, height: '100%', background: '#f59e0b', borderRadius: '4px' }} />
+                                                    <div style={{ width: `${(r.count / PRODUCT.reviews) * 100}%`, height: '100%', background: 'var(--secondary)', borderRadius: '4px' }} />
                                                 </div>
                                                 <span style={{ color: 'var(--text-muted)', width: '28px' }}>{r.count}</span>
                                             </div>

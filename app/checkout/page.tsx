@@ -438,8 +438,8 @@ function OrderSuccess({ form }: { form: FormData }) {
                 </div>
 
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                    <a href="/account/orders" style={{ flex: 1, minWidth: '120px', padding: '11px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '13px', textAlign: 'center' }}>Track Order →</a>
-                    <a href="/" style={{ flex: 1, minWidth: '120px', padding: '11px', border: '1.5px solid var(--border)', color: 'var(--text-secondary)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '13px', textAlign: 'center' }}>Continue Shopping</a>
+                    <a href="/account" style={{ flex: 1, minWidth: '120px', padding: '11px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '13px', textAlign: 'center' }}>Track Order →</a>
+                    <a href="/" style={{ display: 'inline-block', padding: '12px 28px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '14px' }}>Continue Shopping</a>
                 </div>
             </div>
         </div>

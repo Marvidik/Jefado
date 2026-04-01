@@ -13,7 +13,7 @@ export default function Home() {
       <HeroSection />
       <TrustBadges />
       <FlashSale />
-      <div style={{ borderTop: '1px solid var(--border)', margin: '0 0 36px' }} />
+      <div style={{ borderTop: '1px solid var(--border)', margin: '0 0 28px' }} />
       <CategoryStrip />
       <PromoBanners />
       <ProductGrid />

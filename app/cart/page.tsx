@@ -236,7 +236,7 @@ export default function CartPage() {
 
                     {/* Right: Order Summary */}
                     <div style={{ minWidth: 0 }}>
-                        <OrderSummary items={cartItems} shipping={selectedShipping} onCheckout={() => setOrderPlaced(true)} />
+                        <OrderSummary items={cartItems} shipping={selectedShipping} onCheckout={() => { window.location.href = '/checkout'; }} />
                     </div>
                 </div>
             </div>

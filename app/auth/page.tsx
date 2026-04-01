@@ -76,7 +76,7 @@ function LoginForm({ onSwitch, onForgot }: { onSwitch: () => void; onForgot: () 
             <div style={{ width: '64px', height: '64px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '30px' }}>✓</div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', marginBottom: '8px' }}>Welcome back!</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '20px', fontSize: '14px' }}>You've been logged in successfully.</p>
-            <a href="/" style={{ display: 'inline-block', padding: '11px 28px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, fontFamily: 'var(--font-body)', fontSize: '14px' }}>Go to Home →</a>
+            <a href="/account" style={{ display: 'inline-block', padding: '11px 28px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, fontFamily: 'var(--font-body)', fontSize: '14px' }}>Go to Home →</a>
         </div>
     );
 
@@ -105,7 +105,7 @@ function LoginForm({ onSwitch, onForgot }: { onSwitch: () => void; onForgot: () 
                 <button onClick={onForgot} style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)', fontFamily: 'var(--font-body)', background: 'transparent' }}>Forgot password?</button>
             </div>
 
-            <button onClick={handleSubmit} disabled={loading || !email || !password} style={{ width: '100%', padding: '13px', background: (!email || !password) ? 'var(--border)' : 'var(--primary)', color: (!email || !password) ? 'var(--text-muted)' : '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: (!email || !password) ? 'not-allowed' : 'pointer', transition: 'all 0.2s', marginBottom: '16px', boxShadow: email && password ? '0 4px 20px rgba(192,88,0,0.3)' : 'none' }}>
+            <button onClick={handleSubmit} disabled={loading || !email || !password} style={{ width: '100%', padding: '13px', background: (!email || !password) ? 'var(--border)' : 'var(--primary)', color: (!email || !password) ? 'var(--text-muted)' : '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: (!email || !password) ? 'not-allowed' : 'pointer', transition: 'all 0.2s', marginBottom: '16px', boxShadow: email && password ? '0 4px 20px rgba(26,86,219,0.3)' : 'none' }}>
                 {loading ? '⏳ Signing in…' : 'Sign In →'}
             </button>
 
@@ -190,7 +190,7 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
                 <span>I agree to the <a href="#" style={{ color: 'var(--primary)', fontWeight: 600 }}>Terms of Service</a> and <a href="#" style={{ color: 'var(--primary)', fontWeight: 600 }}>Privacy Policy</a></span>
             </label>
 
-            <button onClick={handleSubmit} disabled={!valid || loading} style={{ width: '100%', padding: '13px', background: !valid ? 'var(--border)' : 'var(--primary)', color: !valid ? 'var(--text-muted)' : '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: !valid ? 'not-allowed' : 'pointer', transition: 'all 0.2s', marginBottom: '16px', boxShadow: valid ? '0 4px 20px rgba(192,88,0,0.3)' : 'none' }}>
+            <button onClick={handleSubmit} disabled={!valid || loading} style={{ width: '100%', padding: '13px', background: !valid ? 'var(--border)' : 'var(--primary)', color: !valid ? 'var(--text-muted)' : '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: !valid ? 'not-allowed' : 'pointer', transition: 'all 0.2s', marginBottom: '16px', boxShadow: valid ? '0 4px 20px rgba(26,86,219,0.3)' : 'none' }}>
                 {loading ? '⏳ Creating account…' : 'Create Account →'}
             </button>
 
@@ -235,7 +235,7 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
                     <div style={{ marginBottom: '20px' }}>
                         <InputField label="Email Address" type="email" value={email} onChange={setEmail} placeholder="you@example.com" required />
                     </div>
-                    <button onClick={handleSend} disabled={!email || loading} style={{ width: '100%', padding: '13px', background: !email ? 'var(--border)' : 'var(--primary)', color: !email ? 'var(--text-muted)' : '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: !email ? 'not-allowed' : 'pointer', transition: 'all 0.2s', boxShadow: email ? '0 4px 20px rgba(192,88,0,0.3)' : 'none' }}>
+                    <button onClick={handleSend} disabled={!email || loading} style={{ width: '100%', padding: '13px', background: !email ? 'var(--border)' : 'var(--primary)', color: !email ? 'var(--text-muted)' : '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: !email ? 'not-allowed' : 'pointer', transition: 'all 0.2s', boxShadow: email ? '0 4px 20px rgba(26,86,219,0.3)' : 'none' }}>
                         {loading ? '⏳ Sending…' : 'Send Reset Link →'}
                     </button>
                 </>

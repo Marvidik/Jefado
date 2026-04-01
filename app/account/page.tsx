@@ -509,7 +509,8 @@ export default function AccountPage() {
                         <button style={{ width: '100%', padding: '12px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', background: 'var(--surface)', color: 'var(--danger)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}
                             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#fef2f2'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--danger)'; }}
                             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; }}
-                        >🚪 Sign Out</button>
+                            onClick={() => { window.location.href = '/auth'; }}>🚪 Sign Out</button>
+                        {/* navigate to auth on sign out */}
                     </aside>
 
                     {/* ── Main Content ── */}

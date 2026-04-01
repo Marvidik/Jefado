@@ -1,54 +1,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
 :root {
-  /* ── Brand Palette ── */
-  --primary: #C05800;
-  /* main — burnt orange */
-  --primary-dark: #713600;
-  /* deep brown */
-  --primary-light: #fff4e6;
-  /* warm cream tint */
-  --accent: #713600;
-  /* dark brown accent */
-  --cream: #FDFBD4;
-  /* warm off-white bg */
-  --dark: #38240D;
-  /* near-black brown */
+  /* ── Blue + Orange Palette ── */
+  --primary: #1a56db;
+  /* main blue */
+  --primary-dark: #1341b5;
+  /* deep blue */
+  --primary-light: #ebf1fd;
+  /* light blue tint */
+  --accent: #f97316;
+  /* orange accent */
+  --accent-dark: #ea6a05;
+  /* deep orange */
+  --accent-light: #fff4ed;
+  /* light orange tint */
 
-  --danger: #dc2626;
-  --success: #16a34a;
-  --warning: #d97706;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --warning: #eab308;
 
-  /* ── Neutrals (warm-tinted) ── */
-  --bg: #faf8f2;
+  /* ── Neutrals ── */
+  --bg: #f4f6f9;
   --surface: #ffffff;
-  --surface-2: #fdf9f0;
-  --border: #e8d9c4;
-  --border-light: #f3ece0;
-  --text-primary: #38240D;
-  --text-secondary: #6b4c2a;
-  --text-muted: #a07850;
+  --surface-2: #f8fafc;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
 
-  /* ── Announcement bar ── */
-  --announce-bg: #38240D;
-  --announce-text: #FDFBD4;
+  --announce-bg: #0f172a;
+  --announce-text: #e2e8f0;
 
-  /* ── Typography ── */
   --font-display: 'Syne', sans-serif;
   --font-body: 'DM Sans', sans-serif;
 
-  /* ── Layout ── */
   --container: 1280px;
   --gutter: 24px;
   --radius: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
 
-  /* ── Shadows (warm-tinted) ── */
-  --shadow-sm: 0 1px 3px rgba(56, 36, 13, 0.08), 0 1px 2px rgba(56, 36, 13, 0.05);
-  --shadow: 0 4px 12px rgba(56, 36, 13, 0.10);
-  --shadow-lg: 0 8px 30px rgba(56, 36, 13, 0.14);
-  --shadow-hover: 0 12px 40px rgba(192, 88, 0, 0.20);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --shadow-hover: 0 12px 40px rgba(26, 86, 219, 0.18);
 }
 
 *,
@@ -89,7 +85,6 @@ button {
   font-family: inherit;
 }
 
-/* ── Container ── */
 .container {
   max-width: var(--container);
   margin: 0 auto;
@@ -97,7 +92,6 @@ button {
   width: 100%;
 }
 
-/* ── Scrollbar ── */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -112,7 +106,6 @@ button {
   border-radius: 3px;
 }
 
-/* ── Animations ── */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -139,9 +132,7 @@ button {
   animation: fadeInUp 0.4s ease both;
 }
 
-/* ═══════════════════════════════════════════
-   HOME GRID CLASSES
-═══════════════════════════════════════════ */
+/* ── Home grids ── */
 .flash-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -179,9 +170,7 @@ button {
   flex: 1;
 }
 
-/* ═══════════════════════════════════════════
-   PRODUCTS PAGE
-═══════════════════════════════════════════ */
+/* ── Page layouts ── */
 .products-layout {
   display: flex;
   gap: 20px;
@@ -200,18 +189,12 @@ button {
   flex: 1;
 }
 
-/* ═══════════════════════════════════════════
-   PRODUCT DETAIL
-═══════════════════════════════════════════ */
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 32px;
 }
 
-/* ═══════════════════════════════════════════
-   CART
-═══════════════════════════════════════════ */
 .cart-layout {
   display: grid;
   grid-template-columns: 1fr 360px;
@@ -225,9 +208,6 @@ button {
   align-items: flex-start;
 }
 
-/* ═══════════════════════════════════════════
-   CHECKOUT
-═══════════════════════════════════════════ */
 .checkout-layout {
   display: grid;
   grid-template-columns: 1fr 370px;
@@ -236,18 +216,24 @@ button {
   margin: 0 auto;
 }
 
-/* ═══════════════════════════════════════════
-   AUTH (login/register)
-═══════════════════════════════════════════ */
 .auth-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
 }
 
-/* ═══════════════════════════════════════════
-   TABLET  ≤ 1024px
-═══════════════════════════════════════════ */
+.account-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.account-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+/* ── Tablet ≤ 1024px ── */
 @media (max-width: 1024px) {
   :root {
     --gutter: 18px;
@@ -325,11 +311,17 @@ button {
   .auth-hero {
     display: none !important;
   }
+
+  .account-layout {
+    flex-direction: column !important;
+  }
+
+  .account-sidebar {
+    width: 100% !important;
+  }
 }
 
-/* ═══════════════════════════════════════════
-   MOBILE  ≤ 768px
-═══════════════════════════════════════════ */
+/* ── Mobile ≤ 768px ── */
 @media (max-width: 768px) {
   :root {
     --gutter: 14px;
@@ -436,7 +428,6 @@ button {
 
   .related-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
   }
 
   .cart-layout {
@@ -455,19 +446,9 @@ button {
     grid-template-columns: 1fr 1fr !important;
     gap: 24px !important;
   }
-
-  .auth-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  .auth-hero {
-    display: none !important;
-  }
 }
 
-/* ═══════════════════════════════════════════
-   SMALL MOBILE  ≤ 480px
-═══════════════════════════════════════════ */
+/* ── Small Mobile ≤ 480px ── */
 @media (max-width: 480px) {
   :root {
     --gutter: 12px;
@@ -507,64 +488,5 @@ button {
 
   .section-title {
     font-size: 18px !important;
-  }
-}
-
-/* ═══════════════════════════════════════════
-   ACCOUNT PAGE
-═══════════════════════════════════════════ */
-.account-layout {
-  display: flex;
-  gap: 22px;
-  align-items: flex-start;
-}
-
-@media (max-width: 900px) {
-  .account-layout {
-    flex-direction: column !important;
-  }
-
-  .account-layout>aside {
-    width: 100% !important;
-  }
-
-  .account-layout>aside>div:first-child {
-    display: none !important;
-  }
-
-  /* hide profile card, shown inline */
-}
-
-@media (max-width: 600px) {
-  .account-layout>div>div[style*="repeat(3"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  .account-layout>div>div[style*="repeat(2"] {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-/* ═══════════════════════════════════════════
-   ACCOUNT PAGE RESPONSIVE
-═══════════════════════════════════════════ */
-.account-layout {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-}
-
-.account-sidebar {
-  width: 260px;
-  flex-shrink: 0;
-}
-
-@media (max-width: 900px) {
-  .account-layout {
-    flex-direction: column !important;
-  }
-
-  .account-sidebar {
-    width: 100% !important;
   }
 }

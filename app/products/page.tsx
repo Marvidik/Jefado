@@ -55,7 +55,7 @@ interface Filters {
 }
 
 function Stars({ rating, size = 13 }: { rating: number; size?: number }) {
-    return <span style={{ display: 'inline-flex', gap: '1px' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ fontSize: size, color: i <= Math.round(rating) ? '#f59e0b' : '#e2e8f0' }}>★</span>)}</span>;
+    return <span style={{ display: 'inline-flex', gap: '1px' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ fontSize: size, color: i <= Math.round(rating) ? 'var(--secondary)' : '#e2e8f0' }}>★</span>)}</span>;
 }
 
 function MiniProductCard({ p }: { p: Product }) {
