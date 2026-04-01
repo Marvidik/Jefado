@@ -72,7 +72,7 @@ export default function FullWidthPromo() {
                         Join thousands of sellers using our platform. Create your account, list your products, and reach buyers instantly with a simple, fast, and secure process.
                     </p>
                     <a
-                        href="/signup"
+                        href="/auth"
                         style={{
                             display: 'inline-flex',
                             alignItems: 'center',

@@ -4,9 +4,9 @@ import Link from 'next/link';
 
 const slides = [
     {
-        tag: 'New Season Arrivals',
-        headline: 'Top Brands,\nBest Products.',
-        subline: 'Now buy genuine products from the comfort of your home, with reliable delivery.',
+        tag: 'Shop Smart, Sell Easy',
+        headline: 'Sell, Shop, Succeed.\nEverything You Need in One Place',
+        subline: ' Join our marketplace today: sell your products, shop the latest deals, and enjoy a seamless experience tailored just for you',
         cta1: { label: 'Buy Now', href: '/products' },
         cta2: { label: 'View Detail', href: '/products' },
         badge: { top: 'Up To', main: '60%', sub: 'OFF' },
@@ -23,9 +23,9 @@ const slides = [
         ],
     },
     {
-        tag: 'Flash Sale Today',
-        headline: 'Premium Tech,\nUnbeatable Deals.',
-        subline: 'Shop the latest gadgets at prices that will blow your mind. Limited time only.',
+        tag: 'Shop Smart, Sell Easy',
+        headline: 'Top Products,\nTrusted Sellers.\nYour Marketplace Awaits.',
+        subline: 'From selling your first product to finding great deals, experience everything our marketplace has to offer.',
         cta1: { label: 'Grab Deals', href: '/products?category=electronics' },
         cta2: { label: 'View All', href: '/products' },
         badge: { top: 'Save', main: '40%', sub: 'TODAY' },
@@ -42,8 +42,8 @@ const slides = [
         ],
     },
     {
-        tag: 'Limited Time Offer',
-        headline: 'Fashion Forward,\nStyle Awaits.',
+        tag: 'Shop Smart, Sell Easy',
+        headline: 'Premium Deals,\nExciting Finds.\nStart Selling Today.',
         subline: 'Discover the latest trends in fashion. Free delivery on all orders above $50.',
         cta1: { label: 'Shop Fashion', href: '/products?category=womens-fashion' },
         cta2: { label: 'Explore', href: '/products' },
