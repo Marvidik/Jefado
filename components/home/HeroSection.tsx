@@ -1,82 +1,370 @@
 'use client';
-import { useState } from 'react';
-
-const categories = [
-    { icon: '👗', label: "Women's Fashion", href: '/products?category=womens-fashion' },
-    { icon: '👔', label: "Men's Fashion", href: '/products?category=mens-fashion' },
-    { icon: '💻', label: 'Electronics', href: '/products?category=electronics' },
-    { icon: '🏠', label: 'Home & Lifestyle', href: '/products?category=home' },
-    { icon: '💊', label: 'Medicine', href: '/products?category=medicine' },
-    { icon: '⚽', label: 'Sports & Outdoor', href: '/products?category=sports' },
-    { icon: '🧸', label: "Baby's & Toys", href: '/products?category=baby' },
-    { icon: '🛒', label: 'Groceries & Pets', href: '/products?category=groceries' },
-    { icon: '✨', label: 'Health & Beauty', href: '/products?category=beauty' },
-];
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const slides = [
-    { tag: 'Best Deal of the Week', headline: 'Smart Wearables', subline: 'Up to 80% OFF on Top Brands', cta: 'Shop Now', ctaHref: '/products?category=electronics', emoji: '⌚', bg: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)', accent: '#60a5fa' },
-    { tag: 'New Arrivals', headline: 'iPhone 14 Series', subline: 'Up to 10% Off Voucher — Today Only', cta: 'Explore Deals', ctaHref: '/products?category=smartphones', emoji: '📱', bg: 'linear-gradient(135deg, #1a1a2e 0%, #1a56db 100%)', accent: '#93c5fd' },
-    { tag: 'Gaming Week', headline: 'Xbox Consoles', subline: 'Save 50% on Select Xbox Games', cta: 'Shop Gaming', ctaHref: '/products?category=gaming', emoji: '🎮', bg: 'linear-gradient(135deg, #0f172a 0%, #f97316 80%)', accent: '#fed7aa' },
+    {
+        tag: 'New Season Arrivals',
+        headline: 'Top Brands,\nBest Products.',
+        subline: 'Now buy genuine products from the comfort of your home, with reliable delivery.',
+        cta1: { label: 'Buy Now', href: '/products' },
+        cta2: { label: 'View Detail', href: '/products' },
+        badge: { top: 'Up To', main: '60%', sub: 'OFF' },
+        bg: 'linear-gradient(135deg, #1a56db 0%, #1341b5 55%, #0f2d8a 100%)',
+        circle: 'rgba(255,255,255,0.13)',
+        photo: '/images/goods.PNG',
+        fallback: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&h=700&fit=crop&crop=top&q=80',
+        floats: [
+            { emoji: '💻', top: '6%', left: '64%', size: 54, d: 0 },
+            { emoji: '👗', top: '36%', left: '52%', size: 46, d: 0.35 },
+            { emoji: '👟', top: '66%', left: '56%', size: 42, d: 0.7 },
+            { emoji: '❄️', top: '18%', right: '5%', size: 36, d: 1.0 },
+            { emoji: '🌿', top: '62%', right: '4%', size: 34, d: 1.4 },
+        ],
+    },
+    {
+        tag: 'Flash Sale Today',
+        headline: 'Premium Tech,\nUnbeatable Deals.',
+        subline: 'Shop the latest gadgets at prices that will blow your mind. Limited time only.',
+        cta1: { label: 'Grab Deals', href: '/products?category=electronics' },
+        cta2: { label: 'View All', href: '/products' },
+        badge: { top: 'Save', main: '40%', sub: 'TODAY' },
+        bg: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #1a56db 100%)',
+        circle: 'rgba(249,115,22,0.18)',
+        photo: '/images/goods2.png',
+        fallback: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=700&fit=crop&crop=top&q=80',
+        floats: [
+            { emoji: '📱', top: '6%', left: '64%', size: 56, d: 0 },
+            { emoji: '💻', top: '38%', left: '52%', size: 48, d: 0.35 },
+            { emoji: '🎮', top: '66%', left: '56%', size: 42, d: 0.7 },
+            { emoji: '🔊', top: '18%', right: '5%', size: 38, d: 1.0 },
+            { emoji: '⌨️', top: '62%', right: '4%', size: 34, d: 1.4 },
+        ],
+    },
+    {
+        tag: 'Limited Time Offer',
+        headline: 'Fashion Forward,\nStyle Awaits.',
+        subline: 'Discover the latest trends in fashion. Free delivery on all orders above $50.',
+        cta1: { label: 'Shop Fashion', href: '/products?category=womens-fashion' },
+        cta2: { label: 'Explore', href: '/products' },
+        badge: { top: 'Flat', main: '50%', sub: 'OFF' },
+        bg: 'linear-gradient(135deg, #1a56db 0%, #4f46e5 50%, #7c3aed 100%)',
+        circle: 'rgba(255,255,255,0.11)',
+        photo: '/images/goods3.PNG',
+        fallback: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=700&fit=crop&crop=top&q=80',
+        floats: [
+            { emoji: '👗', top: '6%', left: '64%', size: 54, d: 0 },
+            { emoji: '👠', top: '36%', left: '52%', size: 46, d: 0.35 },
+            { emoji: '👜', top: '64%', left: '56%', size: 42, d: 0.7 },
+            { emoji: '💄', top: '18%', right: '5%', size: 36, d: 1.0 },
+            { emoji: '🧣', top: '60%', right: '4%', size: 34, d: 1.4 },
+        ],
+    },
 ];
 
 export default function HeroSection() {
-    const [activeSlide, setActiveSlide] = useState(0);
-    const [hoveredCat, setHoveredCat] = useState<string | null>(null);
-    const slide = slides[activeSlide];
+    const [active, setActive] = useState(0);
+    const [imgSrc, setImgSrc] = useState<Record<number, string>>({});
+    const slide = slides[active];
+
+    useEffect(() => {
+        const t = setInterval(() => setActive(p => (p + 1) % slides.length), 6000);
+        return () => clearInterval(t);
+    }, []);
+
+    const getSrc = (idx: number) => imgSrc[idx] ?? slides[idx].photo;
+
+    const handleError = (idx: number) => {
+        setImgSrc(prev => ({ ...prev, [idx]: slides[idx].fallback }));
+    };
 
     return (
-        <section className="container hero-layout" style={{ padding: '16px var(--gutter)', display: 'flex', gap: '14px' }}>
-            {/* Category Sidebar */}
-            <div className="hero-sidebar" style={{ width: '200px', flexShrink: 0, background: 'var(--surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', alignSelf: 'stretch' }}>
-                {categories.map((cat) => (
-                    <a key={cat.label} href={cat.href}
-                        onMouseEnter={() => setHoveredCat(cat.label)}
-                        onMouseLeave={() => setHoveredCat(null)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', cursor: 'pointer', background: hoveredCat === cat.label ? 'var(--primary-light)' : 'transparent', color: hoveredCat === cat.label ? 'var(--primary)' : 'var(--text-primary)', transition: 'all 0.15s', borderLeft: `3px solid ${hoveredCat === cat.label ? 'var(--primary)' : 'transparent'}`, fontSize: '13px', fontWeight: hoveredCat === cat.label ? 600 : 400, borderBottom: '1px solid var(--border-light)', textDecoration: 'none' }}
-                    >
-                        <span>{cat.icon}</span><span style={{ flex: 1 }}>{cat.label}</span>
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>›</span>
-                    </a>
-                ))}
-            </div>
+        <>
+            <style>{`
+        @keyframes heroFloat  { 0%,100%{transform:translateY(0)}        50%{transform:translateY(-12px)} }
+        @keyframes heroFloatR { 0%,100%{transform:translateY(0) rotate(-4deg)} 50%{transform:translateY(-14px) rotate(4deg)} }
+        @keyframes heroPop    { from{opacity:0;transform:translateY(24px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
 
-            {/* Slider */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-                <div className="hero-slider" style={{ background: slide.bg, borderRadius: 'var(--radius-xl)', padding: '40px 48px', minHeight: '340px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', overflow: 'hidden', position: 'relative', transition: 'background 0.4s ease' }}>
-                    <div style={{ position: 'absolute', right: '-40px', top: '-40px', width: '260px', height: '260px', borderRadius: '50%', background: 'rgba(255,255,255,0.04)' }} />
-                    <div style={{ position: 'absolute', right: '80px', bottom: '-60px', width: '180px', height: '180px', borderRadius: '50%', background: 'rgba(255,255,255,0.04)' }} />
-                    <div style={{ position: 'relative', zIndex: 2, maxWidth: '380px' }}>
-                        <span style={{ display: 'inline-block', background: 'rgba(255,255,255,0.15)', color: slide.accent, fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', padding: '4px 12px', borderRadius: '20px', marginBottom: '14px', border: `1px solid ${slide.accent}40` }}>{slide.tag}</span>
-                        <h1 className="hero-title" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '38px', color: '#fff', lineHeight: 1.1, marginBottom: '10px', letterSpacing: '-1px' }}>{slide.headline}</h1>
-                        <p className="hero-subline" style={{ color: 'rgba(255,255,255,0.75)', fontSize: '15px', marginBottom: '24px' }}>{slide.subline}</p>
-                        <a href={slide.ctaHref} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--accent)', color: '#fff', padding: '11px 26px', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '14px', boxShadow: '0 4px 20px rgba(249,115,22,0.4)' }}>{slide.cta} →</a>
+        .hero-section {
+          width: 100%;
+          position: relative;
+          overflow: hidden;
+          min-height: 630px;
+          display: flex;
+          align-items: stretch;
+          margin-bottom: 40px;
+        }
+        .hero-row {
+          width: 100%;
+          max-width: 1440px;
+          margin: 0 auto;
+          padding: 0 40px;
+          display: flex;
+          align-items: stretch;
+          position: relative;
+          z-index: 3;
+        }
+        .hero-text {
+          flex: 0 0 auto;
+          width: 46%;
+          max-width: 560px;
+          padding: 56px 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          z-index: 4;
+        }
+        .hero-photo-col {
+            flex: 0 0 48%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: visible;
+            }
+        .hero-img {
+            position: relative; /*  change from absolute */
+            height: auto;
+            width: 100%;
+            max-height: 580px;
+            object-fit: contain;
+            transform: translateX(40%);
+            }
+        .hero-h1 {
+          font-family: var(--font-display);
+          font-weight: 800;
+          font-size: 54px;
+          color: #fff;
+          line-height: 1.04;
+          margin-bottom: 20px;
+          letter-spacing: -2px;
+          white-space: pre-line;
+        }
+        .hero-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          background: rgba(255,255,255,0.16);
+          color: rgba(255,255,255,0.95);
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          padding: 6px 16px;
+          border-radius: 20px;
+          margin-bottom: 22px;
+          border: 1px solid rgba(255,255,255,0.28);
+          width: fit-content;
+        }
+        .hero-sub {
+          color: rgba(255,255,255,0.76);
+          font-size: 15px;
+          line-height: 1.75;
+          margin-bottom: 36px;
+          max-width: 400px;
+          display: flex;
+          align-items: flex-start;
+          gap: 9px;
+        }
+        .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+        .hero-cta-solid {
+          display: inline-flex; align-items: center;
+          background: #fff; color: var(--primary);
+          padding: 13px 34px; border-radius: 50px;
+          font-family: var(--font-body); font-weight: 800; font-size: 15px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+          transition: all 0.2s; text-decoration: none;
+        }
+        .hero-cta-solid:hover  { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        .hero-cta-outline {
+          display: inline-flex; align-items: center;
+          background: transparent; color: #fff;
+          padding: 13px 34px; border-radius: 50px;
+          font-family: var(--font-body); font-weight: 700; font-size: 15px;
+          border: 2px solid rgba(255,255,255,0.55);
+          transition: all 0.2s; text-decoration: none;
+        }
+        .hero-cta-outline:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.9); }
+        .hero-badge {
+          position: absolute;
+          top: 22px; right: 22px; z-index: 10;
+          background: #FDFBD4;
+          border-radius: 50%;
+          width: 92px; height: 92px;
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          box-shadow: 0 6px 28px rgba(0,0,0,0.3);
+          text-align: center;
+          border: 3px solid rgba(255,255,255,0.65);
+        }
+        .hero-badge-top { font-size: 9px;  font-weight: 700; color: #1a1a2e; letter-spacing: 0.5px; line-height: 1.3; }
+        .hero-badge-num { font-family: var(--font-display); font-size: 27px; font-weight: 800; line-height: 1; color: var(--primary); }
+        .hero-badge-sub { font-size: 9px;  font-weight: 700; color: #1a1a2e; letter-spacing: 0.5px; line-height: 1.3; }
+        .hero-dots {
+          position: absolute;
+          bottom: 18px; left: 50%; transform: translateX(-50%);
+          display: flex; gap: 8px; z-index: 10;
+        }
+
+        /* ── TABLET ≤ 1024px ── */
+        @media (max-width: 1024px) {
+          .hero-section { min-height: 420px; }
+          .hero-row     { padding: 0 28px; }
+          .hero-text    { width: 50%; padding: 44px 0; }
+          .hero-h1      { font-size: 42px; }
+          .hero-img     { max-height: 440px; }
+        }
+
+        /* ── MOBILE ≤ 768px ── */
+        @media (max-width: 768px) {
+          .hero-section  { min-height: 300px; }
+          .hero-row      { padding: 0 16px; align-items: center; }
+
+          /* text: left 54%, smaller */
+          .hero-text     { width: 54%; max-width: none; padding: 28px 0; }
+          .hero-h1       { font-size: 24px; letter-spacing: -0.5px; margin-bottom: 10px; white-space: normal; }
+          .hero-tag      { font-size: 9px; padding: 4px 10px; margin-bottom: 10px; letter-spacing: 1px; }
+          .hero-sub      { font-size: 12px; margin-bottom: 16px; max-width: 100%; }
+          .hero-cta-solid,
+          .hero-cta-outline { padding: 9px 18px; font-size: 13px; border-radius: 50px; }
+          .hero-ctas     { gap: 8px; }
+
+          /* badge: smaller */
+          .hero-badge    { width: 60px; height: 60px; top: 10px; right: 10px; }
+          .hero-badge-num { font-size: 17px; }
+          .hero-badge-top,
+          .hero-badge-sub { font-size: 7px; }
+
+          /* photo: right 46% — ALWAYS VISIBLE on mobile */
+          .hero-photo-col { flex: 0 0 64%; }
+          .hero-img {
+            height: 110%;
+            max-height: 310px;
+            left: 50%;
+            transform: translateX(-60%);
+          }
+
+          /* hide floats on mobile — too cluttered */
+          .hero-float-items { display: none !important; }
+        }
+
+        /* ── SMALL MOBILE ≤ 480px ── */
+        @media (max-width: 480px) {
+          .hero-section  { min-height: 240px; }
+          .hero-text     { width: 52%; padding: 20px 0; }
+          .hero-h1       { font-size: 19px; margin-bottom: 8px; }
+          .hero-tag      { display: none; }
+          .hero-sub      { display: none; }
+          .hero-cta-solid,
+          .hero-cta-outline { padding: 8px 14px; font-size: 12px; }
+          .hero-ctas     { gap: 6px; flex-direction: column; align-items: flex-start; }
+
+          /* photo stays visible */
+          .hero-photo-col { flex: 0 0 64%; }
+          .hero-img {
+            max-height: 250px;
+            height: 100%;
+            transform: translateX(-60%);
+          }
+
+          .hero-badge    { width: 50px; height: 50px; top: 8px; right: 8px; }
+          .hero-badge-num { font-size: 13px; }
+          .hero-badge-top,
+          .hero-badge-sub { font-size: 6px; }
+        }
+
+        /* ── TINY ≤ 360px ── */
+        @media (max-width: 360px) {
+          .hero-section  { min-height: 210px; }
+          .hero-h1       { font-size: 17px; }
+          .hero-img      { max-height: 220px; }
+          .hero-ctas     { gap: 5px; }
+          .hero-cta-solid,
+          .hero-cta-outline { padding: 7px 12px; font-size: 11px; }
+        }
+      `}</style>
+
+            <section className="hero-section" style={{ background: slide.bg, transition: 'background 0.6s ease' }}>
+
+                {/* Background circles */}
+                <div style={{
+                    position: 'absolute', width: '400px', height: '400px',
+                    borderRadius: '50%', background: slide.circle,
+                    top: '50%', right: '22%', transform: 'translateY(-50%)',
+                    zIndex: 1, transition: 'background 0.6s', pointerEvents: 'none',
+                }} />
+                <div style={{
+                    position: 'absolute', width: '280px', height: '280px',
+                    borderRadius: '50%', background: 'rgba(255,255,255,0.07)',
+                    top: '50%', right: '24%', transform: 'translateY(-50%)',
+                    zIndex: 1, pointerEvents: 'none',
+                }} />
+
+                <div className="hero-row">
+
+                    {/* Left: text */}
+                    <div className="hero-text">
+                        <span className="hero-tag">🚀 {slide.tag}</span>
+                        <h1 className="hero-h1">{slide.headline}</h1>
+                        <p className="hero-sub">
+                            <span style={{ fontSize: '18px', marginTop: '2px', flexShrink: 0 }}>🚚</span>
+                            {slide.subline}
+                        </p>
+                        <div className="hero-ctas">
+                            <Link href={slide.cta1.href} className="hero-cta-solid">{slide.cta1.label}</Link>
+                            <Link href={slide.cta2.href} className="hero-cta-outline">{slide.cta2.label}</Link>
+                        </div>
                     </div>
-                    <div className="hero-emoji" style={{ fontSize: '130px', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))', position: 'relative', zIndex: 2 }}>{slide.emoji}</div>
+
+                    {/* Right: photo + floats */}
+                    <div className="hero-photo-col">
+
+                        {/* Floating emojis — hidden on mobile via CSS */}
+                        <div className="hero-float-items" style={{ position: 'absolute', inset: 0, zIndex: 4, pointerEvents: 'none' }}>
+                            {slide.floats.map((f, i) => (
+                                <div key={`${active}-${i}`} style={{
+                                    position: 'absolute',
+                                    top: f.top,
+                                    ...(f.left ? { left: f.left } : {}),
+                                    ...(f.right ? { right: f.right } : {}),
+                                    fontSize: `${f.size}px`,
+                                    filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.25))',
+                                    animation: `${i % 2 === 0 ? 'heroFloat' : 'heroFloatR'} ${2.8 + i * 0.3}s ease-in-out infinite`,
+                                    animationDelay: `${f.d}s`,
+                                    zIndex: 5,
+                                }}>{f.emoji}</div>
+                            ))}
+                        </div>
+
+                        {/* Hero photo — tries local first, falls back to Unsplash */}
+                        <img
+                            key={active}
+                            src={getSrc(active)}
+                            alt="Hero model"
+                            className="hero-img"
+                            onError={() => handleError(active)}
+                        />
+                    </div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '12px' }}>
+
+                {/* Badge */}
+                <div className="hero-badge">
+                    <span className="hero-badge-top">{slide.badge.top}</span>
+                    <span className="hero-badge-num">{slide.badge.main}</span>
+                    <span className="hero-badge-sub">{slide.badge.sub}</span>
+                </div>
+
+                {/* Dots */}
+                <div className="hero-dots">
                     {slides.map((_, i) => (
-                        <button key={i} onClick={() => setActiveSlide(i)} style={{ width: i === activeSlide ? '24px' : '7px', height: '7px', borderRadius: '4px', background: i === activeSlide ? 'var(--primary)' : 'var(--border)', transition: 'all 0.3s' }} />
+                        <button key={i} onClick={() => setActive(i)} style={{
+                            width: i === active ? '28px' : '8px', height: '8px',
+                            borderRadius: '4px',
+                            background: i === active ? '#fff' : 'rgba(255,255,255,0.4)',
+                            transition: 'all 0.3s', border: 'none', cursor: 'pointer', padding: 0,
+                        }} />
                     ))}
                 </div>
-            </div>
-
-            {/* Right Mini Banners */}
-            <div className="hero-right-banners" style={{ width: '190px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {[
-                    { tag: 'Introducing', name: 'Apple HomePod Mini', desc: 'Jam-packed with innovation', emoji: '🔊', bg: 'var(--surface-2)', accent: 'var(--text-primary)', href: '/products' },
-                    { tag: 'Summer Sale', name: 'Xiaomi Mi 11 Ultra', desc: '12GB + 256GB — $580', emoji: '📱', bg: 'var(--announce-bg)', accent: '#fff', href: '/products' },
-                ].map((banner) => (
-                    <a key={banner.name} href={banner.href} style={{ background: banner.bg, borderRadius: 'var(--radius-lg)', padding: '18px 14px', border: '1px solid var(--border)', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden', textDecoration: 'none' }}>
-                        <div>
-                            <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '4px' }}>{banner.tag}</p>
-                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', color: banner.accent, marginBottom: '4px', lineHeight: 1.2 }}>{banner.name}</p>
-                            <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px' }}>{banner.desc}</p>
-                            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--primary)' }}>Shop Now →</span>
-                        </div>
-                        <div style={{ fontSize: '44px', textAlign: 'right', marginTop: '8px' }}>{banner.emoji}</div>
-                    </a>
-                ))}
-            </div>
-        </section>
+            </section>
+        </>
     );
 }

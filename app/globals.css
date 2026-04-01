@@ -35,8 +35,8 @@
   --font-display: 'Syne', sans-serif;
   --font-body: 'DM Sans', sans-serif;
 
-  --container: 1280px;
-  --gutter: 24px;
+  --container: 1440px;
+  --gutter: 40px;
   --radius: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
@@ -236,7 +236,7 @@ button {
 /* ── Tablet ≤ 1024px ── */
 @media (max-width: 1024px) {
   :root {
-    --gutter: 18px;
+    --gutter: 28px;
   }
 
   .hero-sidebar {
@@ -324,7 +324,7 @@ button {
 /* ── Mobile ≤ 768px ── */
 @media (max-width: 768px) {
   :root {
-    --gutter: 14px;
+    --gutter: 18px;
   }
 
   .nav-links {
@@ -451,7 +451,7 @@ button {
 /* ── Small Mobile ≤ 480px ── */
 @media (max-width: 480px) {
   :root {
-    --gutter: 12px;
+    --gutter: 14px;
   }
 
   .flash-grid {
