@@ -87,7 +87,7 @@ export default function CouponsPage() {
             </Card>
 
             <Drawer open={isDrawerOpen} onClose={() => setDrawerOpen(false)} title={editingId ? "Edit Coupon" : "Create New Coupon"} maxWidth="600px">
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', height: '100%', overflowY: 'auto' }}>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                     <Card style={{ padding: '24px' }}>
                          <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Coupon Intelligence</h3>
                          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -101,13 +101,13 @@ export default function CouponsPage() {
 
                     <Card style={{ padding: '24px' }}>
                          <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Usage & Expiration</h3>
-                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
                              <Input label="Usage Limit" value={form.limit} onChange={v => setForm({ ...form, limit: v })} placeholder="e.g. 100" type="number" />
                              <Input label="Expiry Date" value={form.expires} onChange={v => setForm({ ...form, expires: v })} type="date" required />
                          </div>
                     </Card>
 
-                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid #e2e8f0', background: '#fff', position: 'sticky', bottom: '-32px', paddingBottom: '32px', zIndex: 10 }}>
                         <Btn label="Cancel" variant="secondary" onClick={() => setDrawerOpen(false)} />
                         <Btn label={editingId ? "Update Coupon" : "Create Coupon"} submit disabled={!form.code || !form.value} />
                     </div>

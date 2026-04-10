@@ -124,59 +124,57 @@ export default function ProductsPage() {
             </Card>
 
             <Drawer open={isDrawerOpen} onClose={() => setDrawerOpen(false)} title={editingId ? "Edit Product" : "Add New Product"} maxWidth="860px">
-                <form onSubmit={handleAddProduct} style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', height: '100%', flexDirection: 'column', overflow: 'hidden' }}>
-                    <div style={{ display: 'flex', gap: '24px', flex: 1, minHeight: 0, flexWrap: 'wrap' }}>
-                        <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', gap: '24px', overflowY: 'auto', paddingRight: '8px' }}>
-                            <Card style={{ padding: '24px' }}>
-                                <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Basic Details</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                    <Input label="Product Name" required value={formData.name} onChange={v => setFormData({ ...formData, name: v })} placeholder="e.g. Wireless Headphones" />
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                        <label style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Product Description</label>
-                                        <textarea rows={5} placeholder="The product description delivers..." style={{ width: '100%', padding: '12px 16px', border: '1.5px solid #e2e8f0', borderRadius: '12px', fontSize: '14px', fontFamily: 'Inter, sans-serif', outline: 'none', background: '#f8fafc', resize: 'vertical' }} />
-                                    </div>
+                <form onSubmit={handleAddProduct} style={{ display: 'flex', flexWrap: 'wrap', gap: '24px' }}>
+                    <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '300px' }}>
+                        <Card style={{ padding: '24px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Basic Details</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <Input label="Product Name" required value={formData.name} onChange={v => setFormData({ ...formData, name: v })} placeholder="e.g. Wireless Headphones" />
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                    <label style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Product Description</label>
+                                    <textarea rows={5} placeholder="The product description delivers..." style={{ width: '100%', padding: '12px 16px', border: '1.5px solid #e2e8f0', borderRadius: '12px', fontSize: '14px', fontFamily: 'Inter, sans-serif', outline: 'none', background: '#f8fafc', resize: 'vertical' }} />
                                 </div>
-                            </Card>
+                            </div>
+                        </Card>
 
-                            <Card style={{ padding: '24px' }}>
-                                <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Pricing</h3>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-                                    <Input type="number" label="Product Price" required value={formData.price} onChange={v => setFormData({ ...formData, price: v })} placeholder="0.00" />
-                                    <Input type="number" label="Discounted Price (Optional)" placeholder="0.00" />
-                                </div>
-                            </Card>
+                        <Card style={{ padding: '24px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Pricing</h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                                <Input type="number" label="Product Price" required value={formData.price} onChange={v => setFormData({ ...formData, price: v })} placeholder="0.00" />
+                                <Input type="number" label="Discounted Price (Optional)" placeholder="0.00" />
+                            </div>
+                        </Card>
 
-                            <Card style={{ padding: '24px' }}>
-                                <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Inventory</h3>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-                                    <Input type="number" label="Stock Quantity" required value={formData.stock} onChange={v => setFormData({ ...formData, stock: v })} placeholder="0" />
-                                    <Select label="Stock Status" required value={formData.status} onChange={v => setFormData({ ...formData, status: v })} options={['In Stock', 'Low Stock', 'Out of Stock']} />
-                                </div>
-                            </Card>
-                        </div>
-                        
-                        <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '24px', overflowY: 'auto', paddingRight: '8px' }}>
-                            <Card style={{ padding: '24px' }}>
-                                <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Upload Product Image</h3>
-                                <div style={{ width: '100%', height: '180px', background: '#f8fafc', border: '2px dashed #cbd5e1', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#64748b', cursor: 'pointer', transition: 'border 0.2s' }} onMouseEnter={e => e.currentTarget.style.borderColor = '#10b981'} onMouseLeave={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
-                                    <span style={{ fontSize: '32px', marginBottom: '8px' }}>📸</span>
-                                    <span style={{ fontSize: '14px', fontWeight: 600 }}>Click to upload image</span>
-                                    <span style={{ fontSize: '12px' }}>PNG, JPG up to 5MB</span>
-                                </div>
-                            </Card>
+                        <Card style={{ padding: '24px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Inventory</h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                                <Input type="number" label="Stock Quantity" required value={formData.stock} onChange={v => setFormData({ ...formData, stock: v })} placeholder="0" />
+                                <Select label="Stock Status" required value={formData.status} onChange={v => setFormData({ ...formData, status: v })} options={['In Stock', 'Low Stock', 'Out of Stock']} />
+                            </div>
+                        </Card>
+                    </div>
+                    
+                    <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '300px' }}>
+                        <Card style={{ padding: '24px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Upload Product Image</h3>
+                            <div style={{ width: '100%', height: '180px', background: '#f8fafc', border: '2px dashed #cbd5e1', borderRadius: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#64748b', cursor: 'pointer', transition: 'border 0.2s' }} onMouseEnter={e => e.currentTarget.style.borderColor = '#10b981'} onMouseLeave={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
+                                <span style={{ fontSize: '32px', marginBottom: '8px' }}>📸</span>
+                                <span style={{ fontSize: '14px', fontWeight: 600 }}>Click to upload image</span>
+                                <span style={{ fontSize: '12px' }}>PNG, JPG up to 5MB</span>
+                            </div>
+                        </Card>
 
-                            <Card style={{ padding: '24px' }}>
-                                <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Categories</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                    <Select label="Product Categories" required value={formData.category} onChange={v => setFormData({ ...formData, category: v })} options={['Decor', 'Storage', 'Accessories', 'Audio', 'Laptops', 'Footwear', 'Smartphones']} />
-                                    <Select label="Product Tag" options={['Select your tag', 'New Arrival', 'Featured', 'Sale']} />
-                                </div>
-                            </Card>
-                        </div>
+                        <Card style={{ padding: '24px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Categories</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <Select label="Product Categories" required value={formData.category} onChange={v => setFormData({ ...formData, category: v })} options={['Decor', 'Storage', 'Accessories', 'Audio', 'Laptops', 'Footwear', 'Smartphones']} />
+                                <Select label="Product Tag" options={['Select your tag', 'New Arrival', 'Featured', 'Sale']} />
+                            </div>
+                        </Card>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '24px', borderTop: '1px solid #e2e8f0' }}>
-                        <Btn label="Save to draft" variant="secondary" onClick={() => setDrawerOpen(false)} />
+                    <div style={{ width: '100%', display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '24px', borderTop: '1px solid #e2e8f0', marginTop: 'auto', background: '#fff', position: 'sticky', bottom: '-32px', paddingBottom: '32px', zIndex: 10 }}>
+                        <Btn label="Cancel" variant="secondary" onClick={() => setDrawerOpen(false)} />
                         <Btn label={editingId ? "Update Product" : "Publish Product"} submit />
                     </div>
                 </form>

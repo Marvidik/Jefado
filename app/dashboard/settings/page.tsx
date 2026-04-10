@@ -219,7 +219,7 @@ export default function SettingsPage() {
 
             {/* Add Payment Method Drawer */}
             <Drawer open={cardDrawer} onClose={() => setCardDrawer(false)} title="Add Payment Method" maxWidth="480px">
-                <form onSubmit={handleAddCard} style={{ display: 'flex', flexDirection: 'column', gap: '24px', height: '100%' }}>
+                <form onSubmit={handleAddCard} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                     <div style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.5 }}>
                         Securely add a new credit or debit card for billing defaults and subscription renewals.
                     </div>
@@ -233,11 +233,11 @@ export default function SettingsPage() {
                             <Input label="Card Number" type="text" placeholder="0000 0000 0000 0000" required value={cardForm.number} onChange={v => setCardForm({ ...cardForm, number: v })} />
                         </div>
                         <Input label="Name on Card" type="text" placeholder="e.g. James Okafor" required value={cardForm.name} onChange={v => setCardForm({ ...cardForm, name: v })} />
-                        <div style={{ display: 'flex', gap: '16px' }}>
-                            <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                            <div style={{ flex: '1 1 150px' }}>
                                 <Input label="Expiry Date" type="text" placeholder="MM/YY" required value={cardForm.expiry} onChange={v => setCardForm({ ...cardForm, expiry: v })} />
                             </div>
-                            <div style={{ flex: 1 }}>
+                            <div style={{ flex: '1 1 100px' }}>
                                 <Input label="CVV" type="password" placeholder="123" required value={cardForm.cvv} onChange={v => setCardForm({ ...cardForm, cvv: v })} />
                             </div>
                         </div>
@@ -248,7 +248,7 @@ export default function SettingsPage() {
                         <span style={{ fontSize: '13px', color: '#475569', fontWeight: 500 }}>Set as default payment method</span>
                     </label>
 
-                    <div style={{ marginTop: 'auto', paddingTop: '24px', display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0' }}>
+                    <div style={{ padding: '24px 0 8px', display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', background: '#fff', position: 'sticky', bottom: '-32px', zIndex: 10 }}>
                         <Btn label="Cancel" variant="ghost" onClick={() => setCardDrawer(false)} />
                         <Btn label="Save Card" submit />
                     </div>
@@ -256,7 +256,7 @@ export default function SettingsPage() {
             </Drawer>
             {/* Add Payout Method Drawer */}
             <Drawer open={payoutDrawer} onClose={() => setPayoutDrawer(false)} title="Add Payout Method" maxWidth="480px">
-                <form onSubmit={handleAddPayout} style={{ display: 'flex', flexDirection: 'column', gap: '24px', height: '100%' }}>
+                <form onSubmit={handleAddPayout} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                     <div style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.5 }}>
                         Connect a bank account to receive automated payouts from your store sales.
                     </div>
@@ -280,7 +280,7 @@ export default function SettingsPage() {
                         <span style={{ fontSize: '13px', color: '#475569', fontWeight: 500 }}>Set as default for incoming transfers</span>
                     </label>
 
-                    <div style={{ marginTop: 'auto', paddingTop: '24px', display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0' }}>
+                    <div style={{ padding: '24px 0 8px', display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', background: '#fff', position: 'sticky', bottom: '-32px', zIndex: 10 }}>
                         <Btn label="Cancel" variant="ghost" onClick={() => setPayoutDrawer(false)} />
                         <Btn label="Save Bank Details" submit />
                     </div>
