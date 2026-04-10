@@ -9,7 +9,7 @@ export default function ProductCard({ id = 1, name, price, originalPrice, discou
     const [wishlisted, setWishlisted] = useState(false);
     const [added, setAdded] = useState(false);
     return (
-        <a href={`/product/${id}`} style={{ display: 'block', textDecoration: 'none' }}>
+        <a href={`/products/${id}`} style={{ display: 'block', textDecoration: 'none' }}>
             <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden', transition: 'all 0.25s', cursor: 'pointer', position: 'relative', height: '100%' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-hover)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--primary)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border)'; }}

@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-type Mode = 'login' | 'register' | 'forgot';
+type Mode = 'login' | 'register' | 'forgot' | 'otp';
 
 /* ── Reusable input ─────────────────────── */
 function Field({ label, type = 'text', value, onChange, placeholder, required }: {
@@ -51,73 +51,87 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
 function AuthPanel({ mode }: { mode: Mode }) {
     const content = {
         login: {
-            title: 'Welcome\nback!',
-            desc: 'Sign in and pick up right where you left off. Your cart, wishlist and orders are all waiting.',
-            bullets: ['Access your orders & tracking', 'Earn loyalty points on every purchase', 'Exclusive member-only deals'],
-            topEmoji: '🛍️',
-            floats: ['📦', '⭐', '🔔', '💳', '🚚'],
+            title: 'Experience\nthe Future.',
+            desc: 'Sign in to access your premium dashboard, track orders, and experience the next generation of global commerce.',
         },
         register: {
-            title: 'Join\nJefado!',
-            desc: 'Create your free account and start shopping from thousands of verified vendors today.',
-            bullets: ['Shop from 10,000+ verified vendors', 'Sell your products as a vendor', 'Fast delivery across 30+ countries'],
-            topEmoji: '🎉',
-            floats: ['🛒', '💝', '🎁', '✨', '🌟'],
+            title: 'Join the\nElite.',
+            desc: 'Create your account and connect with thousands of verified vendors in a secure, high-performance ecosystem.',
         },
         forgot: {
-            title: 'Account\nRecovery',
-            desc: 'No worries — we\'ll help you get back into your account securely in just a few steps.',
-            bullets: ['Secure link sent to your email', 'Your data stays fully protected', 'Contact support if you need help'],
-            topEmoji: '🔑',
-            floats: ['🔒', '📧', '✅', '🛡️', '💬'],
+            title: 'Secure\nRecovery.',
+            desc: 'Quickly regain access to your account through our encrypted recovery protocol.',
+        },
+        otp: {
+            title: 'Finalize\nAccess.',
+            desc: 'A verification token has been dispatched to your digital mail. Enter it below to unlock your terminal.',
         },
     };
     const c = content[mode];
 
     return (
         <div style={{
-            background: 'linear-gradient(160deg, var(--primary-dark) 0%, var(--primary) 55%, #2563eb 100%)',
-            display: 'flex', flexDirection: 'column', justifyContent: 'center',
-            padding: '60px 48px', position: 'relative', overflow: 'hidden', width: '100%',
-            minHeight: '100vh',
+            position: 'relative',
+            width: '100%',
+            height: '100vh',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+            padding: '60px',
         }}>
-            {/* Decorative circles */}
-            <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '360px', height: '360px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
-            <div style={{ position: 'absolute', bottom: '-100px', left: '-60px', width: '300px', height: '300px', borderRadius: '50%', background: 'rgba(249,115,22,0.12)' }} />
-            <div style={{ position: 'absolute', top: '40%', right: '-40px', width: '180px', height: '180px', borderRadius: '50%', background: 'rgba(255,255,255,0.04)' }} />
+            {/* Background Image */}
+            <div style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: 'url("/images/auth_bg.png")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                transition: 'transform 10s ease-in-out',
+                transform: 'scale(1.1)',
+                zIndex: 1
+            }} />
+            
+            {/* Animated Overlay */}
+            <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 50%, rgba(15, 23, 42, 0.2) 100%)',
+                zIndex: 2
+            }} />
 
-            <div style={{ position: 'relative', zIndex: 2 }}>
-                {/* Big emoji */}
-                <div style={{ fontSize: '64px', marginBottom: '28px', filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.2))' }}>{c.topEmoji}</div>
-
-                {/* Title */}
-                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '40px', color: '#fff', marginBottom: '18px', lineHeight: 1.1, letterSpacing: '-1px', whiteSpace: 'pre-line' }}>{c.title}</h2>
-
-                <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.75)', marginBottom: '36px', lineHeight: 1.75, maxWidth: '340px' }}>{c.desc}</p>
-
-                {/* Bullet points */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '44px' }}>
-                    {c.bullets.map(b => (
-                        <div key={b} style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                            <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(249,115,22,0.3)', border: '1px solid rgba(249,115,22,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', color: '#fbbf24', flexShrink: 0 }}>✓</div>
-                            <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.88)', lineHeight: 1.5 }}>{b}</span>
-                        </div>
-                    ))}
+            {/* Content Over the Image */}
+            <div style={{ position: 'relative', zIndex: 10, maxWidth: '500px', animation: 'fadeInUp 0.8s ease' }}>
+                <div style={{ display: 'inline-flex', padding: '6px 12px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '20px', color: '#fff', fontSize: '12px', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '24px' }}>
+                    ✨ Global Marketplace 2026
                 </div>
-
-                {/* Floating emoji row */}
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    {c.floats.map((em, i) => (
-                        <div key={i} style={{ width: '44px', height: '44px', background: 'rgba(255,255,255,0.12)', borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', border: '1px solid rgba(255,255,255,0.2)' }}>{em}</div>
-                    ))}
-                </div>
-
-                {/* Stats row */}
-                <div style={{ display: 'flex', gap: '32px', marginTop: '48px', paddingTop: '28px', borderTop: '1px solid rgba(255,255,255,0.15)' }}>
-                    {[['10k+', 'Vendors'], ['2M+', 'Shoppers'], ['30+', 'Countries']].map(([n, l]) => (
-                        <div key={l}>
-                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', color: '#fff', lineHeight: 1 }}>{n}</p>
-                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', marginTop: '4px' }}>{l}</p>
+                <h2 style={{ 
+                    fontFamily: 'var(--font-display)', 
+                    fontWeight: 800, 
+                    fontSize: '48px', 
+                    color: '#fff', 
+                    marginBottom: '20px', 
+                    lineHeight: 1.1, 
+                    letterSpacing: '-1.5px',
+                    whiteSpace: 'pre-line' 
+                }}>{c.title}</h2>
+                <p style={{ 
+                    fontSize: '17px', 
+                    color: 'rgba(255,255,255,0.8)', 
+                    lineHeight: 1.6,
+                    marginBottom: '32px'
+                }}>{c.desc}</p>
+                
+                {/* Micro-stats */}
+                <div style={{ display: 'flex', gap: '32px' }}>
+                    {[
+                        { label: 'Verified Vendors', val: '10k+' },
+                        { label: 'Active Users', val: '2.4M' },
+                        { label: 'Safe Delivery', val: '100%' }
+                    ].map(s => (
+                        <div key={s.label}>
+                            <p style={{ fontSize: '20px', fontWeight: 800, color: '#fff', marginBottom: '4px' }}>{s.val}</p>
+                            <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</p>
                         </div>
                     ))}
                 </div>
@@ -125,6 +139,8 @@ function AuthPanel({ mode }: { mode: Mode }) {
         </div>
     );
 }
+
+const SocialBtn = ({ icon, label }: { icon: string, label: string }) => null;
 
 /* ── Login Form ─────────────────────────── */
 function LoginForm({ onSwitch, onForgot }: { onSwitch: () => void; onForgot: () => void }) {
@@ -146,30 +162,51 @@ function LoginForm({ onSwitch, onForgot }: { onSwitch: () => void; onForgot: () 
     const valid = email && password;
     return (
         <div style={{ width: '100%' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '28px', color: 'var(--text-primary)', marginBottom: '6px' }}>Sign In</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '28px' }}>Enter your credentials to access your account</p>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-1.5px' }}>Sign In</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '40px' }}>Enter your credentials to access the hub.</p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
-                <Field label="Email Address" type="email" value={email} onChange={setEmail} placeholder="you@example.com" required />
-                <Field label="Password" type="password" value={password} onChange={setPassword} placeholder="Your password" required />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
+                <Field label="Identity (Email)" type="email" value={email} onChange={setEmail} placeholder="ID-000@jefado.com" required />
+                <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>Access Key</label>
+                        <button onClick={onForgot} style={{ fontSize: '12px', fontWeight: 800, color: 'var(--primary)', background: 'transparent', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Forgot Access Key?</button>
+                    </div>
+                    <Field label="" type="password" value={password} onChange={setPassword} placeholder="••••••••" required />
+                </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '16px 0 24px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-secondary)' }}>
-                    <input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} style={{ accentColor: 'var(--primary)', width: '15px', height: '15px' }} />
-                    Remember me
+            <div style={{ margin: '24px 0 40px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                    <input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} style={{ accentColor: 'var(--primary)', width: '18px', height: '18px', borderRadius: '4px' }} />
+                    Maintain session on this device
                 </label>
-                <button onClick={onForgot} style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)', fontFamily: 'var(--font-body)', background: 'transparent', border: 'none', cursor: 'pointer' }}>Forgot password?</button>
             </div>
 
             <button onClick={() => { if (!valid) return; setLoading(true); setTimeout(() => { setLoading(false); setSuccess(true); }, 1500); }}
                 disabled={!valid || loading}
-                style={{ width: '100%', padding: '14px', background: valid ? 'var(--primary)' : 'var(--border)', color: valid ? '#fff' : 'var(--text-muted)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', border: 'none', transition: 'all 0.2s', marginBottom: '20px', boxShadow: valid ? '0 4px 20px rgba(26,86,219,0.3)' : 'none' }}
-            >{loading ? '⏳ Signing in…' : 'Sign In →'}</button>
+                style={{ 
+                    width: '100%', 
+                    padding: '18px', 
+                    background: valid ? 'var(--primary)' : 'var(--border)', 
+                    color: valid ? '#fff' : 'var(--text-muted)', 
+                    borderRadius: '14px', 
+                    fontFamily: 'var(--font-display)', 
+                    fontWeight: 800, 
+                    fontSize: '16px', 
+                    cursor: valid ? 'pointer' : 'not-allowed', 
+                    border: 'none', 
+                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', 
+                    marginBottom: '32px', 
+                    boxShadow: valid ? '0 15px 35px -5px rgba(26,86,219,0.5), inset 0 0 10px rgba(255,255,255,0.2)' : 'none',
+                    letterSpacing: '0.5px',
+                    textTransform: 'uppercase'
+                }}
+            >{loading ? '⏳ Synchronizing…' : 'Initialize Access →'}</button>
 
-            <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--text-muted)' }}>
-                Don&apos;t have an account?{' '}
-                <button onClick={onSwitch} style={{ color: 'var(--primary)', fontWeight: 700, background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', fontFamily: 'var(--font-body)' }}>Create account</button>
+            <p style={{ textAlign: 'center', fontSize: '15px', color: 'var(--text-secondary)' }}>
+                New to the platform?{' '}
+                <button onClick={onSwitch} style={{ color: 'var(--primary)', fontWeight: 800, background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '15px' }}>Create identity</button>
             </p>
         </div>
     );
@@ -192,64 +229,186 @@ function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
             <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '34px', boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}>✓</div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', marginBottom: '10px' }}>Account created!</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '14px' }}>Welcome to Jefado, {form.firstName}! Check your email to verify.</p>
-            <a href="/" style={{ display: 'inline-block', padding: '12px 32px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, fontFamily: 'var(--font-body)', fontSize: '15px' }}>Start Shopping →</a>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '14px' }}>Welcome to the platform, {form.firstName}! Synchronizing identity...</p>
+            <button onClick={onSwitch} style={{ display: 'inline-block', padding: '12px 32px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, fontFamily: 'var(--font-body)', fontSize: '15px', border: 'none', cursor: 'pointer' }}>Verify OTP →</button>
         </div>
     );
 
     return (
         <div style={{ width: '100%' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '28px', color: 'var(--text-primary)', marginBottom: '6px' }}>Create Account</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '24px' }}>Join thousands of shoppers and vendors on Jefado</p>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-1.5px' }}>Join the Platform</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '40px' }}>Establish your digital identity within the hub.</p>
 
             {/* Account type */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '22px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
                 {(['buyer', 'seller'] as const).map(type => (
-                    <button key={type} onClick={() => setForm(f => ({ ...f, accountType: type }))} style={{ padding: '14px', border: `2px solid ${form.accountType === type ? 'var(--primary)' : 'var(--border)'}`, background: form.accountType === type ? 'var(--primary-light)' : 'var(--surface)', borderRadius: 'var(--radius-lg)', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontSize: '26px' }}>{type === 'buyer' ? '🛍️' : '🏪'}</span>
-                        <span style={{ fontSize: '13px', fontWeight: 700, color: form.accountType === type ? 'var(--primary)' : 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}>{type === 'buyer' ? 'Shop as Buyer' : 'Sell as Vendor'}</span>
+                    <button key={type} onClick={() => setForm(f => ({ ...f, accountType: type }))} style={{ 
+                        padding: '24px 16px', 
+                        border: `2px solid ${form.accountType === type ? 'var(--primary)' : 'var(--border)'}`, 
+                        background: form.accountType === type ? 'var(--primary-light)' : 'var(--surface)', 
+                        borderRadius: '20px', 
+                        cursor: 'pointer', 
+                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        gap: '12px',
+                        boxShadow: form.accountType === type ? '0 10px 20px rgba(26,86,219,0.1)' : 'none',
+                        transform: form.accountType === type ? 'translateY(-4px)' : 'none'
+                    }}>
+                        <span style={{ fontSize: '36px', filter: form.accountType === type ? 'drop-shadow(0 4px 8px rgba(26,86,219,0.2))' : 'none' }}>{type === 'buyer' ? '👤' : '🏢'}</span>
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: form.accountType === type ? 'var(--primary)' : 'var(--text-secondary)', fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '1px' }}>{type === 'buyer' ? 'Consumer' : 'Merchant'}</span>
                     </button>
                 ))}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '100%', marginBottom: '14px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                    <Field label="First Name" value={form.firstName} onChange={set('firstName')} placeholder="John" required />
-                    <Field label="Last Name" value={form.lastName} onChange={set('lastName')} placeholder="Doe" required />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', marginBottom: '32px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <Field label="First Name" value={form.firstName} onChange={set('firstName')} placeholder="Aria" required />
+                    <Field label="Last Name" value={form.lastName} onChange={set('lastName')} placeholder="Vance" required />
                 </div>
-                <Field label="Email Address" type="email" value={form.email} onChange={set('email')} placeholder="you@example.com" required />
-                <Field label="Phone Number" type="tel" value={form.phone} onChange={set('phone')} placeholder="+1 234 567 8900" />
-                <Field label="Password" type="password" value={form.password} onChange={set('password')} placeholder="Min. 8 characters" required />
+                <Field label="Digital Mail" type="email" value={form.email} onChange={set('email')} placeholder="aria@vance.io" required />
+                <Field label="Security Key" type="password" value={form.password} onChange={set('password')} placeholder="••••••••" required />
 
-                {/* Strength bar */}
                 {form.password.length > 0 && (
-                    <div>
-                        <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
+                    <div style={{ marginTop: '-12px' }}>
+                        <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
                             {[1, 2, 3, 4].map(i => <div key={i} style={{ flex: 1, height: '4px', borderRadius: '2px', background: i <= strength ? strengthColor : 'var(--border)', transition: 'background 0.3s' }} />)}
                         </div>
-                        <p style={{ fontSize: '11px', color: strengthColor, fontWeight: 600 }}>{strengthLabel} password</p>
+                        <p style={{ fontSize: '11px', color: strengthColor, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Entropy: {strengthLabel}</p>
                     </div>
                 )}
 
-                <Field label="Confirm Password" type="password" value={form.confirm} onChange={set('confirm')} placeholder="Repeat password" required />
-                {form.confirm && form.password !== form.confirm && (
-                    <p style={{ fontSize: '12px', color: 'var(--danger)', marginTop: '-8px' }}>⚠ Passwords do not match</p>
-                )}
+                <Field label="Confirm Key" type="password" value={form.confirm} onChange={set('confirm')} placeholder="••••••••" required />
+                {form.confirm && form.password !== form.confirm && <p style={{ fontSize: '12px', color: 'var(--danger)', marginTop: '-16px', fontWeight: 600 }}>⚠ Key mismatch detected</p>}
             </div>
 
-            <label style={{ display: 'flex', gap: '10px', marginBottom: '22px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-secondary)', alignItems: 'flex-start', width: '100%' }}>
-                <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ accentColor: 'var(--primary)', width: '15px', height: '15px', marginTop: '2px', flexShrink: 0 }} />
-                <span>I agree to the <a href="#" style={{ color: 'var(--primary)', fontWeight: 600 }}>Terms of Service</a> and <a href="#" style={{ color: 'var(--primary)', fontWeight: 600 }}>Privacy Policy</a></span>
+            <label style={{ display: 'flex', gap: '14px', marginBottom: '40px', cursor: 'pointer', fontSize: '14px', color: 'var(--text-secondary)', alignItems: 'flex-start' }}>
+                <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ accentColor: 'var(--primary)', width: '20px', height: '20px', marginTop: '2px', flexShrink: 0 }} />
+                <span>I acknowledge the <a href="#" style={{ color: 'var(--primary)', fontWeight: 800, textDecoration: 'underline' }}>Digital Protocols</a> and <a href="#" style={{ color: 'var(--primary)', fontWeight: 800, textDecoration: 'underline' }}>Privacy Stack</a></span>
             </label>
 
             <button onClick={() => { if (!valid) return; setLoading(true); setTimeout(() => { setLoading(false); setSuccess(true); }, 1600); }}
                 disabled={!valid || loading}
-                style={{ width: '100%', padding: '14px', background: valid ? 'var(--primary)' : 'var(--border)', color: valid ? '#fff' : 'var(--text-muted)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', border: 'none', transition: 'all 0.2s', marginBottom: '20px', boxShadow: valid ? '0 4px 20px rgba(26,86,219,0.3)' : 'none' }}
-            >{loading ? '⏳ Creating account…' : 'Create Account →'}</button>
+                style={{ 
+                    width: '100%', 
+                    padding: '18px', 
+                    background: valid ? 'var(--primary)' : 'var(--border)', 
+                    color: valid ? '#fff' : 'var(--text-muted)', 
+                    borderRadius: '14px', 
+                    fontFamily: 'var(--font-display)', 
+                    fontWeight: 800, 
+                    fontSize: '16px', 
+                    cursor: valid ? 'pointer' : 'not-allowed', 
+                    border: 'none', 
+                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', 
+                    marginBottom: '32px', 
+                    boxShadow: valid ? '0 15px 35px -5px rgba(26,86,219,0.5)' : 'none',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px'
+                }}
+            >{loading ? '⏳ Encrypting…' : 'Finalize Registration'}</button>
 
-            <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--text-muted)' }}>
-                Already have an account?{' '}
-                <button onClick={onSwitch} style={{ color: 'var(--primary)', fontWeight: 700, background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', fontFamily: 'var(--font-body)' }}>Sign in</button>
+            <p style={{ textAlign: 'center', fontSize: '15px', color: 'var(--text-secondary)' }}>
+                Already registered?{' '}
+                <button onClick={onSwitch} style={{ color: 'var(--primary)', fontWeight: 800, background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '15px' }}>Initialize Login</button>
+            </p>
+        </div>
+    );
+}
+
+/* ── OTP Form ─────────────────────────────── */
+function OTPForm({ onBack }: { onBack: () => void }) {
+    const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+
+    const handleChange = (val: string, index: number) => {
+        if (!/^\d*$/.test(val)) return;
+        const newOtp = [...otp];
+        newOtp[index] = val.slice(-1);
+        setOtp(newOtp);
+        if (val && index < 5) {
+            const next = document.getElementById(`otp-${index + 1}`);
+            next?.focus();
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+        if (e.key === 'Backspace' && !otp[index] && index > 0) {
+            const prev = document.getElementById(`otp-${index - 1}`);
+            prev?.focus();
+        }
+    };
+
+    if (success) return (
+        <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+            <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '34px', boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}>✓</div>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', marginBottom: '10px' }}>Identity Verified</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '14px' }}>Access to the platform has been fully granted.</p>
+            <a href="/" style={{ display: 'inline-block', padding: '12px 32px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, fontFamily: 'var(--font-body)', fontSize: '15px' }}>Enter Terminal →</a>
+        </div>
+    );
+
+    const valid = otp.every(v => v !== '');
+
+    return (
+        <div style={{ width: '100%' }}>
+            <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', marginBottom: '24px' }}>← Back to login</button>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-1.5px' }}>Enter Token</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '40px' }}>Enter the 6-digit sync code sent to your mail.</p>
+
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '40px' }}>
+                {otp.map((v, i) => (
+                    <input
+                        key={i}
+                        id={`otp-${i}`}
+                        type="text"
+                        value={v}
+                        onChange={e => handleChange(e.target.value, i)}
+                        onKeyDown={e => handleKeyDown(e, i)}
+                        style={{
+                            width: '100%',
+                            height: '60px',
+                            textAlign: 'center',
+                            fontSize: '24px',
+                            fontWeight: 800,
+                            border: '2px solid var(--border)',
+                            borderRadius: '12px',
+                            background: 'var(--surface-2)',
+                            color: 'var(--text-primary)',
+                            outline: 'none',
+                            transition: 'all 0.2s'
+                        }}
+                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--primary)')}
+                        onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')}
+                    />
+                ))}
+            </div>
+
+            <button onClick={() => { if (!valid) return; setLoading(true); setTimeout(() => { setLoading(false); setSuccess(true); }, 1800); }}
+                disabled={!valid || loading}
+                style={{ 
+                    width: '100%', 
+                    padding: '18px', 
+                    background: valid ? 'var(--primary)' : 'var(--border)', 
+                    color: valid ? '#fff' : 'var(--text-muted)', 
+                    borderRadius: '14px', 
+                    fontFamily: 'var(--font-display)', 
+                    fontWeight: 800, 
+                    fontSize: '16px', 
+                    cursor: valid ? 'pointer' : 'not-allowed', 
+                    border: 'none', 
+                    transition: 'all 0.3s', 
+                    marginBottom: '24px', 
+                    boxShadow: valid ? '0 15px 35px -5px rgba(26,86,219,0.5)' : 'none',
+                    textTransform: 'uppercase'
+                }}
+            >{loading ? '⏳ Validating Token…' : 'Sync Identity'}</button>
+
+            <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                Didn&apos;t receive the code?{' '}
+                <button style={{ color: 'var(--primary)', fontWeight: 700, background: 'transparent', border: 'none', cursor: 'pointer' }}>Request new token</button>
             </p>
         </div>
     );
@@ -327,14 +486,10 @@ export default function AuthPage() {
                 {/* Right: form */}
                 <div className="auth-form-col">
                     <div className="auth-form-inner">
-                        {/* Logo */}
-                        <a href="/" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: 'var(--primary)', display: 'block', marginBottom: '36px', letterSpacing: '-0.5px' }}>
-                            Jefado<span style={{ color: 'var(--secondary)' }}>.</span>
-                        </a>
-
                         {mode === 'login' && <LoginForm onSwitch={() => setMode('register')} onForgot={() => setMode('forgot')} />}
-                        {mode === 'register' && <RegisterForm onSwitch={() => setMode('login')} />}
+                        {mode === 'register' && <RegisterForm onSwitch={() => setMode('otp')} />}
                         {mode === 'forgot' && <ForgotForm onBack={() => setMode('login')} />}
+                        {mode === 'otp' && <OTPForm onBack={() => setMode('login')} />}
                     </div>
                 </div>
             </div>

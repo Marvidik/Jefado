@@ -6,10 +6,12 @@ import PromoBanners from '@/components/home/PromoBanners';
 import ProductGrid from '@/components/home/ProductGrid';
 import FullWidthPromo from '@/components/home/FullWidthPromo';
 import BestSellers from '@/components/home/BestSellers';
+import WelcomeModal from '@/components/home/WelcomeModal';
 
 export default function Home() {
   return (
     <div style={{ background: 'var(--bg)' }}>
+      <WelcomeModal />
       <HeroSection />
       <TrustBadges />
       <FlashSale />
