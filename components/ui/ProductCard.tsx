@@ -3,7 +3,7 @@ import { useState } from 'react';
 interface ProductCardProps {
     id?: number; name: string; price: number; originalPrice?: number; discount?: number;
     rating?: number; reviews?: number; badgeColor?: string;
-    emoji: string; image?: string; isNew?: boolean; isBestSeller?: boolean;
+    emoji?: string; image?: string; isNew?: boolean; isBestSeller?: boolean;
 }
 export default function ProductCard({ id = 1, name, price, originalPrice, discount, rating = 4.5, reviews = 128, emoji, image, isNew, isBestSeller }: ProductCardProps) {
     const [wishlisted, setWishlisted] = useState(false);
