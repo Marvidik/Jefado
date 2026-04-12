@@ -1,3 +1,23 @@
+export interface Product {
+    id: number;
+    name: string;
+    price: number;
+    originalPrice?: number;
+    discount?: number;
+    rating: number;
+    reviews: number;
+    image?: string;
+    emoji?: string;
+    isBestSeller?: boolean;
+    isNew?: boolean;
+    brand: string;
+    category: string;
+    inStock: boolean;
+    seller: string;
+    description: string;
+    specs?: [string, string][];
+}
+
 export const CATEGORIES = [
     { icon: '🧥', label: 'Fashion', slug: 'fashion' },
     { icon: '💻', label: 'Electronics', slug: 'electronics' },
@@ -9,7 +29,7 @@ export const CATEGORIES = [
     { icon: '🚗', label: 'Automotive', slug: 'automotive' },
 ];
 
-export const ALL_PRODUCTS = [
+export const ALL_PRODUCTS: Product[] = [
     { 
         id: 1, name: 'Sony WH-1000XM5 Wireless Noise Cancelling Headphones', price: 279, originalPrice: 399, discount: 30, rating: 4.9, reviews: 5621, 
         image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80', 
