@@ -13,8 +13,8 @@ export default function Home() {
     <div style={{ background: 'var(--bg)' }}>
       <WelcomeModal />
       <HeroSection />
-      <TrustBadges />
       <FlashSale />
+      <TrustBadges />
       <div style={{ borderTop: '1px solid var(--border)', margin: '0 0 28px' }} />
       <CategoryStrip />
       <PromoBanners />

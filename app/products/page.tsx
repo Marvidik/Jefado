@@ -1,38 +1,14 @@
 'use client';
 import { useState, useMemo } from 'react';
+import { ALL_PRODUCTS, CATEGORIES as GLOBAL_CATEGORIES, Product } from '@/lib/data';
 
-interface Product {
-    id: number; name: string; price: number; originalPrice?: number;
-    discount?: number; rating: number; reviews: number; emoji: string;
-    isNew?: boolean; isBestSeller?: boolean; brand: string;
-    category: string; inStock: boolean; seller: string;
-}
+const ALL_PRODS = ALL_PRODUCTS;
 
-const ALL_PRODUCTS: Product[] = [
-    { id: 1, name: 'Sony WH-1000XM5 Noise Cancelling Wireless Headphones', price: 279, originalPrice: 399, discount: 30, rating: 4.9, reviews: 5621, emoji: '🎧', isBestSeller: true, brand: 'Sony', category: 'Headphones', inStock: true, seller: 'TechZone Store' },
-    { id: 2, name: 'Apple AirPods Pro 2nd Generation with MagSafe Case', price: 199, originalPrice: 249, discount: 20, rating: 4.8, reviews: 12450, emoji: '🎵', isNew: true, brand: 'Apple', category: 'Headphones', inStock: true, seller: 'Apple Official' },
-    { id: 3, name: 'Samsung Galaxy S25 Ultra 256GB Unlocked Smartphone', price: 1199, originalPrice: 1399, discount: 14, rating: 4.7, reviews: 3201, emoji: '📱', isNew: true, brand: 'Samsung', category: 'Smartphones', inStock: true, seller: 'Samsung Direct' },
-    { id: 4, name: 'iPhone 15 Pro Max 256GB Natural Titanium', price: 1099, originalPrice: 1199, discount: 8, rating: 4.8, reviews: 8920, emoji: '📱', brand: 'Apple', category: 'Smartphones', inStock: true, seller: 'Apple Official' },
-    { id: 5, name: 'Logitech MX Master 3S Wireless Performance Mouse', price: 89, originalPrice: 120, discount: 26, rating: 4.9, reviews: 2341, emoji: '🖱️', isBestSeller: true, brand: 'Logitech', category: 'Accessories', inStock: true, seller: 'PeriphHQ' },
-    { id: 6, name: 'MacBook Pro 14" M3 Pro 18GB RAM 512GB SSD', price: 1999, originalPrice: 2199, discount: 9, rating: 4.9, reviews: 1823, emoji: '💻', brand: 'Apple', category: 'Laptops', inStock: true, seller: 'Apple Official' },
-    { id: 7, name: 'Dell XPS 15 9530 Intel Core i9 32GB RTX 4060', price: 1799, originalPrice: 2099, discount: 14, rating: 4.6, reviews: 987, emoji: '💻', brand: 'Dell', category: 'Laptops', inStock: false, seller: 'Dell Store' },
-    { id: 8, name: 'Razer BlackWidow V3 Pro Wireless Mechanical Keyboard', price: 139, originalPrice: 180, discount: 23, rating: 4.7, reviews: 892, emoji: '⌨️', brand: 'Razer', category: 'Accessories', inStock: true, seller: 'GamingWorld' },
-    { id: 9, name: 'LG C3 55" OLED evo 4K UHD Smart TV 2023', price: 1296, originalPrice: 1799, discount: 28, rating: 4.8, reviews: 4521, emoji: '📺', isBestSeller: true, brand: 'LG', category: 'TVs', inStock: true, seller: 'Electronics Hub' },
-    { id: 10, name: 'Bose QuietComfort 45 Wireless Bluetooth Headphones', price: 259, originalPrice: 329, discount: 21, rating: 4.7, reviews: 3201, emoji: '🎧', brand: 'Bose', category: 'Headphones', inStock: true, seller: 'AudioPro' },
-    { id: 11, name: 'Canon EOS R6 Mark II Mirrorless Camera Body', price: 2499, originalPrice: 2799, discount: 11, rating: 4.8, reviews: 765, emoji: '📷', brand: 'Canon', category: 'Cameras', inStock: true, seller: 'PhotoGear Pro' },
-    { id: 12, name: 'Samsung 65" Neo QLED 4K QN90C Smart TV', price: 1497, originalPrice: 1999, discount: 25, rating: 4.6, reviews: 2134, emoji: '📺', brand: 'Samsung', category: 'TVs', inStock: false, seller: 'Samsung Direct' },
-    { id: 13, name: 'iPad Pro 12.9" M2 Chip 256GB WiFi + Cellular', price: 1099, originalPrice: 1299, discount: 15, rating: 4.8, reviews: 3410, emoji: '📟', isNew: true, brand: 'Apple', category: 'Tablets', inStock: true, seller: 'Apple Official' },
-    { id: 14, name: 'ASUS ROG Strix G16 Gaming Laptop RTX 4070 165Hz', price: 1499, originalPrice: 1799, discount: 17, rating: 4.5, reviews: 654, emoji: '🎮', brand: 'ASUS', category: 'Laptops', inStock: true, seller: 'GamingWorld' },
-    { id: 15, name: 'JBL Charge 5 Portable Waterproof Bluetooth Speaker', price: 129, originalPrice: 179, discount: 28, rating: 4.7, reviews: 5832, emoji: '🔊', isBestSeller: true, brand: 'JBL', category: 'Audio', inStock: true, seller: 'AudioPro' },
-    { id: 16, name: 'Sony Alpha A7 IV Full Frame Mirrorless Camera', price: 2498, originalPrice: 2799, discount: 11, rating: 4.9, reviews: 1203, emoji: '📸', brand: 'Sony', category: 'Cameras', inStock: true, seller: 'PhotoGear Pro' },
-    { id: 17, name: 'Microsoft Surface Pro 9 Intel i7 16GB 256GB', price: 1299, originalPrice: 1499, discount: 13, rating: 4.5, reviews: 432, emoji: '💼', brand: 'Microsoft', category: 'Tablets', inStock: false, seller: 'MS Store' },
-    { id: 18, name: 'Anker 737 Power Bank 24000mAh 140W USB-C', price: 89, originalPrice: 129, discount: 31, rating: 4.7, reviews: 7823, emoji: '🔋', isNew: true, brand: 'Anker', category: 'Accessories', inStock: true, seller: 'TechZone Store' },
-    { id: 19, name: 'NVIDIA GeForce RTX 4080 Super 16GB Graphics Card', price: 999, originalPrice: 1199, discount: 17, rating: 4.8, reviews: 891, emoji: '🖥️', brand: 'NVIDIA', category: 'Components', inStock: true, seller: 'PCBuilder' },
-    { id: 20, name: 'Apple AirTag 4 Pack Item Tracker', price: 79, originalPrice: 99, discount: 20, rating: 4.7, reviews: 15421, emoji: '📍', brand: 'Apple', category: 'Accessories', inStock: true, seller: 'Apple Official' },
-];
+const BRANDS = [...new Set(ALL_PRODS.map(p => p.brand))].sort();
+const CATEGORY_NAMES = [...new Set(ALL_PRODS.map(p => p.category))].sort();
 
-const BRANDS = [...new Set(ALL_PRODUCTS.map(p => p.brand))].sort();
-const CATEGORIES = [...new Set(ALL_PRODUCTS.map(p => p.category))].sort();
+const BRANDS_LIST = BRANDS;
+const CATEGORIES_LIST = CATEGORY_NAMES;
 const PRICE_RANGES = [
     { label: 'Under $100', min: 0, max: 100 },
     { label: '$100 – $500', min: 100, max: 500 },
@@ -66,8 +42,8 @@ function MiniProductCard({ p }: { p: Product }) {
             onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-hover)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--primary)'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; (e.currentTarget as HTMLDivElement).style.transform = ''; (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border)'; }}
         >
-            <div style={{ position: 'relative', background: 'var(--surface-2)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '52px' }}>
-                {p.emoji}
+            <div style={{ position: 'relative', background: 'var(--surface-2)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} className="product-card-img" />
                 <div style={{ position: 'absolute', top: '6px', left: '6px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
                     {p.discount && <span style={{ background: 'var(--danger)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '3px' }}>-{p.discount}%</span>}
                     {p.isNew && <span style={{ background: 'var(--success)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '3px' }}>NEW</span>}
@@ -130,10 +106,10 @@ function FilterSidebar({ filters, onChange }: { filters: Filters; onChange: (f: 
             {/* Category */}
             <div style={{ marginBottom: '20px' }}><SectionHead title="Category" />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {CATEGORIES.map(cat => (
+                    {CATEGORIES_LIST.map(cat => (
                         <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px' }}>
                             <input type="checkbox" checked={filters.categories.includes(cat)} onChange={() => toggle('categories', cat)} style={{ accentColor: 'var(--primary)', width: '14px', height: '14px' }} />
-                            <span style={{ color: filters.categories.includes(cat) ? 'var(--primary)' : 'var(--text-primary)', fontWeight: filters.categories.includes(cat) ? 600 : 400 }}>{cat}</span>
+                            <span style={{ color: filters.categories.includes(cat) ? 'var(--primary)' : 'var(--text-primary)', fontWeight: filters.categories.includes(cat) ? 600 : 400, textTransform: 'capitalize' }}>{cat}</span>
                         </label>
                     ))}
                 </div>
@@ -142,7 +118,7 @@ function FilterSidebar({ filters, onChange }: { filters: Filters; onChange: (f: 
             {/* Brand */}
             <div style={{ marginBottom: '20px' }}><SectionHead title="Brand" />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {BRANDS.map(b => (
+                    {BRANDS_LIST.map(b => (
                         <label key={b} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px' }}>
                             <input type="checkbox" checked={filters.brands.includes(b)} onChange={() => toggle('brands', b)} style={{ accentColor: 'var(--primary)', width: '14px', height: '14px' }} />
                             <span style={{ color: filters.brands.includes(b) ? 'var(--primary)' : 'var(--text-primary)', fontWeight: filters.brands.includes(b) ? 600 : 400 }}>{b}</span>
@@ -173,8 +149,16 @@ export default function ProductsPage() {
     const [page, setPage] = useState(1);
     const PER_PAGE = 12;
 
+    const activeCategoryLabel = useMemo(() => {
+        if (filters.categories.length === 1) {
+            const cat = GLOBAL_CATEGORIES.find(c => c.slug === filters.categories[0]);
+            return cat ? cat.label : filters.categories[0];
+        }
+        return 'All Products';
+    }, [filters.categories]);
+
     const filtered = useMemo(() => {
-        let list = [...ALL_PRODUCTS];
+        let list = [...ALL_PRODS];
         if (search) list = list.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.brand.toLowerCase().includes(search.toLowerCase()));
         if (filters.brands.length) list = list.filter(p => filters.brands.includes(p.brand));
         if (filters.categories.length) list = list.filter(p => filters.categories.includes(p.category));
@@ -199,11 +183,11 @@ export default function ProductsPage() {
             <div className="container" style={{ padding: '24px var(--gutter)' }}>
                 {/* Breadcrumb */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                    <a href="/">Home</a><span>›</span><span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Electronics</span>
+                    <a href="/">Home</a><span>›</span><span style={{ color: 'var(--text-primary)', fontWeight: 500, textTransform: 'capitalize' }}>{activeCategoryLabel}</span>
                 </div>
 
                 <div style={{ marginBottom: '18px' }}>
-                    <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', color: 'var(--text-primary)', letterSpacing: '-0.5px', marginBottom: '4px' }}>Electronics</h1>
+                    <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', color: 'var(--text-primary)', letterSpacing: '-0.5px', marginBottom: '4px', textTransform: 'capitalize' }}>{activeCategoryLabel}</h1>
                     <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{filtered.length} products found</p>
                 </div>
 

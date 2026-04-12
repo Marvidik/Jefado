@@ -14,8 +14,8 @@ export default function ReviewsPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '14px' }}>
                 <Card>
                     <p style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Average Rating</p>
-                    <p style={{ fontFamily: 'Syne,sans-serif', fontWeight: 800, fontSize: '42px', color: '#f97316', lineHeight: 1 }}>4.8</p>
-                    <div style={{ display: 'flex', gap: '3px', margin: '10px 0' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ fontSize: '18px', color: '#f97316' }}>★</span>)}</div>
+                    <p style={{ fontFamily: 'Syne,sans-serif', fontWeight: 800, fontSize: '42px', color: 'var(--dash-primary)', lineHeight: 1 }}>4.8</p>
+                    <div style={{ display: 'flex', gap: '3px', margin: '10px 0' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ fontSize: '18px', color: 'var(--dash-primary)' }}>★</span>)}</div>
                     <p style={{ fontSize: '12px', color: '#94a3b8' }}>From 1,247 reviews</p>
                 </Card>
                 <Card>
@@ -24,7 +24,7 @@ export default function ReviewsPage() {
                         <div key={star} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '7px' }}>
                             <span style={{ fontSize: '12px', color: '#94a3b8', width: '22px' }}>{star}★</span>
                             <div style={{ flex: 1, height: '7px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                                <div style={{ width: `${[78, 14, 5, 2, 1][5 - star]}%`, height: '100%', background: '#f97316', borderRadius: '4px' }} />
+                                <div style={{ width: `${[78, 14, 5, 2, 1][5 - star]}%`, height: '100%', background: 'var(--dash-primary)', borderRadius: '4px' }} />
                             </div>
                             <span style={{ fontSize: '11px', color: '#94a3b8', width: '28px', textAlign: 'right' }}>{[78, 14, 5, 2, 1][5 - star]}%</span>
                         </div>
@@ -50,17 +50,17 @@ export default function ReviewsPage() {
                         >
                             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg,#1a56db,#f97316)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: '14px' }}>{r.name[0]}</div>
+                                    <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg,var(--dash-primary),var(--dash-primary-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: '14px' }}>{r.name[0]}</div>
                                     <div>
                                         <p style={{ fontWeight: 700, fontSize: '14px', color: '#0f172a' }}>{r.name}</p>
                                         <p style={{ fontSize: '12px', color: '#94a3b8' }}>{r.product} · {r.date}</p>
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '2px' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ color: i <= r.rating ? '#f97316' : '#e2e8f0', fontSize: '14px' }}>★</span>)}</div>
+                                <div style={{ display: 'flex', gap: '2px' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ color: i <= r.rating ? 'var(--dash-primary)' : '#e2e8f0', fontSize: '14px' }}>★</span>)}</div>
                             </div>
                             <p style={{ fontSize: '13px', color: '#475569', lineHeight: 1.65, marginBottom: '12px' }}>{r.text}</p>
                             {!r.replied
-                                ? <button style={{ padding: '7px 16px', background: '#eff6ff', color: '#1a56db', borderRadius: '7px', fontWeight: 600, fontSize: '12px', fontFamily: 'DM Sans,sans-serif', border: 'none', cursor: 'pointer' }}>Reply →</button>
+                                ? <button style={{ padding: '7px 16px', background: 'var(--dash-primary-light)', color: 'var(--dash-primary)', borderRadius: '7px', fontWeight: 600, fontSize: '12px', fontFamily: 'DM Sans,sans-serif', border: 'none', cursor: 'pointer' }}>Reply →</button>
                                 : <span style={{ fontSize: '12px', color: '#22c55e', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '5px' }}>✓ Replied</span>
                             }
                         </div>

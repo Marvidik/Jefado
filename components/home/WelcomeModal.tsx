@@ -116,7 +116,7 @@ export default function WelcomeModal() {
                             padding: '20px',
                             background: 'var(--primary-light)',
                             borderRadius: '16px',
-                            border: '1.5px solid rgba(26, 86, 219, 0.1)',
+                            border: '1.5px solid rgba(238, 18, 23, 0.1)',
                             transition: 'transform 0.2s',
                         }}>
                             <div style={{
@@ -145,7 +145,7 @@ export default function WelcomeModal() {
                             padding: '20px',
                             background: 'var(--accent-light)',
                             borderRadius: '16px',
-                            border: '1.5px solid rgba(249, 115, 22, 0.1)',
+                            border: '1.5px solid rgba(60, 127, 178, 0.1)',
                             transition: 'transform 0.2s',
                         }}>
                             <div style={{
@@ -179,7 +179,7 @@ export default function WelcomeModal() {
                                 borderRadius: '12px',
                                 fontWeight: 700,
                                 fontSize: '15px',
-                                boxShadow: '0 10px 15px -3px rgba(26, 86, 219, 0.3)',
+                                boxShadow: '0 10px 15px -3px rgba(238, 18, 23, 0.3)',
                                 transition: 'all 0.2s',
                             }}
                             onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}

@@ -276,7 +276,7 @@ function PaymentStep({ form, setForm, onNext, onBack }: {
             {form.paymentMethod === 'card' && (
                 <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '20px', marginBottom: '20px' }}>
                     {/* Visual card preview */}
-                    <div style={{ background: 'linear-gradient(135deg, #1a56db, #6d28d9)', borderRadius: 'var(--radius-lg)', padding: '20px 24px', marginBottom: '20px', color: '#fff', minHeight: '120px', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))', borderRadius: 'var(--radius-lg)', padding: '20px 24px', marginBottom: '20px', color: '#fff', minHeight: '120px', position: 'relative', overflow: 'hidden' }}>
                         <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '120px', height: '120px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
                         <div style={{ position: 'absolute', bottom: '-30px', right: '40px', width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
                         <div style={{ marginBottom: '16px', fontSize: '13px', letterSpacing: '2px', opacity: 0.7 }}>JEFADO BANK</div>

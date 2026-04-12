@@ -45,7 +45,7 @@ export default function SettingsPage() {
                 <div className="settings-sidebar">
                     <Card style={{ padding: '8px', display: 'flex', flexDirection: 'column', gap: '2px', ...{ flexWrap: 'nowrap' } as any }}>
                         {TABS.map(t => (
-                            <button key={t} onClick={() => setTab(t)} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: tab === t ? 700 : 400, color: tab === t ? '#2563eb' : '#64748b', background: tab === t ? '#eff6ff' : 'transparent', border: 'none', cursor: 'pointer', fontFamily: '"Plus Jakarta Sans", sans-serif', textAlign: 'left', transition: 'all 0.15s' }}>{t}</button>
+                            <button key={t} onClick={() => setTab(t)} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: tab === t ? 700 : 400, color: tab === t ? 'var(--dash-primary)' : '#64748b', background: tab === t ? 'var(--dash-primary-light)' : 'transparent', border: 'none', cursor: 'pointer', fontFamily: '"Plus Jakarta Sans", sans-serif', textAlign: 'left', transition: 'all 0.15s' }}>{t}</button>
                         ))}
                     </Card>
                 </div>
@@ -54,7 +54,7 @@ export default function SettingsPage() {
                         <Card>
                             <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '15px', marginBottom: '20px' }}>Profile Information</h3>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '18px', background: '#f8fafc', borderRadius: '10px', marginBottom: '22px', flexWrap: 'wrap' }}>
-                                <div style={{ width: '68px', height: '68px', borderRadius: '50%', background: 'linear-gradient(135deg,#2563eb,#f97316)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: '26px', flexShrink: 0 }}>J</div>
+                                <div style={{ width: '68px', height: '68px', borderRadius: '50%', background: 'linear-gradient(135deg,var(--dash-primary),var(--dash-primary-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: '26px', flexShrink: 0 }}>J</div>
                                 <div>
                                     <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '16px', marginBottom: '3px' }}>James Okafor</p>
                                     <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '10px' }}>james@jefado.com · Pro Seller</p>
@@ -69,7 +69,7 @@ export default function SettingsPage() {
                             </div>
                             <div style={{ marginBottom: '18px' }}>
                                 <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '5px' }}>Bio</label>
-                                <textarea rows={3} defaultValue="Pro seller specializing in electronics and gadgets." style={{ width: '100%', padding: '10px 14px', border: '1.5px solid #e8edf2', borderRadius: '8px', fontSize: '13px', fontFamily: '"Plus Jakarta Sans", sans-serif', outline: 'none', background: '#f8fafc', resize: 'vertical' }} onFocus={e => (e.currentTarget.style.borderColor = '#2563eb')} onBlur={e => (e.currentTarget.style.borderColor = '#e8edf2')} />
+                                <textarea rows={3} defaultValue="Pro seller specializing in electronics and gadgets." style={{ width: '100%', padding: '10px 14px', border: '1.5px solid #e8edf2', borderRadius: '8px', fontSize: '13px', fontFamily: '"Plus Jakarta Sans", sans-serif', outline: 'none', background: '#f8fafc', resize: 'vertical' }} onFocus={e => (e.currentTarget.style.borderColor = 'var(--dash-primary)')} onBlur={e => (e.currentTarget.style.borderColor = '#e8edf2')} />
                             </div>
                             <Btn label="Save Changes" />
                         </Card>
@@ -87,7 +87,7 @@ export default function SettingsPage() {
                                 <Select label="Currency" value="USD ($)" onChange={() => { }} options={['USD ($)', 'EUR (€)', 'GBP (£)', 'NGN (₦)']} />
                             </div>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px', cursor: 'pointer' }}>
-                                <input type="checkbox" defaultChecked style={{ accentColor: '#2563eb', width: '15px', height: '15px' }} />
+                                <input type="checkbox" defaultChecked style={{ accentColor: 'var(--dash-primary)', width: '15px', height: '15px' }} />
                                 <span style={{ fontSize: '13px', color: '#475569' }}>Show store in marketplace directory</span>
                             </label>
                             <Btn label="Save Settings" />
@@ -181,12 +181,12 @@ export default function SettingsPage() {
                                     <div style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '8px', fontSize: '11px', color: '#34d399' }}>Primary</div>
                                 </div>
                                 {/* Mock Card 2 */}
-                                <div style={{ background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', borderRadius: '16px', padding: '24px', color: '#fff', position: 'relative', overflow: 'hidden' }}>
+                                <div style={{ background: 'linear-gradient(135deg, var(--dash-primary), var(--dash-primary-dark))', borderRadius: '16px', padding: '24px', color: '#fff', position: 'relative', overflow: 'hidden' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
                                         <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '16px', fontStyle: 'italic' }}>VISA</span>
                                     </div>
                                     <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: '18px', letterSpacing: '4px', marginBottom: '8px' }}>**** **** **** 5591</div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#bfdbfe' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--dash-primary-light)' }}>
                                         <span>James Okafor</span>
                                         <span>08/25</span>
                                     </div>
@@ -201,13 +201,13 @@ export default function SettingsPage() {
                                             <td style={{ padding: '12px 16px 12px 0', color: '#0f172a', fontWeight: 600 }}>Pro Seller Plan - Monthly</td>
                                             <td style={{ padding: '12px 16px', color: '#64748b' }}>Apr 1, 2026</td>
                                             <td style={{ padding: '12px 16px', color: '#0f172a', fontWeight: 700 }}>$29.00</td>
-                                            <td style={{ padding: '12px 0', textAlign: 'right' }}><a href="#" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}>Download</a></td>
+                                            <td style={{ padding: '12px 0', textAlign: 'right' }}><a href="#" style={{ color: 'var(--dash-primary)', textDecoration: 'none', fontWeight: 600 }}>Download</a></td>
                                         </tr>
                                         <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
                                             <td style={{ padding: '12px 16px 12px 0', color: '#0f172a', fontWeight: 600 }}>Pro Seller Plan - Monthly</td>
                                             <td style={{ padding: '12px 16px', color: '#64748b' }}>Mar 1, 2026</td>
                                             <td style={{ padding: '12px 16px', color: '#0f172a', fontWeight: 700 }}>$29.00</td>
-                                            <td style={{ padding: '12px 0', textAlign: 'right' }}><a href="#" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}>Download</a></td>
+                                            <td style={{ padding: '12px 0', textAlign: 'right' }}><a href="#" style={{ color: 'var(--dash-primary)', textDecoration: 'none', fontWeight: 600 }}>Download</a></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -244,7 +244,7 @@ export default function SettingsPage() {
                     </Card>
 
                     <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '0 4px' }}>
-                        <input type="checkbox" defaultChecked style={{ accentColor: '#2563eb', width: '16px', height: '16px' }} />
+                        <input type="checkbox" defaultChecked style={{ accentColor: 'var(--dash-primary)', width: '16px', height: '16px' }} />
                         <span style={{ fontSize: '13px', color: '#475569', fontWeight: 500 }}>Set as default payment method</span>
                     </label>
 
@@ -276,7 +276,7 @@ export default function SettingsPage() {
                     </Card>
 
                     <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '0 4px' }}>
-                        <input type="checkbox" defaultChecked style={{ accentColor: '#2563eb', width: '16px', height: '16px' }} />
+                        <input type="checkbox" defaultChecked style={{ accentColor: 'var(--dash-primary)', width: '16px', height: '16px' }} />
                         <span style={{ fontSize: '13px', color: '#475569', fontWeight: 500 }}>Set as default for incoming transfers</span>
                     </label>
 

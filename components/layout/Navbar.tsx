@@ -2,25 +2,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { CATEGORIES } from '@/lib/data';
 
-const categories = [
-    { icon: '👗', label: "Women's Fashion", href: '/products?category=womens-fashion' },
-    { icon: '👔', label: "Men's Fashion", href: '/products?category=mens-fashion' },
-    { icon: '💻', label: 'Electronics', href: '/products?category=electronics' },
-    { icon: '🏠', label: 'Home & Lifestyle', href: '/products?category=home' },
-    { icon: '💊', label: 'Medicine', href: '/products?category=medicine' },
-    { icon: '⚽', label: 'Sports & Outdoor', href: '/products?category=sports' },
-    { icon: '🧸', label: "Baby's & Toys", href: '/products?category=baby' },
-    { icon: '🛒', label: 'Groceries & Pets', href: '/products?category=groceries' },
-    { icon: '✨', label: 'Health & Beauty', href: '/products?category=beauty' },
-];
+const categories = CATEGORIES;
 
 export default function Navbar() {
     const router = useRouter();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [searchVal, setSearchVal] = useState('');
     const [hoveredCat, setHoveredCat] = useState<string | null>(null);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const handleSearch = () => {
         if (searchVal.trim()) router.push(`/products?search=${encodeURIComponent(searchVal.trim())}`);
@@ -75,7 +65,7 @@ export default function Navbar() {
 
                     {/* Desktop nav links */}
                     <nav className="nav-desktop-links" style={{ display: 'flex', gap: '20px', alignItems: 'center', flexShrink: 0 }}>
-                        {[{ label: 'Home', href: '/' }, { label: 'Shop', href: '/products' }, { label: 'About', href: '#' }, { label: 'Contact', href: '#' }].map(link => (
+                        {[{ label: 'Home', href: '/' }, { label: 'Shop', href: '/products' }, { label: 'About', href: '/about' }, { label: 'Contact', href: '/contact' }].map(link => (
                             <Link key={link.label} href={link.href} style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', whiteSpace: 'nowrap', transition: 'color 0.2s' }}
                                 onMouseEnter={e => (e.currentTarget.style.color = 'var(--primary)')}
                                 onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
@@ -110,53 +100,58 @@ export default function Navbar() {
                     </div>
 
                     {/* Mobile hamburger */}
-                    <button className="nav-mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    <button className="nav-mobile-menu-btn" onClick={() => setSidebarOpen(true)}
                         style={{ display: 'none', flexShrink: 0, width: '36px', height: '36px', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', border: '1.5px solid var(--border)', fontSize: '18px', color: 'var(--text-primary)' }}
                     >☰</button>
                 </div>
 
-                {/* Mobile dropdown menu */}
-                {mobileMenuOpen && (
-                    <div style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', padding: '12px var(--gutter)' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            {[
-                                { label: '🏠 Home', href: '/' },
-                                { label: '🛍 Shop', href: '/products' },
-                                { label: '☰ Categories', href: '#', onClick: () => { setMobileMenuOpen(false); setSidebarOpen(true); } },
-                                { label: '👤 Account', href: '/account' },
-                                { label: '🛒 Cart', href: '/cart' },
-                                { label: '♡ Wishlist', href: '/account?tab=wishlist' },
-                                { label: '🔑 Sign In', href: '/auth' },
-                            ].map(item => (
-                                item.onClick
-                                    ? <button key={item.label} onClick={item.onClick} style={{ display: 'block', padding: '11px 14px', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', borderRadius: 'var(--radius)', textAlign: 'left', background: 'transparent', width: '100%', fontFamily: 'var(--font-body)', cursor: 'pointer' }}>{item.label}</button>
-                                    : <Link key={item.label} href={item.href} onClick={() => setMobileMenuOpen(false)} style={{ display: 'block', padding: '11px 14px', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', borderRadius: 'var(--radius)', transition: 'background 0.15s' }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--primary-light)')}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                                    >{item.label}</Link>
-                            ))}
-                        </div>
-                    </div>
-                )}
+
             </header>
 
             {/* Category Drawer */}
             {sidebarOpen && (
                 <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex' }}>
                     <div onClick={() => setSidebarOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(2px)' }} />
-                    <div style={{ position: 'relative', width: '270px', background: 'var(--surface)', height: '100%', overflowY: 'auto', boxShadow: 'var(--shadow-lg)' }}>
+                    <div style={{ position: 'relative', width: '40%', minWidth: '280px', background: 'var(--surface)', height: '100%', overflowY: 'auto', boxShadow: 'var(--shadow-lg)' }}>
                         <div style={{ padding: '18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--primary)' }}>
-                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff' }}>All Categories</span>
+                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff' }}>Menu & Categories</span>
                             <button onClick={() => setSidebarOpen(false)} style={{ fontSize: '22px', color: 'rgba(255,255,255,0.8)', lineHeight: 1 }}>×</button>
                         </div>
-                        {categories.map(cat => (
-                            <Link key={cat.label} href={cat.href} onClick={() => setSidebarOpen(false)}
-                                onMouseEnter={() => setHoveredCat(cat.label)} onMouseLeave={() => setHoveredCat(null)}
-                                style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '13px 18px', background: hoveredCat === cat.label ? 'var(--primary-light)' : 'transparent', color: hoveredCat === cat.label ? 'var(--primary)' : 'var(--text-primary)', borderLeft: `3px solid ${hoveredCat === cat.label ? 'var(--primary)' : 'transparent'}`, fontSize: '14px', fontWeight: 500, borderBottom: '1px solid var(--border-light)', transition: 'all 0.15s' }}
-                            >
-                                <span>{cat.icon}</span><span style={{ flex: 1 }}>{cat.label}</span><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>›</span>
-                            </Link>
-                        ))}
+
+                        {/* Main Navigation Section */}
+                        <div style={{ padding: '20px 0 10px' }}>
+                            <p style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px', padding: '0 18px' }}>Navigation</p>
+                            {[
+                                { icon: '🏠', label: 'Home', href: '/' },
+                                { icon: '🛍', label: 'Shop', href: '/products' },
+                                { icon: 'ℹ', label: 'About', href: '/about' },
+                                { icon: '📞', label: 'Contact', href: '/contact' },
+                                { icon: '👤', label: 'Account', href: '/account' },
+                                { icon: '🛒', label: 'Cart', href: '/cart' },
+                                { icon: '♡', label: 'Wishlist', href: '/account?tab=wishlist' },
+                                { icon: '🔑', label: 'Sign In', href: '/auth' },
+                            ].map(item => (
+                                <Link key={item.label} href={item.href} onClick={() => setSidebarOpen(false)}
+                                    onMouseEnter={() => setHoveredCat(item.label)} onMouseLeave={() => setHoveredCat(null)}
+                                    style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '13px 18px', background: hoveredCat === item.label ? 'var(--primary-light)' : 'transparent', color: hoveredCat === item.label ? 'var(--primary)' : 'var(--text-primary)', borderLeft: `3px solid ${hoveredCat === item.label ? 'var(--primary)' : 'transparent'}`, fontSize: '14px', fontWeight: 500, borderBottom: '1px solid var(--border-light)', transition: 'all 0.15s' }}
+                                >
+                                    <span>{item.icon}</span><span style={{ flex: 1 }}>{item.label}</span><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>›</span>
+                                </Link>
+                            ))}
+                        </div>
+
+                        {/* Categories Section */}
+                        <div style={{ padding: '10px 0' }}>
+                            <p style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px', padding: '0 18px' }}>Shop Categories</p>
+                            {categories.map(cat => (
+                                <Link key={cat.label} href={`/products?category=${cat.slug}`} onClick={() => setSidebarOpen(false)}
+                                    onMouseEnter={() => setHoveredCat(cat.label)} onMouseLeave={() => setHoveredCat(null)}
+                                    style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '13px 18px', background: hoveredCat === cat.label ? 'var(--primary-light)' : 'transparent', color: hoveredCat === cat.label ? 'var(--primary)' : 'var(--text-primary)', borderLeft: `3px solid ${hoveredCat === cat.label ? 'var(--primary)' : 'transparent'}`, fontSize: '14px', fontWeight: 500, borderBottom: '1px solid var(--border-light)', transition: 'all 0.15s' }}
+                                >
+                                    <span>{cat.icon}</span><span style={{ flex: 1 }}>{cat.label}</span><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>›</span>
+                                </Link>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}

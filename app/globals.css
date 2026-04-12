@@ -1,19 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
 :root {
-  /* ── Blue + Orange Palette ── */
-  --primary: #1a56db;
-  /* main blue */
-  --primary-dark: #1341b5;
+  /* ── Red + Blue Palette ── */
+  --primary: #EE1217;
+  /* requested primary red */
+  --primary-dark: #7D1419;
+  /* requested overlay red */
+  --primary-light: #fef2f2;
+  /* light red tint */
+  
+  --secondary: #3C7FB2;
+  /* requested secondary blue */
+  --secondary-dark: #326a95;
   /* deep blue */
-  --primary-light: #ebf1fd;
+  --secondary-light: #eff6ff;
   /* light blue tint */
-  --accent: #f97316;
-  /* orange accent */
-  --accent-dark: #ea6a05;
-  /* deep orange */
-  --accent-light: #fff4ed;
-  /* light orange tint */
+
+  /* ── Dashboard (Blue) ── */
+  --dash-primary: #2563eb;
+  --dash-primary-dark: #1d4ed8;
+  --dash-primary-light: #eff6ff;
+
+  --accent: var(--secondary);
+  --accent-dark: var(--secondary-dark);
+  --accent-light: var(--secondary-light);
 
   --danger: #ef4444;
   --success: #22c55e;
@@ -44,7 +54,7 @@
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
-  --shadow-hover: 0 12px 40px rgba(26, 86, 219, 0.18);
+  --shadow-hover: 0 12px 40px rgba(238, 18, 23, 0.18);
 }
 
 *,

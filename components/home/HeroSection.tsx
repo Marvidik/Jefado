@@ -7,11 +7,11 @@ const slides = [
         tag: 'Shop Smart, Sell Easy',
         headline: 'Sell, Shop, Succeed.\nEverything You Need in One Place',
         subline: ' Join our marketplace today: sell your products, shop the latest deals, and enjoy a seamless experience tailored just for you',
-        cta1: { label: 'Buy Now', href: '/products' },
-        cta2: { label: 'View Detail', href: '/products' },
+        cta1: { label: 'Shop Now', href: '/products' },
+        cta2: { label: 'Create Account', href: '/auth' },
         badge: { top: 'Up To', main: '60%', sub: 'OFF' },
-        bg: 'linear-gradient(135deg, #1a56db 0%, #1341b5 55%, #0f2d8a 100%)',
-        circle: 'rgba(255,255,255,0.13)',
+        bg: '#ffe4e6', /* Rose 100 - Dimmer than before */
+        circle: 'rgba(238,18,23,0.15)',
         photo: '/images/goods.PNG',
         fallback: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&h=700&fit=crop&crop=top&q=80',
         floats: [
@@ -26,11 +26,11 @@ const slides = [
         tag: 'Shop Smart, Sell Easy',
         headline: 'Top Products,\nTrusted Sellers.\nYour Marketplace Awaits.',
         subline: 'From selling your first product to finding great deals, experience everything our marketplace has to offer.',
-        cta1: { label: 'Grab Deals', href: '/products?category=electronics' },
-        cta2: { label: 'View All', href: '/products' },
+        cta1: { label: 'Shop Now', href: '/products?category=electronics' },
+        cta2: { label: 'Create Account', href: '/auth' },
         badge: { top: 'Save', main: '40%', sub: 'TODAY' },
-        bg: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #1a56db 100%)',
-        circle: 'rgba(249,115,22,0.18)',
+        bg: '#fee2e2', /* Red 100 */
+        circle: 'rgba(238,18,23,0.15)',
         photo: '/images/goods2.png',
         fallback: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=700&fit=crop&crop=top&q=80',
         floats: [
@@ -44,12 +44,12 @@ const slides = [
     {
         tag: 'Shop Smart, Sell Easy',
         headline: 'Premium Deals,\nExciting Finds.\nStart Selling Today.',
-        subline: 'Discover the latest trends in fashion. Free delivery on all orders above $50.',
-        cta1: { label: 'Shop Fashion', href: '/products?category=womens-fashion' },
-        cta2: { label: 'Explore', href: '/products' },
+        subline: 'Discover the latest trends in fashion. Reliable Delivery on all orders above $50.',
+        cta1: { label: 'Shop Now', href: '/products?category=womens-fashion' },
+        cta2: { label: 'Create Account', href: '/auth' },
         badge: { top: 'Flat', main: '50%', sub: 'OFF' },
-        bg: 'linear-gradient(135deg, #1a56db 0%, #4f46e5 50%, #7c3aed 100%)',
-        circle: 'rgba(255,255,255,0.11)',
+        bg: '#fce7f3', /* Pink 100 */
+        circle: 'rgba(238,18,23,0.15)',
         photo: '/images/goods3.PNG',
         fallback: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=700&fit=crop&crop=top&q=80',
         floats: [
@@ -133,9 +133,9 @@ export default function HeroSection() {
           font-family: var(--font-display);
           font-weight: 800;
           font-size: 54px;
-          color: #fff;
+          color: #0f172a;
           line-height: 1.04;
-          margin-bottom: 20px;
+          margin-bottom: 28px; /* Increased from 20px */
           letter-spacing: -2px;
           white-space: pre-line;
         }
@@ -143,23 +143,23 @@ export default function HeroSection() {
           display: inline-flex;
           align-items: center;
           gap: 7px;
-          background: rgba(255,255,255,0.16);
-          color: rgba(255,255,255,0.95);
+          background: rgba(238,18,23,0.08);
+          color: var(--primary);
           font-size: 11px;
           font-weight: 700;
           letter-spacing: 1.5px;
           text-transform: uppercase;
           padding: 6px 16px;
           border-radius: 20px;
-          margin-bottom: 22px;
-          border: 1px solid rgba(255,255,255,0.28);
+          margin-bottom: 30px; /* Increased from 22px */
+          border: 1px solid rgba(238,18,23,0.15);
           width: fit-content;
         }
         .hero-sub {
-          color: rgba(255,255,255,0.76);
+          color: #64748b;
           font-size: 15px;
           line-height: 1.75;
-          margin-bottom: 36px;
+          margin-bottom: 42px; /* Increased from 36px */
           max-width: 400px;
           display: flex;
           align-items: flex-start;
@@ -168,22 +168,23 @@ export default function HeroSection() {
         .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
         .hero-cta-solid {
           display: inline-flex; align-items: center;
-          background: #fff; color: var(--primary);
+          background: var(--primary); color: #fff;
           padding: 13px 34px; border-radius: 50px;
           font-family: var(--font-body); font-weight: 800; font-size: 15px;
-          box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+          box-shadow: 0 4px 20px rgba(238,18,23,0.25);
+          border: none;
           transition: all 0.2s; text-decoration: none;
         }
-        .hero-cta-solid:hover  { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+        .hero-cta-solid:hover  { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(238,18,23,0.35); filter: brightness(1.1); }
         .hero-cta-outline {
           display: inline-flex; align-items: center;
-          background: transparent; color: #fff;
+          background: var(--primary-dark); color: #fff;
           padding: 13px 34px; border-radius: 50px;
           font-family: var(--font-body); font-weight: 700; font-size: 15px;
-          border: 2px solid rgba(255,255,255,0.55);
+          border: none;
           transition: all 0.2s; text-decoration: none;
         }
-        .hero-cta-outline:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.9); }
+        .hero-cta-outline:hover { transform: translateY(-2px); filter: brightness(1.2); box-shadow: 0 8px 20px rgba(125,20,25,0.25); }
         .hero-badge {
           position: absolute;
           top: 22px; right: 22px; z-index: 10;
@@ -223,7 +224,7 @@ export default function HeroSection() {
           .hero-text     { width: 54%; max-width: none; padding: 28px 0; }
           .hero-h1       { font-size: 24px; letter-spacing: -0.5px; margin-bottom: 10px; white-space: normal; }
           .hero-tag      { font-size: 9px; padding: 4px 10px; margin-bottom: 10px; letter-spacing: 1px; }
-          .hero-sub      { font-size: 12px; margin-bottom: 16px; max-width: 100%; }
+          .hero-sub      { display: none !important; }
           .hero-cta-solid,
           .hero-cta-outline { padding: 9px 18px; font-size: 13px; border-radius: 50px; }
           .hero-ctas     { gap: 8px; }
@@ -359,7 +360,7 @@ export default function HeroSection() {
                         <button key={i} onClick={() => setActive(i)} style={{
                             width: i === active ? '28px' : '8px', height: '8px',
                             borderRadius: '4px',
-                            background: i === active ? '#fff' : 'rgba(255,255,255,0.4)',
+                            background: i === active ? 'var(--primary)' : '#e2e8f0',
                             transition: 'all 0.3s', border: 'none', cursor: 'pointer', padding: 0,
                         }} />
                     ))}

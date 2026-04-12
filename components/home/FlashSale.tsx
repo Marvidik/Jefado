@@ -1,15 +1,9 @@
 'use client';
 import CountdownTimer from '../ui/CountdownTimer';
 import ProductCard from '../ui/ProductCard';
+import { ALL_PRODUCTS } from '@/lib/data';
 
-const flashProducts = [
-    { name: 'Xbox Series X 1TB SSD Console w/ Wireless Controller', price: 440, originalPrice: 600, discount: 27, rating: 4.7, reviews: 342, emoji: '🎮', isBestSeller: true },
-    { name: 'Bose Sport Earbuds Wireless Bluetooth Headphones', price: 79, originalPrice: 149, discount: 47, rating: 4.5, reviews: 891, emoji: '🎧' },
-    { name: 'Simple Mobile 4G LTE Galaxy 12 Note 64GB Phone', price: 299, originalPrice: 399, discount: 25, rating: 4.2, reviews: 156, emoji: '📱' },
-    { name: '4K UHD LED Smart TV with Chromecast Built-in 55"', price: 280, originalPrice: 420, discount: 33, rating: 4.6, reviews: 228, emoji: '📺', isNew: true },
-    { name: 'Dell Optiplex 7090 i7 All-in-One Desktop Monitor', price: 850, originalPrice: 1200, discount: 29, rating: 4.4, reviews: 63, emoji: '🖥️' },
-    { name: 'Portable Folding Washing Machine 11lbs Capacity', price: 1300, originalPrice: 1800, discount: 28, rating: 4.1, reviews: 41, emoji: '🫧' },
-];
+const flashProducts = ALL_PRODUCTS.slice(4, 10); // Pick a diverse range
 
 export default function FlashSale() {
     return (

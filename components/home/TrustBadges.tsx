@@ -1,5 +1,5 @@
 const badges = [
-    { icon: '🚚', title: 'Free Delivery', desc: 'On orders over $50' },
+    { icon: '🚚', title: 'Reliable Delivery', desc: 'On orders over $50' },
     { icon: '↩️', title: '24 Hours Return', desc: 'If goods have problems' },
     { icon: '🔒', title: 'Secure Payment', desc: 'Your money is safe' },
     { icon: '🎧', title: '24/7 Support', desc: '1–2 days of message' },

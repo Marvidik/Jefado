@@ -11,9 +11,9 @@ export default function FinancialsPage() {
                 <Btn label="Export Report" variant="ghost" small icon={Icons.download} />
             </PageHeader>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px' }}>
-                <StatCard icon={Icons.financials} label="Total Revenue" value="$48,250" change="+22%" up sparkData={[30, 35, 32, 40, 38, 44, 42, 48]} color="#1a56db" />
+                <StatCard icon={Icons.financials} label="Total Revenue" value="$48,250" change="+22%" up sparkData={[30, 35, 32, 40, 38, 44, 42, 48]} color="var(--dash-primary)" />
                 <StatCard icon={Icons.analytics} label="Net Profit" value="$28,940" change="+18%" up sparkData={[20, 24, 22, 28, 26, 32, 30, 35]} color="#22c55e" />
-                <StatCard icon={Icons.payouts} label="Pending Payout" value="$3,200" change="-5%" up={false} sparkData={[40, 36, 38, 32, 30, 28, 26, 24]} color="#f97316" />
+                <StatCard icon={Icons.payouts} label="Pending Payout" value="$3,200" change="-5%" up={false} sparkData={[40, 36, 38, 32, 30, 28, 26, 24]} color="var(--dash-primary)" />
                 <StatCard icon={Icons.orders} label="Refunds" value="$890" change="+2%" up={false} sparkData={[10, 12, 11, 14, 13, 15, 14, 16]} color="#dc2626" />
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '16px' }}>
@@ -25,13 +25,13 @@ export default function FinancialsPage() {
                     <Card>
                         <SectionHead title="Revenue Breakdown" />
                         <DonutChart segments={[
-                            { label: 'Products', value: 68, color: '#1a56db' },
-                            { label: 'Shipping', value: 18, color: '#f97316' },
+                            { label: 'Products', value: 68, color: 'var(--dash-primary)' },
+                            { label: 'Shipping', value: 18, color: 'var(--dash-primary-light)' },
                             { label: 'Fees', value: 14, color: '#e8edf2' },
                         ]} />
                     </Card>
                     <Card>
-                        {[['Gross Sales', '$52,100', '#22c55e'], ['Platform Fees', '-$2,605', '#dc2626'], ['Payment Fees', '-$1,245', '#dc2626'], ['Net Revenue', '$48,250', '#1a56db']].map(([l, v, c]) => (
+                        {[['Gross Sales', '$52,100', '#22c55e'], ['Platform Fees', '-$2,605', '#dc2626'], ['Payment Fees', '-$1,245', '#dc2626'], ['Net Revenue', '$48,250', 'var(--dash-primary)']].map(([l, v, c]) => (
                             <div key={l} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid #f1f5f9' }}>
                                 <span style={{ fontSize: '13px', color: '#64748b' }}>{l}</span>
                                 <span style={{ fontFamily: 'Syne,sans-serif', fontWeight: 700, fontSize: '13px', color: c }}>{v}</span>
@@ -63,7 +63,7 @@ export default function FinancialsPage() {
                                     onMouseEnter={e => (e.currentTarget as HTMLTableRowElement).style.background = '#f8fafc'}
                                     onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = 'transparent'}
                                 >
-                                    <td style={{ padding: '12px 16px', fontFamily: 'Syne,sans-serif', fontWeight: 700, color: '#1a56db' }}>{t.id}</td>
+                                    <td style={{ padding: '12px 16px', fontFamily: 'Syne,sans-serif', fontWeight: 700, color: 'var(--dash-primary)' }}>{t.id}</td>
                                     <td style={{ padding: '12px 16px', color: '#94a3b8', fontSize: '12px' }}>{t.date}</td>
                                     <td style={{ padding: '12px 16px', fontWeight: 500, color: '#0f172a' }}>{t.desc}</td>
                                     <td style={{ padding: '12px 16px' }}><Badge status={t.type} /></td>

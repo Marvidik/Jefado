@@ -3,9 +3,9 @@ import { useState } from 'react';
 interface ProductCardProps {
     id?: number; name: string; price: number; originalPrice?: number; discount?: number;
     rating?: number; reviews?: number; badgeColor?: string;
-    emoji: string; isNew?: boolean; isBestSeller?: boolean;
+    emoji: string; image?: string; isNew?: boolean; isBestSeller?: boolean;
 }
-export default function ProductCard({ id = 1, name, price, originalPrice, discount, rating = 4.5, reviews = 128, emoji, isNew, isBestSeller }: ProductCardProps) {
+export default function ProductCard({ id = 1, name, price, originalPrice, discount, rating = 4.5, reviews = 128, emoji, image, isNew, isBestSeller }: ProductCardProps) {
     const [wishlisted, setWishlisted] = useState(false);
     const [added, setAdded] = useState(false);
     return (
@@ -14,8 +14,12 @@ export default function ProductCard({ id = 1, name, price, originalPrice, discou
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-hover)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--primary)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border)'; }}
             >
-                <div style={{ position: 'relative', background: 'var(--surface-2)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px' }}>
-                    <span style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))' }}>{emoji}</span>
+                <div style={{ position: 'relative', background: 'var(--surface-2)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    {image ? (
+                        <img src={image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                        <span style={{ fontSize: '60px', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))' }}>{emoji}</span>
+                    )}
                     <div style={{ position: 'absolute', top: '8px', left: '8px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
                         {discount && <span style={{ background: 'var(--danger)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px' }}>-{discount}%</span>}
                         {isNew && <span style={{ background: 'var(--success)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px' }}>NEW</span>}

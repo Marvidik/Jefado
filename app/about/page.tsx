@@ -114,13 +114,13 @@ export default function AboutPage() {
             {/* Team/Node section placeholder */}
             <div style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '100px 0' }}>
                 <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
+                    <div className="about-footer-grid">
                         <div>
                             <h3 style={{ fontSize: '36px', fontWeight: 800, marginBottom: '24px' }}>Global Infrastructure</h3>
                             <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: '32px' }}>
                                 Our servers are distributed across 32 regional nodes, ensuring that your store is always online and your customers always experience zero-latency shopping.
                             </p>
-                            <div style={{ display: 'flex', gap: '20px' }}>
+                            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
                                 {['NA', 'EU', 'AS', 'AF', 'LATAM'].map(node => (
                                     <div key={node} style={{ padding: '8px 16px', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', fontSize: '12px', fontWeight: 800 }}>{node}</div>
                                 ))}
@@ -146,6 +146,11 @@ export default function AboutPage() {
             </div>
 
             <style>{`
+                .about-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+                @media (max-width: 768px) {
+                    .about-footer-grid { grid-template-columns: 1fr; gap: 40px; }
+                    .about-footer-grid h3 { font-size: 28px; }
+                }
                 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
                 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
             `}</style>

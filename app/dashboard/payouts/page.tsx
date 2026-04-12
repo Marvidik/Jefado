@@ -16,7 +16,7 @@ export default function PayoutsPage() {
                 {[
                     { label: 'Available Balance', value: '$3,200', sub: 'Ready to withdraw', color: '#22c55e', bg: '#f0fdf4', border: '#bbf7d0' },
                     { label: 'Pending Balance', value: '$1,850', sub: 'Processing (2-3 days)', color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
-                    { label: 'Total Paid Out', value: '$44,200', sub: 'All time', color: '#1a56db', bg: '#eff6ff', border: '#bfdbfe' },
+                    { label: 'Total Paid Out', value: '$44,200', sub: 'All time', color: 'var(--dash-primary)', bg: 'var(--dash-primary-light)', border: 'var(--dash-primary-dark)' },
                 ].map(c => (
                     <div key={c.label} style={{ background: c.bg, border: `1px solid ${c.border}`, borderRadius: '12px', padding: '20px 22px' }}>
                         <p style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>{c.label}</p>
@@ -43,9 +43,9 @@ export default function PayoutsPage() {
                             <div>
                                 <p style={{ fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '8px' }}>Payout Method</p>
                                 {[['Bank Transfer', '🏦'], ['PayPal', '🅿️'], ['Mobile Money', '📱']].map(([m, icon]) => (
-                                    <label key={m} onClick={() => setMethod(m)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 13px', border: `1.5px solid ${method === m ? '#1a56db' : '#e8edf2'}`, borderRadius: '8px', background: method === m ? '#eff6ff' : '#f8fafc', cursor: 'pointer', marginBottom: '7px', transition: 'all 0.15s' }}>
-                                        <input type="radio" name="method" checked={method === m} onChange={() => setMethod(m)} style={{ accentColor: '#1a56db', width: '14px', height: '14px' }} />
-                                        <span style={{ fontSize: '13px', fontWeight: method === m ? 700 : 400, color: method === m ? '#1a56db' : '#475569' }}>{icon} {m}</span>
+                                    <label key={m} onClick={() => setMethod(m)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 13px', border: `1.5px solid ${method === m ? 'var(--dash-primary)' : '#e8edf2'}`, borderRadius: '8px', background: method === m ? 'var(--dash-primary-light)' : '#f8fafc', cursor: 'pointer', marginBottom: '7px', transition: 'all 0.15s' }}>
+                                        <input type="radio" name="method" checked={method === m} onChange={() => setMethod(m)} style={{ accentColor: 'var(--dash-primary)', width: '14px', height: '14px' }} />
+                                        <span style={{ fontSize: '13px', fontWeight: method === m ? 700 : 400, color: method === m ? 'var(--dash-primary)' : '#475569' }}>{icon} {m}</span>
                                     </label>
                                 ))}
                             </div>
@@ -83,7 +83,7 @@ export default function PayoutsPage() {
                                         <td style={{ padding: '13px 16px', color: '#94a3b8', fontSize: '12px' }}>{p.date}</td>
                                         <td style={{ padding: '13px 16px', fontFamily: 'Syne,sans-serif', fontWeight: 800, color: '#22c55e' }}>{p.amount}</td>
                                         <td style={{ padding: '13px 16px', color: '#64748b' }}>{p.method}</td>
-                                        <td style={{ padding: '13px 16px', fontFamily: 'Syne,sans-serif', fontWeight: 700, color: '#1a56db' }}>{p.ref}</td>
+                                        <td style={{ padding: '13px 16px', fontFamily: 'Syne,sans-serif', fontWeight: 700, color: 'var(--dash-primary)' }}>{p.ref}</td>
                                         <td style={{ padding: '13px 16px' }}><Badge status={p.status} /></td>
                                     </tr>
                                 ))}

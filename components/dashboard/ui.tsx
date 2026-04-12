@@ -4,9 +4,9 @@ import { Icons } from './icons';
 /* ── Badge ── */
 const BADGE_CFG: Record<string, { color: string; bg: string }> = {
     Delivered: { color: '#059669', bg: '#ecfdf5' },
-    Shipped: { color: '#2563eb', bg: '#eff6ff' },
-    Processing: { color: '#d97706', bg: '#fffbeb' },
-    Pending: { color: '#d97706', bg: '#fffbeb' },
+    Shipped: { color: 'var(--dash-primary)', bg: 'var(--dash-primary-light)' },
+    Processing: { color: 'var(--dash-primary)', bg: 'var(--dash-primary-light)' },
+    Pending: { color: 'var(--dash-primary)', bg: 'var(--dash-primary-light)' },
     Cancelled: { color: '#dc2626', bg: '#fef2f2' },
     Refunded: { color: '#7c3aed', bg: '#f5f3ff' },
     Completed: { color: '#059669', bg: '#ecfdf5' },
@@ -20,7 +20,7 @@ const BADGE_CFG: Record<string, { color: string; bg: string }> = {
     Credit: { color: '#059669', bg: '#ecfdf5' },
     Debit: { color: '#dc2626', bg: '#fef2f2' },
     Fee: { color: '#d97706', bg: '#fffbeb' },
-    Payout: { color: '#2563eb', bg: '#eff6ff' },
+    Payout: { color: 'var(--dash-primary)', bg: 'var(--dash-primary-light)' },
 };
 export function Badge({ status }: { status: string }) {
     const s = BADGE_CFG[status] ?? { color: '#64748b', bg: '#f1f5f9' };
@@ -61,7 +61,7 @@ export function SectionHead({ title, action, actionLabel }: { title: string; act
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '16px', color: '#0f172a' }}>{title}</h3>
-            {action && <button onClick={action} style={{ fontSize: '13px', fontWeight: 600, color: '#2563eb', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: '"Plus Jakarta Sans", sans-serif', display: 'flex', alignItems: 'center', gap: '4px' }}>{actionLabel ?? 'View All'} {Icons.chevronRight}</button>}
+            {action && <button onClick={action} style={{ fontSize: '13px', fontWeight: 600, color: 'var(--dash-primary)', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: '"Plus Jakarta Sans", sans-serif', display: 'flex', alignItems: 'center', gap: '4px' }}>{actionLabel ?? 'View All'} {Icons.chevronRight}</button>}
         </div>
     );
 }
@@ -70,7 +70,7 @@ export function SectionHead({ title, action, actionLabel }: { title: string; act
 type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
 export function Btn({ label, icon, variant = 'primary', onClick, small, disabled, submit }: { label: string; icon?: React.ReactNode; variant?: BtnVariant; onClick?: () => void; small?: boolean; disabled?: boolean; submit?: boolean }) {
     const cfg: Record<BtnVariant, React.CSSProperties> = {
-        primary: { background: '#2563eb', color: '#fff', border: '1px solid #10b981', boxShadow: '0 4px 12px rgba(37,99,235,0.2)' },
+        primary: { background: 'var(--dash-primary)', color: '#fff', border: '1px solid var(--dash-primary-dark)', boxShadow: 'var(--shadow-hover)' },
         secondary: { background: '#f8fafc', color: '#334155', border: '1px solid #e2e8f0', boxShadow: '0 2px 6px rgba(15,23,42,0.02)' },
         ghost: { background: 'transparent', color: '#475569', border: '1px solid transparent' },
         danger: { background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' },
@@ -78,7 +78,7 @@ export function Btn({ label, icon, variant = 'primary', onClick, small, disabled
     };
     return (
         <button type={submit ? 'submit' : 'button'} onClick={onClick} disabled={disabled} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: small ? '8px 16px' : '12px 24px', borderRadius: '12px', fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 600, fontSize: small ? '13px' : '14px', cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.5 : 1, transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)', whiteSpace: 'nowrap', ...cfg[variant] }}
-            onMouseEnter={e => { if(!disabled) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = variant === 'primary' ? '0 8px 20px rgba(37,99,235,0.35)' : '0 6px 16px rgba(15,23,42,0.06)'; } }}
+            onMouseEnter={e => { if(!disabled) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = variant === 'primary' ? 'var(--shadow-hover)' : '0 6px 16px rgba(15,23,42,0.06)'; } }}
             onMouseLeave={e => { if(!disabled) { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = cfg[variant].boxShadow || 'none'; } }}
         >
             {icon && <span style={{ display: 'flex', lineHeight: 1 }}>{icon}</span>}
@@ -97,7 +97,7 @@ export function Input({ label, value, onChange, placeholder, type = 'text', requ
             <div style={{ position: 'relative' }}>
                 <input type={type} value={value} onChange={e => onChange?.(e.target.value)} placeholder={placeholder} required={required}
                     style={{ width: '100%', padding: suffix ? '12px 40px 12px 16px' : '12px 16px', border: '1.5px solid #e2e8f0', borderRadius: '12px', fontSize: '14px', fontFamily: '"Plus Jakarta Sans", sans-serif', outline: 'none', background: '#f8fafc', color: '#0f172a', transition: 'all 0.25s' }}
-                    onFocus={e => { e.currentTarget.style.borderColor = '#2563eb'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(37,99,235,0.1)'; }}
+                    onFocus={e => { e.currentTarget.style.borderColor = 'var(--dash-primary)'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(37,99,235,0.1)'; }}
                     onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.boxShadow = 'none'; }}
                 />
                 {suffix && <span style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', display: 'flex' }}>{suffix}</span>}
@@ -113,7 +113,7 @@ export function Select({ label, value, onChange, options, required }: { label?: 
             {label && <label style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>{label}{required && <span style={{ color: '#ef4444', marginLeft: '3px' }}>*</span>}</label>}
             <select value={value} onChange={e => onChange?.(e.target.value)} required={required}
                 style={{ width: '100%', padding: '12px 16px', border: '1.5px solid #e2e8f0', borderRadius: '12px', fontSize: '14px', fontFamily: '"Plus Jakarta Sans", sans-serif', outline: 'none', background: '#f8fafc', color: '#0f172a', cursor: 'pointer', transition: 'all 0.25s', appearance: 'none' }}
-                onFocus={e => { e.currentTarget.style.borderColor = '#2563eb'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(37,99,235,0.1)'; }}
+                onFocus={e => { e.currentTarget.style.borderColor = 'var(--dash-primary)'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(37,99,235,0.1)'; }}
                 onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.boxShadow = 'none'; }}
             >
                 {options.map(o => <option key={o}>{o}</option>)}
@@ -138,7 +138,7 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
     );
 }
 
-export function StatCard({ label, value, change, up, sparkData, color = '#2563eb' }: {
+export function StatCard({ label, value, change, up, sparkData, color = 'var(--dash-primary)' }: {
     label: string; value: string; change: string; up: boolean; sparkData: number[]; color?: string; icon?: React.ReactNode;
 }) {
     return (
@@ -158,7 +158,7 @@ export function StatCard({ label, value, change, up, sparkData, color = '#2563eb
 }
 
 /* ── Line Chart ── */
-export function LineChart({ data, color = '#2563eb', height = 220, labels }: { data: number[]; color?: string; height?: number; labels?: string[] }) {
+export function LineChart({ data, color = 'var(--dash-primary)', height = 220, labels }: { data: number[]; color?: string; height?: number; labels?: string[] }) {
     const max = Math.max(...data) * 1.05;
     const min = Math.min(...data) * 0.92;
     const w = 100; const h = height;
@@ -267,7 +267,7 @@ export function Pagination({ total, page, perPage, onPage }: { total: number; pa
                     {Icons.chevronLeft} Prev
                 </button>
                 {Array.from({ length: Math.min(pages, 5) }, (_, i) => i + 1).map(n => (
-                    <button key={n} onClick={() => onPage(n)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: `1px solid ${n === page ? '#2563eb' : '#e2e8f0'}`, background: n === page ? '#2563eb' : '#fff', color: n === page ? '#fff' : '#334155', fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }}>{n}</button>
+                    <button key={n} onClick={() => onPage(n)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: `1px solid ${n === page ? 'var(--dash-primary)' : '#e2e8f0'}`, background: n === page ? 'var(--dash-primary)' : '#fff', color: n === page ? '#fff' : '#334155', fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }}>{n}</button>
                 ))}
                 {pages > 5 && <span style={{ padding: '8px 4px', color: '#94a3b8', fontSize: '14px' }}>…</span>}
                 <button onClick={() => onPage(Math.min(pages, page + 1))} disabled={page === pages} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#fff', color: page === pages ? '#cbd5e1' : '#334155', fontSize: '13px', fontWeight: 600, cursor: page === pages ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>

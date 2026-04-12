@@ -36,7 +36,7 @@ export default function ShopPage({ params }: { params: { id: string } }) {
                     <div style={{ position: 'absolute', bottom: '-80px', left: 'var(--gutter)', right: 'var(--gutter)', background: 'var(--surface)', borderRadius: 'var(--radius-xl)', padding: '24px', display: 'flex', gap: '24px', alignItems: 'center', boxShadow: 'var(--shadow-md)', border: '1px solid var(--border)', flexWrap: 'wrap', zIndex: 10 }}>
                         
                         {/* Avatar */}
-                        <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '40px', fontWeight: 800, fontFamily: 'var(--font-display)', flexShrink: 0, boxShadow: '0 4px 12px rgba(37,99,235,0.3)' }}>
+                        <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '40px', fontWeight: 800, fontFamily: 'var(--font-display)', flexShrink: 0, boxShadow: '0 4px 12px rgba(238, 18, 23, 0.3)' }}>
                             T
                         </div>
                         
@@ -61,7 +61,7 @@ export default function ShopPage({ params }: { params: { id: string } }) {
                         {/* Action Buttons */}
                         <div style={{ display: 'flex', gap: '12px' }}>
                             <button style={{ background: 'var(--surface)', border: '1.5px solid var(--primary)', color: 'var(--primary)', padding: '10px 20px', borderRadius: '8px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', transition: 'all 0.2s' }}>Contact Seller</button>
-                            <button style={{ background: 'var(--primary)', border: 'none', color: '#fff', padding: '10px 24px', borderRadius: '8px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(37,99,235,0.2)' }}>+ Follow Shop</button>
+                            <button style={{ background: 'var(--primary)', border: 'none', color: '#fff', padding: '10px 24px', borderRadius: '8px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(238, 18, 23, 0.2)' }}>+ Follow Shop</button>
                         </div>
                     </div>
                 </div>
