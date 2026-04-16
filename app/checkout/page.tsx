@@ -1,5 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { ALL_PRODUCTS, ALL_SERVICES } from '@/lib/data';
 
 /* ── Types ──────────────────────────────── */
 interface FormData {
@@ -10,19 +12,24 @@ interface FormData {
     paymentMethod: 'card' | 'paypal' | 'bank' | 'mobile';
 }
 
-/* ── Mock order items ───────────────────── */
-const ORDER_ITEMS = [
-    { id: 1, name: 'Sony WH-1000XM5 Noise Cancelling Headphones', emoji: '🎧', price: 279, qty: 1, color: 'Midnight Black', seller: 'TechZone Store' },
-    { id: 2, name: 'Logitech MX Master 3S Wireless Mouse', emoji: '🖱️', price: 89, qty: 2, color: 'Graphite', seller: 'PeriphHQ' },
-    { id: 3, name: 'Anker 737 Power Bank 24000mAh', emoji: '🔋', price: 89, qty: 1, color: 'Black', seller: 'TechZone Store' },
-];
+interface OrderItem {
+    id: number;
+    name: string;
+    emoji: string;
+    price: number;
+    qty: number;
+    color?: string;
+    seller: string;
+    date?: string;
+    time?: string;
+}
 
 const COUNTRIES = ['United States', 'United Kingdom', 'Canada', 'Australia', 'Germany', 'France', 'Nigeria', 'South Africa', 'India', 'Singapore'];
 const US_STATES = ['Alabama', 'Alaska', 'Arizona', 'California', 'Colorado', 'Florida', 'Georgia', 'Illinois', 'New York', 'Texas', 'Washington'];
 
 /* ── Step indicator ─────────────────────── */
-function StepBar({ step }: { step: number }) {
-    const steps = ['Shipping', 'Payment', 'Review'];
+function StepBar({ step, isService }: { step: number; isService: boolean }) {
+    const steps = [isService ? 'Service Location' : 'Shipping', 'Payment', 'Review'];
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '32px', gap: '0' }}>
             {steps.map((label, i) => {
@@ -102,12 +109,12 @@ function SelectField({ label, value, onChange, options, required }: {
 }
 
 /* ── Order summary sidebar ──────────────── */
-function OrderSidebar({ coupon, setCoupon }: { coupon: number; setCoupon: (n: number) => void }) {
+function OrderSidebar({ items, coupon, setCoupon }: { items: OrderItem[]; coupon: number; setCoupon: (n: number) => void }) {
     const [code, setCode] = useState('');
     const [error, setError] = useState('');
     const [applied, setApplied] = useState('');
 
-    const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price * i.qty, 0);
+    const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
     const shipping = 0;
     const couponSave = (subtotal * coupon) / 100;
     const total = subtotal + shipping - couponSave;
@@ -126,7 +133,7 @@ function OrderSidebar({ coupon, setCoupon }: { coupon: number; setCoupon: (n: nu
 
             {/* Items */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '18px' }}>
-                {ORDER_ITEMS.map(item => (
+                {items.map(item => (
                     <div key={item.id} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
                         <div style={{ width: '48px', height: '48px', background: 'var(--surface-2)', borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0, position: 'relative', border: '1px solid var(--border)' }}>
                             {item.emoji}
@@ -134,7 +141,9 @@ function OrderSidebar({ coupon, setCoupon }: { coupon: number; setCoupon: (n: nu
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                             <p style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', lineHeight: 1.35, marginBottom: '2px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.name}</p>
-                            <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.color} · {item.seller}</p>
+                            <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                {item.date ? `📅 ${item.date} @ ${item.time}` : `${item.color || ""} · ${item.seller}`}
+                            </p>
                         </div>
                         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', color: 'var(--primary)', flexShrink: 0 }}>${(item.price * item.qty).toFixed(2)}</span>
                     </div>
@@ -157,7 +166,7 @@ function OrderSidebar({ coupon, setCoupon }: { coupon: number; setCoupon: (n: nu
                 {/* Totals */}
                 {[
                     { label: 'Subtotal', value: `$${subtotal.toFixed(2)}` },
-                    { label: 'Shipping', value: 'FREE', green: true },
+                    { label: 'Shipping/Service Fee', value: 'FREE', green: true },
                     ...(applied ? [{ label: `Coupon (${applied})`, value: `-$${couponSave.toFixed(2)}`, green: true }] : []),
                 ].map(row => (
                     <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '8px' }}>
@@ -184,8 +193,8 @@ function OrderSidebar({ coupon, setCoupon }: { coupon: number; setCoupon: (n: nu
 }
 
 /* ── Step 1: Shipping form ──────────────── */
-function ShippingStep({ form, setForm, onNext }: {
-    form: FormData; setForm: (f: FormData) => void; onNext: () => void;
+function ShippingStep({ form, setForm, onNext, isService }: {
+    form: FormData; setForm: (f: FormData) => void; onNext: () => void; isService: boolean;
 }) {
     const set = (k: keyof FormData) => (v: string | boolean) => setForm({ ...form, [k]: v });
 
@@ -193,7 +202,12 @@ function ShippingStep({ form, setForm, onNext }: {
 
     return (
         <div>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', marginBottom: '20px', color: 'var(--text-primary)' }}>Shipping Information</h2>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', marginBottom: '20px', color: 'var(--text-primary)' }}>
+                {isService ? 'Service Location' : 'Shipping Information'}
+            </h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px' }}>
+                {isService ? "Please provide the address where you want our professional to meet you." : "Provide your delivery address below."}
+            </p>
 
             {/* Name row */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
@@ -227,7 +241,7 @@ function ShippingStep({ form, setForm, onNext }: {
             {/* Save address */}
             <label style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-secondary)' }}>
                 <input type="checkbox" checked={form.saveAddress} onChange={e => set('saveAddress')(e.target.checked)} style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }} />
-                Save this address for future orders
+                Save this {isService ? 'location' : 'address'} for future orders
             </label>
 
             <button onClick={() => valid && onNext()} style={{ width: '100%', padding: '14px', background: valid ? 'var(--primary)' : 'var(--border)', color: valid ? '#fff' : 'var(--text-muted)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', transition: 'all 0.2s', boxShadow: valid ? '0 4px 20px rgba(26,86,219,0.25)' : 'none' }}>
@@ -346,9 +360,9 @@ function PaymentStep({ form, setForm, onNext, onBack }: {
 }
 
 /* ── Step 3: Review & confirm ───────────── */
-function ReviewStep({ form, onBack, onPlace }: { form: FormData; onBack: () => void; onPlace: () => void; }) {
+function ReviewStep({ items, form, onBack, onPlace }: { items: OrderItem[]; form: FormData; onBack: () => void; onPlace: () => void; }) {
     const [agreed, setAgreed] = useState(false);
-    const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price * i.qty, 0);
+    const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
 
     const payLabel: Record<FormData['paymentMethod'], string> = {
         card: `Card ending in ${form.cardNumber.slice(-4)}`,
@@ -362,7 +376,7 @@ function ReviewStep({ form, onBack, onPlace }: { form: FormData; onBack: () => v
             {/* Shipping summary */}
             <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px' }}>📦 Shipping To</p>
+                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px' }}>📍 Service / Delivery Location</p>
                     <button onClick={onBack} style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 600, fontFamily: 'var(--font-body)' }}>Edit</button>
                 </div>
                 <p style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>{form.firstName} {form.lastName}</p>
@@ -380,14 +394,16 @@ function ReviewStep({ form, onBack, onPlace }: { form: FormData; onBack: () => v
 
             {/* Items */}
             <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '20px' }}>
-                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', marginBottom: '12px' }}>🛍 Items ({ORDER_ITEMS.reduce((s, i) => s + i.qty, 0)})</p>
-                {ORDER_ITEMS.map(item => (
+                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', marginBottom: '12px' }}>🛍 Summary ({items.reduce((s, i) => s + i.qty, 0)})</p>
+                {items.map(item => (
                     <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--border-light)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <span style={{ fontSize: '22px' }}>{item.emoji}</span>
                             <div>
                                 <p style={{ fontSize: '12px', fontWeight: 500 }}>{item.name}</p>
-                                <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Qty: {item.qty} · {item.color}</p>
+                                <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                    {item.date ? `📅 ${item.date} @ ${item.time}` : `Qty: ${item.qty} · ${item.color || ""}`}
+                                </p>
                             </div>
                         </div>
                         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', color: 'var(--primary)' }}>${(item.price * item.qty).toFixed(2)}</span>
@@ -416,20 +432,21 @@ function ReviewStep({ form, onBack, onPlace }: { form: FormData; onBack: () => v
 }
 
 /* ── Order Success ───────────────────────── */
-function OrderSuccess({ form }: { form: FormData }) {
+function OrderSuccess({ form, items }: { form: FormData; items: OrderItem[] }) {
     const orderId = `JFD-${Math.floor(Math.random() * 90000 + 10000)}`;
-    const subtotal = ORDER_ITEMS.reduce((s, i) => s + i.price * i.qty, 0);
+    const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+    const isService = items.some(i => i.date);
 
     return (
         <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center', padding: '20px' }}>
             <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '40px 32px', animation: 'fadeInUp 0.5s ease' }}>
                 <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '36px', boxShadow: '0 8px 30px rgba(34,197,94,0.3)' }}>✓</div>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', marginBottom: '8px', color: 'var(--text-primary)' }}>Order Placed!</h2>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '4px', fontSize: '14px' }}>Thank you, <strong>{form.firstName}</strong>! Your order is confirmed.</p>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', marginBottom: '8px', color: 'var(--text-primary)' }}>{isService ? 'Booking Confirmed!' : 'Order Placed!'}</h2>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '4px', fontSize: '14px' }}>Thank you, <strong>{form.firstName}</strong>! Your {isService ? 'booking' : 'order'} is confirmed.</p>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '13px' }}>A confirmation has been sent to <strong>{form.email}</strong></p>
 
                 <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '16px', marginBottom: '24px', textAlign: 'left' }}>
-                    {[['Order Number', orderId], ['Order Total', `$${subtotal.toFixed(2)}`], ['Shipping To', `${form.city}, ${form.country}`], ['Estimated Delivery', '3–5 business days']].map(([k, v]) => (
+                    {[['Order Number', orderId], ['Total', `$${subtotal.toFixed(2)}`], [isService ? 'Service Location' : 'Shipping To', `${form.city}, ${form.country}`], [isService ? 'Appointment' : 'Estimated Delivery', isService ? `${items[0].date} @ ${items[0].time}` : '3–5 business days']].map(([k, v]) => (
                         <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
                             <span style={{ color: 'var(--text-muted)' }}>{k}</span>
                             <span style={{ fontWeight: 600, color: k === 'Order Number' ? 'var(--primary)' : 'var(--text-primary)' }}>{v}</span>
@@ -438,10 +455,86 @@ function OrderSuccess({ form }: { form: FormData }) {
                 </div>
 
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                    <a href="/account" style={{ flex: 1, minWidth: '120px', padding: '11px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '13px', textAlign: 'center' }}>Track Order →</a>
+                    <a href="/account" style={{ flex: 1, minWidth: '120px', padding: '11px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '13px', textAlign: 'center' }}>Track {isService ? 'Booking' : 'Order'} →</a>
                     <a href="/" style={{ display: 'inline-block', padding: '12px 28px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '14px' }}>Continue Shopping</a>
                 </div>
             </div>
+        </div>
+    );
+}
+
+/* ── Checkout Content with Params ────────── */
+function CheckoutContent() {
+    const searchParams = useSearchParams();
+    const [step, setStep] = useState(1);
+    const [form, setForm] = useState<FormData>(EMPTY_FORM);
+    const [coupon, setCoupon] = useState(0);
+    const [placed, setPlaced] = useState(false);
+
+    const type = searchParams.get('type');
+    const id = searchParams.get('id');
+    const date = searchParams.get('date');
+    const time = searchParams.get('time');
+
+    const items = useMemo<OrderItem[]>(() => {
+        if (type === 'service' && id) {
+            const service = ALL_SERVICES.find(s => s.id === parseInt(id));
+            if (service) {
+                return [{
+                    id: service.id,
+                    name: service.name,
+                    emoji: service.emoji,
+                    price: service.price,
+                    qty: 1,
+                    seller: service.provider,
+                    date: date || undefined,
+                    time: time || undefined,
+                }];
+            }
+        }
+        return DEFAULT_ITEMS;
+    }, [type, id, date, time]);
+
+    const isService = type === 'service';
+
+    if (placed) return (
+        <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: '48px', paddingBottom: '60px' }}>
+            <OrderSuccess form={form} items={items} />
+        </div>
+    );
+
+    return (
+        <div className="container" style={{ padding: '28px var(--gutter)' }}>
+            {/* Header */}
+            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                <a href="/" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: 'var(--primary)' }}>Jefado<span style={{ color: 'var(--accent)' }}>.</span></a>
+                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Secure Checkout</p>
+            </div>
+
+            <StepBar step={step} isService={isService} />
+
+            {/* Responsive two-column layout */}
+            <div className="checkout-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '24px', alignItems: 'flex-start', maxWidth: '1000px', margin: '0 auto' }}>
+
+                {/* Left: form steps */}
+                <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '28px', minWidth: 0 }}>
+                    {step === 1 && <ShippingStep form={form} setForm={setForm} onNext={() => setStep(2)} isService={isService} />}
+                    {step === 2 && <PaymentStep form={form} setForm={setForm} onNext={() => setStep(3)} onBack={() => setStep(1)} />}
+                    {step === 3 && <ReviewStep items={items} form={form} onBack={() => setStep(2)} onPlace={() => setPlaced(true)} />}
+                </div>
+
+                {/* Right: order summary */}
+                <div style={{ minWidth: 0 }}>
+                    <OrderSidebar items={items} coupon={coupon} setCoupon={setCoupon} />
+                </div>
+            </div>
+            <style jsx>{`
+                @media (max-width: 900px) {
+                    .checkout-layout {
+                        grid-template-columns: 1fr !important;
+                    }
+                }
+            `}</style>
         </div>
     );
 }
@@ -455,46 +548,16 @@ const EMPTY_FORM: FormData = {
     paymentMethod: 'card',
 };
 
+const DEFAULT_ITEMS: OrderItem[] = [
+    { id: 1, name: 'Sony WH-1000XM5 Noise Cancelling Headphones', emoji: '🎧', price: 279, qty: 1, color: 'Midnight Black', seller: 'TechZone Store' },
+];
+
 export default function CheckoutPage() {
-    const [step, setStep] = useState(1);
-    const [form, setForm] = useState<FormData>(EMPTY_FORM);
-    const [coupon, setCoupon] = useState(0);
-    const [placed, setPlaced] = useState(false);
-
-    if (placed) return (
-        <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: '48px', paddingBottom: '60px' }}>
-            <OrderSuccess form={form} />
-        </div>
-    );
-
     return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: '60px' }}>
-            <div className="container" style={{ padding: '28px var(--gutter)' }}>
-
-                {/* Header */}
-                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                    <a href="/" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: 'var(--primary)' }}>Jefado<span style={{ color: 'var(--accent)' }}>.</span></a>
-                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Secure Checkout</p>
-                </div>
-
-                <StepBar step={step} />
-
-                {/* Responsive two-column layout */}
-                <div className="checkout-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '24px', alignItems: 'flex-start', maxWidth: '1000px', margin: '0 auto' }}>
-
-                    {/* Left: form steps */}
-                    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '28px', minWidth: 0 }}>
-                        {step === 1 && <ShippingStep form={form} setForm={setForm} onNext={() => setStep(2)} />}
-                        {step === 2 && <PaymentStep form={form} setForm={setForm} onNext={() => setStep(3)} onBack={() => setStep(1)} />}
-                        {step === 3 && <ReviewStep form={form} onBack={() => setStep(2)} onPlace={() => setPlaced(true)} />}
-                    </div>
-
-                    {/* Right: order summary */}
-                    <div style={{ minWidth: 0 }}>
-                        <OrderSidebar coupon={coupon} setCoupon={setCoupon} />
-                    </div>
-                </div>
-            </div>
+            <Suspense fallback={<div style={{ textAlign: 'center', padding: '100px' }}>Loading Checkout...</div>}>
+                <CheckoutContent />
+            </Suspense>
         </div>
     );
 }

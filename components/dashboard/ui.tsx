@@ -34,9 +34,7 @@ export function Badge({ status }: { status: string }) {
 /* ── Card ── */
 export function Card({ children, style, noPad }: { children: React.ReactNode; style?: React.CSSProperties; noPad?: boolean }) {
     return (
-        <div style={{ background: '#fff', borderRadius: '24px', boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04)', border: '1px solid rgba(15, 23, 42, 0.03)', padding: noPad ? 0 : '28px', transition: 'box-shadow 0.3s ease', ...style }}
-             onMouseEnter={e => e.currentTarget.style.boxShadow = '0 12px 48px rgba(15, 23, 42, 0.06)'}
-             onMouseLeave={e => e.currentTarget.style.boxShadow = '0 8px 32px rgba(15, 23, 42, 0.04)'}
+        <div style={{ background: '#fff', borderRadius: '24px', boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04)', border: '1px solid rgba(15, 23, 42, 0.03)', padding: noPad ? 0 : '28px', transition: 'all 0.3s ease', ...style }}
         >
             {children}
         </div>
@@ -47,11 +45,11 @@ export function Card({ children, style, noPad }: { children: React.ReactNode; st
 export function PageHeader({ title, subtitle, children }: { title: React.ReactNode; subtitle?: string; children?: React.ReactNode }) {
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
+            <div style={{ minWidth: '280px' }}>
                 <h1 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: '28px', color: '#0f172a', letterSpacing: '-0.5px', margin: 0 }}>{title}</h1>
                 {subtitle && <p style={{ fontSize: '15px', color: '#64748b', margin: '6px 0 0 0' }}>{subtitle}</p>}
             </div>
-            {children && <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>{children}</div>}
+            {children && <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>{children}</div>}
         </div>
     );
 }
@@ -70,16 +68,14 @@ export function SectionHead({ title, action, actionLabel }: { title: string; act
 type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
 export function Btn({ label, icon, variant = 'primary', onClick, small, disabled, submit }: { label: string; icon?: React.ReactNode; variant?: BtnVariant; onClick?: () => void; small?: boolean; disabled?: boolean; submit?: boolean }) {
     const cfg: Record<BtnVariant, React.CSSProperties> = {
-        primary: { background: 'var(--dash-primary)', color: '#fff', border: '1px solid var(--dash-primary-dark)', boxShadow: 'var(--shadow-hover)' },
-        secondary: { background: '#f8fafc', color: '#334155', border: '1px solid #e2e8f0', boxShadow: '0 2px 6px rgba(15,23,42,0.02)' },
+        primary: { background: 'var(--dash-primary)', color: '#fff', border: '1px solid var(--dash-primary-dark)' },
+        secondary: { background: '#f8fafc', color: '#334155', border: '1px solid #e2e8f0' },
         ghost: { background: 'transparent', color: '#475569', border: '1px solid transparent' },
         danger: { background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' },
         success: { background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0' },
     };
     return (
-        <button type={submit ? 'submit' : 'button'} onClick={onClick} disabled={disabled} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: small ? '8px 16px' : '12px 24px', borderRadius: '12px', fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 600, fontSize: small ? '13px' : '14px', cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.5 : 1, transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)', whiteSpace: 'nowrap', ...cfg[variant] }}
-            onMouseEnter={e => { if(!disabled) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = variant === 'primary' ? 'var(--shadow-hover)' : '0 6px 16px rgba(15,23,42,0.06)'; } }}
-            onMouseLeave={e => { if(!disabled) { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = cfg[variant].boxShadow || 'none'; } }}
+        <button type={submit ? 'submit' : 'button'} onClick={onClick} disabled={disabled} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: small ? '8px 16px' : '12px 24px', borderRadius: '12px', fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 600, fontSize: small ? '13px' : '14px', cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.5 : 1, transition: 'all 0.2s', whiteSpace: 'nowrap', ...cfg[variant] }}
         >
             {icon && <span style={{ display: 'flex', lineHeight: 1 }}>{icon}</span>}
             {label}
@@ -96,9 +92,7 @@ export function Input({ label, value, onChange, placeholder, type = 'text', requ
             {label && <label style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>{label}{required && <span style={{ color: '#ef4444', marginLeft: '3px' }}>*</span>}</label>}
             <div style={{ position: 'relative' }}>
                 <input type={type} value={value} onChange={e => onChange?.(e.target.value)} placeholder={placeholder} required={required}
-                    style={{ width: '100%', padding: suffix ? '12px 40px 12px 16px' : '12px 16px', border: '1.5px solid #e2e8f0', borderRadius: '12px', fontSize: '14px', fontFamily: '"Plus Jakarta Sans", sans-serif', outline: 'none', background: '#f8fafc', color: '#0f172a', transition: 'all 0.25s' }}
-                    onFocus={e => { e.currentTarget.style.borderColor = 'var(--dash-primary)'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(37,99,235,0.1)'; }}
-                    onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.boxShadow = 'none'; }}
+                    style={{ width: '100%', padding: suffix ? '12px 40px 12px 16px' : '12px 16px', border: '1.5px solid #e2e8f0', borderRadius: '12px', fontSize: '14px', fontFamily: '"Plus Jakarta Sans", sans-serif', outline: 'none', background: '#f8fafc', color: '#0f172a' }}
                 />
                 {suffix && <span style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', display: 'flex' }}>{suffix}</span>}
             </div>
@@ -112,9 +106,7 @@ export function Select({ label, value, onChange, options, required }: { label?: 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
             {label && <label style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>{label}{required && <span style={{ color: '#ef4444', marginLeft: '3px' }}>*</span>}</label>}
             <select value={value} onChange={e => onChange?.(e.target.value)} required={required}
-                style={{ width: '100%', padding: '12px 16px', border: '1.5px solid #e2e8f0', borderRadius: '12px', fontSize: '14px', fontFamily: '"Plus Jakarta Sans", sans-serif', outline: 'none', background: '#f8fafc', color: '#0f172a', cursor: 'pointer', transition: 'all 0.25s', appearance: 'none' }}
-                onFocus={e => { e.currentTarget.style.borderColor = 'var(--dash-primary)'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(37,99,235,0.1)'; }}
-                onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.boxShadow = 'none'; }}
+                style={{ width: '100%', padding: '12px 16px', border: '1.5px solid #e2e8f0', borderRadius: '12px', fontSize: '14px', fontFamily: '"Plus Jakarta Sans", sans-serif', outline: 'none', background: '#f8fafc', color: '#0f172a', cursor: 'pointer', appearance: 'none' }}
             >
                 {options.map(o => <option key={o}>{o}</option>)}
             </select>
@@ -123,66 +115,74 @@ export function Select({ label, value, onChange, options, required }: { label?: 
 }
 
 /* ── Stat Card ── */
-function Sparkline({ data, color }: { data: number[]; color: string }) {
-    const max = Math.max(...data); const min = Math.min(...data);
-    const w = 80; const h = 40;
-    const pts = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - ((v - min) / (max - min || 1)) * h}`).join(' ');
-    
-    return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-end', height: '100%' }}>
-           <svg width={w} height={h} style={{ overflow: 'visible', marginBottom: '8px' }}>
-               <polyline points={pts} fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-               <circle cx={parseFloat(pts.split(' ').pop()!.split(',')[0])} cy={parseFloat(pts.split(' ').pop()!.split(',')[1])} r="4" fill={color} />
-           </svg>
-        </div>
-    );
-}
-
-export function StatCard({ label, value, change, up, sparkData, color = 'var(--dash-primary)' }: {
+export function StatCard({ label, value, change, up, sparkData, color = 'var(--dash-primary)', icon }: {
     label: string; value: string; change: string; up: boolean; sparkData: number[]; color?: string; icon?: React.ReactNode;
 }) {
     return (
-        <Card style={{ display: 'flex', flexDirection: 'column', height: '160px' }}>
+        <Card style={{ display: 'flex', flexDirection: 'column', minHeight: '140px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 600 }}>{label}</span>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: up ? '#059669' : '#dc2626', background: up ? '#ecfdf5' : '#fef2f2', padding: '4px 10px', borderRadius: '16px' }}>
-                   {up ? '+' : ''}{change}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    {icon && <div style={{ color: color, display: 'flex', opacity: 0.8 }}>{icon}</div>}
+                    <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 600 }}>{label}</span>
+                </div>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: up ? '#059669' : '#dc2626', background: up ? '#ecfdf5' : '#fef2f2', padding: '4px 8px', borderRadius: '12px' }}>
+                   {up ? '↑' : '↓'} {change}
                 </span>
             </div>
-            <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: 'auto' }}>
-                <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: '32px', color: '#0f172a', margin: 0, letterSpacing: '-0.5px' }}>{value}</p>
-                <Sparkline data={sparkData} color={color} />
+            <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: '28px', color: '#0f172a', margin: 0 }}>{value}</p>
             </div>
         </Card>
     );
 }
 
-/* ── Line Chart ── */
-export function LineChart({ data, color = 'var(--dash-primary)', height = 220, labels }: { data: number[]; color?: string; height?: number; labels?: string[] }) {
-    const max = Math.max(...data) * 1.05;
-    const min = Math.min(...data) * 0.92;
-    const w = 100; const h = height;
-    const xs = data.map((_, i) => (i / (data.length - 1)) * w);
-    const ys = data.map(v => h - ((v - min) / (max - min || 1)) * (h - 16) - 8);
-    const pts = data.map((_, i) => `${xs[i]},${ys[i]}`).join(' ');
-    const area = `${xs[0]},${h} ${pts} ${xs[xs.length - 1]},${h}`;
+/* ── Table ── */
+export function Table({ cols, rows }: { cols: string[]; rows: React.ReactNode[][] }) {
     return (
-        <div>
-            <svg viewBox={`0 0 100 ${h}`} preserveAspectRatio="none" style={{ width: '100%', height: `${h}px`, display: 'block' }}>
-                <defs>
-                    <linearGradient id={`lg-${color.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={color} stopOpacity="0.25" />
-                        <stop offset="100%" stopColor={color} stopOpacity="0" />
-                    </linearGradient>
-                </defs>
-                <polygon points={area} fill={`url(#lg-${color.replace('#', '')})`} />
-                <polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            {labels && (
-                <div style={{ display: 'flex', marginTop: '12px', gap: '4px' }}>
-                    {labels.map(l => <span key={l} style={{ flex: 1, textAlign: 'center', fontSize: '11px', fontWeight: 600, color: '#94a3b8' }}>{l}</span>)}
+        <div style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 8px', fontSize: '14px', minWidth: '800px' }}>
+                <thead>
+                    <tr>
+                        {cols.map((c) => (
+                            <th key={c} style={{ padding: '0 16px 12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>{c}</th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows.map((row, i) => (
+                        <tr key={i} style={{ background: '#fff' }}>
+                            {row.map((cell, j) => (
+                                <td key={j} style={{ padding: '16px', color: '#334155', borderTopLeftRadius: j === 0 ? '12px' : 0, borderBottomLeftRadius: j === 0 ? '12px' : 0, borderTopRightRadius: j === row.length - 1 ? '12px' : 0, borderBottomRightRadius: j === row.length - 1 ? '12px' : 0, border: '1px solid #f1f5f9', borderRight: j === row.length - 1 ? '1px solid #f1f5f9' : 'none', borderLeft: j === 0 ? '1px solid #f1f5f9' : 'none' }}>{cell}</td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            {rows.length === 0 && <div style={{ padding: '40px', textAlign: 'center', color: '#94a3b8' }}>No data found.</div>}
+        </div>
+    );
+}
+
+/* ── Drawer ── */
+export function Drawer({ open, onClose, title, children, maxWidth = '480px' }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode; maxWidth?: string }) {
+    if (!open) return null;
+    return (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
+            <div className="ds-drawer" style={{ position: 'relative', width: '100%', maxWidth, background: '#fff', height: '100vh', display: 'flex', flexDirection: 'column', boxShadow: '-10px 0 50px rgba(0,0,0,0.1)' }}>
+                <style>{`
+                    .ds-drawer { animation: dsSlideIn 0.3s ease-out; }
+                    @keyframes dsSlideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+                    @media (max-width: 640px) { .ds-drawer { max-width: 100% !important; } }
+                `}</style>
+                <div style={{ padding: '24px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0 }}>{title}</h2>
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#64748b' }}>✕</button>
                 </div>
-            )}
+                <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+                    {children}
+                </div>
+            </div>
         </div>
     );
 }
@@ -201,19 +201,18 @@ export function DonutChart({ segments, size = 120 }: { segments: { label: string
         return { ...seg, d: `M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${pct > 0.5 ? 1 : 0},1 ${x2},${y2} Z`, pct };
     });
     return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <svg viewBox="0 0 100 100" style={{ width: `${size}px`, height: `${size}px`, flexShrink: 0 }}>
-                <circle cx={cx} cy={cy} r="20" fill="#fff" />
                 {slices.map((s, i) => <path key={i} d={s.d} fill={s.color} />)}
-                <circle cx={cx} cy={cy} r="22" fill="#fff" />
-                <text x="50" y="55" textAnchor="middle" fontSize="14" fontWeight="800" fill="#0f172a" fontFamily="Outfit">{Math.round(slices[0].pct * 100)}%</text>
+                <circle cx={cx} cy={cy} r="24" fill="#fff" />
+                <text x="50" y="55" textAnchor="middle" fontSize="10" fontWeight="800" fill="#0f172a" fontFamily="Outfit">{Math.round(slices[0].pct * 100)}%</text>
             </svg>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '120px' }}>
                 {segments.map(s => (
-                    <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-                        <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: s.color, flexShrink: 0 }} />
-                        <span style={{ color: '#475569', flex: 1, fontWeight: 500 }}>{s.label}</span>
-                        <span style={{ fontWeight: 700, color: '#0f172a' }}>{s.value}%</span>
+                    <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: s.color, flexShrink: 0 }} />
+                        <span style={{ color: '#64748b', flex: 1, fontWeight: 500 }}>{s.label}</span>
+                        <span style={{ fontWeight: 700, color: '#0f172a' }}>{Math.round(s.value)}%</span>
                     </div>
                 ))}
             </div>
@@ -221,99 +220,16 @@ export function DonutChart({ segments, size = 120 }: { segments: { label: string
     );
 }
 
-/* ── Table ── */
-export function Table({ cols, rows }: { cols: string[]; rows: React.ReactNode[][] }) {
-    return (
-        <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 8px', fontSize: '14px', minWidth: '700px' }}>
-                <thead>
-                    <tr>
-                        {cols.map((c, idx) => (
-                            <th key={c} style={{ padding: '0 16px 12px', textAlign: 'left', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                                {c}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows.map((row, i) => (
-                        <tr key={i} style={{ background: '#fff', boxShadow: '0 2px 8px rgba(15,23,42,0.02)', transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer' }}
-                            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.002)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(15,23,42,0.06)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(15,23,42,0.02)'; }}
-                        >
-                            {row.map((cell, j) => (
-                                <td key={j} style={{ padding: '20px 16px', color: '#334155', verticalAlign: 'middle', fontWeight: 500, borderTopLeftRadius: j === 0 ? '16px' : 0, borderBottomLeftRadius: j === 0 ? '16px' : 0, borderTopRightRadius: j === row.length - 1 ? '16px' : 0, borderBottomRightRadius: j === row.length - 1 ? '16px' : 0 }}>{cell}</td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            {rows.length === 0 && (
-                <div style={{ padding: '60px', textAlign: 'center', color: '#9ca3af', fontSize: '15px' }}>No records found.</div>
-            )}
-        </div>
-    );
-}
-
-/* ── Pagination ── */
 export function Pagination({ total, page, perPage, onPage }: { total: number; page: number; perPage: number; onPage: (n: number) => void }) {
     const pages = Math.ceil(total / perPage);
     if (pages <= 1) return null;
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 0 8px', borderTop: '1px solid #f1f5f9', flexWrap: 'wrap', gap: '16px', marginTop: '16px' }}>
-            <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>Showing {Math.min((page - 1) * perPage + 1, total)}–{Math.min(page * perPage, total)} of {total}</span>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <button onClick={() => onPage(Math.max(1, page - 1))} disabled={page === 1} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#fff', color: page === 1 ? '#cbd5e1' : '#334155', fontSize: '13px', fontWeight: 600, cursor: page === 1 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
-                    {Icons.chevronLeft} Prev
-                </button>
-                {Array.from({ length: Math.min(pages, 5) }, (_, i) => i + 1).map(n => (
-                    <button key={n} onClick={() => onPage(n)} style={{ width: '36px', height: '36px', borderRadius: '10px', border: `1px solid ${n === page ? 'var(--dash-primary)' : '#e2e8f0'}`, background: n === page ? 'var(--dash-primary)' : '#fff', color: n === page ? '#fff' : '#334155', fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }}>{n}</button>
-                ))}
-                {pages > 5 && <span style={{ padding: '8px 4px', color: '#94a3b8', fontSize: '14px' }}>…</span>}
-                <button onClick={() => onPage(Math.min(pages, page + 1))} disabled={page === pages} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#fff', color: page === pages ? '#cbd5e1' : '#334155', fontSize: '13px', fontWeight: 600, cursor: page === pages ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
-                    Next {Icons.chevronRight}
-                </button>
-            </div>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '24px', flexWrap: 'wrap' }}>
+            {Array.from({ length: pages }, (_, i) => i + 1).map(n => (
+                <button key={n} onClick={() => onPage(n)} style={{ width: '36px', height: '36px', borderRadius: '8px', border: '1px solid #e2e8f0', background: n === page ? 'var(--dash-primary)' : '#fff', color: n === page ? '#fff' : '#475569', fontWeight: 700, cursor: 'pointer' }}>{n}</button>
+            ))}
         </div>
     );
 }
 
-/* ── Empty State ── */
-export function Empty({ icon, title, desc, action }: { icon: string; title: string; desc: string; action?: React.ReactNode }) {
-    return (
-        <div style={{ padding: '80px 20px', textAlign: 'center' }}>
-            <div style={{ fontSize: '56px', marginBottom: '24px' }}>{icon}</div>
-            <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '20px', color: '#0f172a', marginBottom: '12px' }}>{title}</p>
-            <p style={{ fontSize: '15px', color: '#64748b', marginBottom: '24px', maxWidth: '400px', margin: '0 auto 24px' }}>{desc}</p>
-            {action}
-        </div>
-    );
-}
-
-/* ── Drawer ── */
-export function Drawer({ open, onClose, title, children, maxWidth = '480px' }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode; maxWidth?: string }) {
-    if (!open) return null;
-    return (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', justifyContent: 'flex-end' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', animation: 'fadeIn 0.3s ease' }} onClick={onClose} />
-            <div style={{ position: 'relative', width: '100%', maxWidth, background: '#fff', height: '100vh', display: 'flex', flexDirection: 'column', boxShadow: '-8px 0 40px rgba(0,0,0,0.1)', animation: 'slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                <style>{`
-                    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-                    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-                `}</style>
-                <div style={{ padding: '24px 32px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '22px', color: '#0f172a', margin: 0 }}>{title}</h2>
-                    <button onClick={onClose} style={{ background: '#f8fafc', border: 'none', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '50%', transition: 'all 0.2s' }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#64748b'; }}
-                    >
-                        <span style={{ fontSize: '18px', fontWeight: 'bold' }}>✕</span>
-                    </button>
-                </div>
-                <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
-                    {children}
-                </div>
-            </div>
-        </div>
-    );
-}
+export function LineChart({ data, color, height, labels }: any) { return <div style={{ height: height + 'px', background: '#f8fafc', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '13px' }}>Chart Placeholder</div> }

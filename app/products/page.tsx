@@ -55,9 +55,16 @@ function MiniProductCard({ p }: { p: Product }) {
             <div style={{ padding: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}><Stars rating={p.rating} /><span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({p.reviews.toLocaleString()})</span></div>
                 <p style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '6px', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.name}</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: 'var(--primary)' }}>${p.price}</span>
-                    {p.originalPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${p.originalPrice}</span>}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: 'var(--primary)' }}>${p.price}</span>
+                        {p.originalPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${p.originalPrice}</span>}
+                    </div>
+                    {p.stockQuantity !== undefined && p.inStock && (
+                        <span style={{ fontSize: '10px', fontWeight: 700, color: p.stockQuantity < 10 ? 'var(--danger)' : 'var(--success)' }}>
+                            {p.stockQuantity} left
+                        </span>
+                    )}
                 </div>
                 <button disabled={!p.inStock} onClick={() => { setAdded(true); setTimeout(() => setAdded(false), 2000); }} style={{ width: '100%', padding: '7px', background: added ? 'var(--success)' : p.inStock ? 'var(--primary)' : 'var(--border)', color: p.inStock ? '#fff' : 'var(--text-muted)', borderRadius: 'var(--radius)', fontSize: '12px', fontWeight: 700, fontFamily: 'var(--font-body)', transition: 'all 0.2s', cursor: p.inStock ? 'pointer' : 'not-allowed' }}>
                     {added ? '✓ Added!' : '+ Add to Cart'}

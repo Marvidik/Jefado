@@ -1,158 +1,118 @@
 'use client';
-import { useState } from 'react';
 
 export default function AboutPage() {
     return (
-        <div style={{ background: '#0f172a', color: '#fff', minHeight: '100vh', fontFamily: 'var(--font-body)' }}>
+        <div style={{ background: 'var(--bg)', minHeight: '100vh', fontFamily: 'var(--font-body)', overflow: 'hidden' }}>
             {/* Hero Section */}
-            <div style={{
-                position: 'relative',
-                height: '70vh',
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+            <div style={{ 
+                background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
+                padding: '120px 0 160px', 
                 textAlign: 'center',
+                position: 'relative',
                 overflow: 'hidden'
             }}>
-                <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backgroundImage: 'url("/images/about_vision.png")',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    opacity: 0.6,
-                    zIndex: 1
-                }} />
-                <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'radial-gradient(circle, rgba(15,23,42,0.2) 0%, rgba(15,23,42,0.9) 100%)',
-                    zIndex: 2
-                }} />
-                
-                <div style={{ position: 'relative', zIndex: 10, maxWidth: '900px', padding: '0 20px' }}>
+                <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '400px', height: '400px', background: 'var(--primary)', filter: 'blur(180px)', opacity: 0.15 }}></div>
+                <div style={{ position: 'absolute', bottom: '-100px', left: '-100px', width: '400px', height: '400px', background: 'var(--secondary)', filter: 'blur(180px)', opacity: 0.15 }}></div>
+
+                <div className="container animate-in">
+                    <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '100px', color: 'var(--primary)', fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '32px' }}>
+                        Our Vision 2026
+                    </div>
                     <h1 style={{ 
                         fontFamily: 'var(--font-display)', 
-                        fontSize: 'clamp(40px, 8vw, 84px)', 
                         fontWeight: 900, 
-                        lineHeight: 1, 
+                        fontSize: 'clamp(42px, 8vw, 72px)', 
+                        color: '#fff', 
                         marginBottom: '24px',
-                        background: 'linear-gradient(to bottom, #fff, #94a3b8)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        letterSpacing: '-4px'
+                        letterSpacing: '-2.5px',
+                        lineHeight: 1.05
                     }}>
-                        Architecting the Future of Commerce
+                        Architecting the <span style={{ color: 'var(--primary)' }}>Future</span> of Global Trade.
                     </h1>
                     <p style={{ 
-                        fontSize: 'clamp(16px, 2vw, 20px)', 
+                        fontSize: '20px', 
                         color: 'rgba(255,255,255,0.7)', 
-                        lineHeight: 1.6,
-                        maxWidth: '600px',
-                        margin: '0 auto 40px'
+                        maxWidth: '750px', 
+                        margin: '0 auto 48px',
+                        lineHeight: 1.6
                     }}>
-                        We aren&apos;t just a marketplace. We are the decentralized infrastructure for the next generation of global trade, power and velocity.
+                        We aren't just a marketplace. We are the decentralized infrastructure for the next generation of commerce, built on velocity, security, and global reach.
                     </p>
-                    <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-                        <button style={{ 
-                            padding: '16px 32px', 
-                            background: 'var(--primary)', 
-                            color: '#fff', 
-                            borderRadius: '14px', 
-                            fontWeight: 800, 
-                            border: 'none', 
-                            fontSize: '16px',
-                            boxShadow: '0 10px 30px -10px rgba(26,86,219,0.5)'
-                        }}>Explore Our Core</button>
+                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <button style={{ padding: '16px 36px', background: 'var(--primary)', color: '#fff', borderRadius: '14px', fontWeight: 800, fontSize: '16px', boxShadow: '0 10px 40px -10px rgba(238,18,23,0.5)' }}>Explore Marketplace</button>
+                        <button style={{ padding: '16px 36px', background: 'rgba(255,255,255,0.05)', color: '#fff', borderRadius: '14px', fontWeight: 700, fontSize: '16px', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>Watch Manifesto</button>
                     </div>
                 </div>
             </div>
 
-            {/* Features/Stats Grid */}
-            <div style={{ maxWidth: '1200px', margin: '-100px auto 100px', padding: '0 24px', position: 'relative', zIndex: 20 }}>
-                <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-                    gap: '24px' 
-                }}>
+            {/* Impact Grid */}
+            <div className="container" style={{ marginTop: '-80px', position: 'relative', zIndex: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', marginBottom: '100px' }}>
                     {[
-                        { title: 'Global Velocity', val: '0.04ms', desc: 'Latency optimized transaction layer for instantaneous global trade.' },
-                        { title: 'Secure Prototcol', val: 'AES-512', desc: 'Military-grade encryption for every identity and transaction.' },
-                        { title: 'Elite Network', val: '10k+', desc: 'Curated ecosystem of top-tier verified merchants and brands.' }
+                        { title: 'Global Velocity', val: '0.04ms', desc: 'Zero-latency transaction layer for instantaneous trade execution.' },
+                        { title: 'Secure Prototcol', val: 'AES-512', desc: 'Military-grade encryption securing every identity and asset.' },
+                        { title: 'Elite Network', val: '10k+', desc: 'A curated ecosystem of premium verified merchants and creators.' }
                     ].map((s, i) => (
                         <div key={i} style={{
-                            padding: '40px',
-                            background: 'rgba(30, 41, 59, 0.7)',
+                            padding: '48px 40px',
+                            background: 'var(--surface)',
                             backdropFilter: 'blur(20px)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '24px',
-                            boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
-                            transition: 'transform 0.3s'
-                        }}>
-                            <p style={{ color: 'var(--primary)', fontWeight: 800, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '12px' }}>{s.title}</p>
-                            <p style={{ fontSize: '42px', fontWeight: 900, marginBottom: '16px', color: '#fff' }}>{s.val}</p>
-                            <p style={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, fontSize: '15px' }}>{s.desc}</p>
+                            border: '1px solid var(--border)',
+                            borderRadius: '32px',
+                            boxShadow: 'var(--shadow-lg)',
+                            transition: 'all 0.3s ease'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-8px)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                        >
+                            <p style={{ color: 'var(--primary)', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '16px' }}>{s.title}</p>
+                            <p style={{ fontSize: '48px', fontWeight: 900, marginBottom: '20px', color: 'var(--text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-1px' }}>{s.val}</p>
+                            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '15px' }}>{s.desc}</p>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* Vision Section */}
-            <div style={{ maxWidth: '1000px', margin: '0 auto 120px', padding: '0 24px', textAlign: 'center' }}>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '48px', fontWeight: 800, marginBottom: '32px', letterSpacing: '-1.5px' }}>Our Mission</h2>
-                <div style={{ fontSize: '20px', lineHeight: 1.8, color: 'rgba(255,255,255,0.8)' }}>
-                    <p style={{ marginBottom: '24px' }}>
-                        Jefado was founded on the principle that commerce should be borderless, frictionless, and secure. We build the tools that empower small vendors to reach a global audience with the same velocity as multinational corporations.
-                    </p>
-                    <p>
-                        By 2026, our goal is to become the primary layer for decentralized multi-vendor ecosystems, ensuring that every handshake, digital or physical, is backed by the most robust technology stack ever built.
-                    </p>
-                </div>
-            </div>
-
-            {/* Team/Node section placeholder */}
-            <div style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '100px 0' }}>
-                <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
-                    <div className="about-footer-grid">
-                        <div>
-                            <h3 style={{ fontSize: '36px', fontWeight: 800, marginBottom: '24px' }}>Global Infrastructure</h3>
-                            <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: '32px' }}>
-                                Our servers are distributed across 32 regional nodes, ensuring that your store is always online and your customers always experience zero-latency shopping.
+            {/* Mission Section */}
+            <div style={{ background: 'var(--surface)', padding: '120px 0', borderTop: '1px solid var(--border)' }}>
+                <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '80px', alignItems: 'center' }}>
+                    <div>
+                        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '42px', fontWeight: 800, marginBottom: '32px', letterSpacing: '-1.5px', lineHeight: 1.1 }}>
+                            Our Mission is to <span style={{ color: 'var(--primary)' }}>Empower</span> Every Merchant.
+                        </h2>
+                        <div style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-secondary)' }}>
+                            <p style={{ marginBottom: '24px' }}>
+                                Jefado was founded on the principle that commerce should be borderless and frictionless. We build the tools that empower vendors to reach their full potential.
                             </p>
-                            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-                                {['NA', 'EU', 'AS', 'AF', 'LATAM'].map(node => (
-                                    <div key={node} style={{ padding: '8px 16px', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', fontSize: '12px', fontWeight: 800 }}>{node}</div>
-                                ))}
+                            <p>
+                                By 2026, our goal is to become the primary layer for the global multi-vendor ecosystem, ensuring every transaction is backed by the most robust technology stack ever built.
+                            </p>
+                        </div>
+                        <div style={{ marginTop: '48px', display: 'flex', gap: '40px' }}>
+                            <div>
+                                <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>32+</p>
+                                <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Global Nodes</p>
+                            </div>
+                            <div style={{ width: '1px', background: 'var(--border)' }} />
+                            <div>
+                                <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>$1.2B</p>
+                                <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Volume Processed</p>
                             </div>
                         </div>
-                        <div style={{ position: 'relative', height: '400px', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-                             <div style={{ 
-                                position: 'absolute', 
-                                inset: 0, 
-                                background: 'linear-gradient(45deg, #1e293b, #0f172a)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                             }}>
-                                 {/* Abstract technical visualization */}
-                                 <div style={{ width: '80%', height: '80%', opacity: 0.3, border: '1px dashed rgba(255,255,255,0.5)', borderRadius: '50%', animation: 'spin 20s linear infinite' }} />
-                                 <div style={{ position: 'absolute', width: '60%', height: '60%', opacity: 0.2, border: '1px solid var(--primary)', borderRadius: '50%', animation: 'spin 15s linear reverse infinite' }} />
-                                 <p style={{ position: 'relative', zIndex: 5, fontSize: '14px', fontWeight: 700, letterSpacing: '2px', color: 'var(--primary)' }}>SYSTEM_CONNECTED</p>
-                             </div>
+                    </div>
+                    <div style={{ position: 'relative', borderRadius: '40px', overflow: 'hidden', aspectRatio: '1/1', background: 'linear-gradient(45deg, #1e293b, #0f172a)', border: '1px solid var(--border)' }}>
+                        <div style={{ position: 'absolute', inset: '40px', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '50%', animation: 'spin 30s linear infinite' }}></div>
+                        <div style={{ position: 'absolute', inset: '80px', border: '1px solid var(--primary)', borderRadius: '50%', opacity: 0.2, animation: 'spin 20s linear reverse infinite' }}></div>
+                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <span style={{ fontSize: '80px' }}>🌍</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <style>{`
-                .about-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-                @media (max-width: 768px) {
-                    .about-footer-grid { grid-template-columns: 1fr; gap: 40px; }
-                    .about-footer-grid h3 { font-size: 28px; }
-                }
+            <style jsx>{`
                 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-                @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+                .animate-in { animation: fadeInUp 0.6s ease both; }
             `}</style>
         </div>
     );

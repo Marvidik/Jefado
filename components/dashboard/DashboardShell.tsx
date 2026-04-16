@@ -10,6 +10,7 @@ const MENU_GROUPS = [
         items: [
             { icon: Icons.dashboard, href: '/dashboard', label: 'Dashboard' },
             { icon: Icons.orders, href: '/dashboard/orders', label: 'Order Management' },
+            { icon: Icons.calendar, href: '/dashboard/service-orders', label: 'Service Bookings' },
             { icon: Icons.customers, href: '/dashboard/customers', label: 'Customers' },
             { icon: Icons.coupons, href: '/dashboard/coupons', label: 'Coupon Code' },
         ]
@@ -18,6 +19,7 @@ const MENU_GROUPS = [
         name: 'Product',
         items: [
             { icon: Icons.products, href: '/dashboard/products', label: 'Products Master' },
+            { icon: Icons.services, href: '/dashboard/services', label: 'Services Master' },
         ]
     },
     {
@@ -253,20 +255,20 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                 </aside>
 
                 <div className="ds-main">
-                    <header style={{ height: '80px', background: '#fff', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', flexShrink: 0 }}>
+                    <header style={{ minHeight: '80px', background: '#fff', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', flexShrink: 0, flexWrap: 'wrap', gap: '16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                             {isMobile && (
                                 <button onClick={() => setMobileOpen(true)} style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0f172a', cursor: 'pointer' }}>
                                     {Icons.menu}
                                 </button>
                             )}
-                            <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '20px', color: '#0f172a', margin: 0, display: isMobile ? 'none' : 'block' }}>
+                            <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: '20px', color: '#0f172a', margin: 0 }}>
                                 {pathname === '/dashboard' ? 'Dashboard' : pathname.split('/').pop()?.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase() || '')}
                             </h2>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                            <div style={{ position: 'relative' }}>
-                                <input type="text" placeholder="Search data, users, or reports" style={{ padding: '10px 16px 10px 40px', borderRadius: '24px', border: 'none', background: '#f8fafc', fontSize: '13px', width: '280px', outline: 'none' }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap', justifyContent: 'flex-end', flex: 1 }}>
+                            <div style={{ position: 'relative', minWidth: '200px', flex: '1 1 200px', maxWidth: '400px' }}>
+                                <input type="text" placeholder="Search..." style={{ width: '100%', padding: '10px 16px 10px 40px', borderRadius: '24px', border: 'none', background: '#f8fafc', fontSize: '13px', outline: 'none' }} />
                                 <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>{Icons.search}</span>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', color: '#64748b' }}>

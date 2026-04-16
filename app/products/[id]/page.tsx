@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { ALL_PRODUCTS } from '@/lib/data';
 import ProductCard from '@/components/ui/ProductCard';
+import ReviewsSection from '@/components/ui/ReviewsSection';
 
 function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
     return <span style={{ display: 'inline-flex', gap: '2px' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ fontSize: size, color: i <= Math.round(rating) ? 'var(--secondary)' : '#e2e8f0' }}>★</span>)}</span>;
@@ -85,7 +86,14 @@ export default function ProductDetailPage() {
                             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>{product.rating}</span>
                             <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>({product.reviews.toLocaleString()} reviews)</span>
                             <span style={{ width: '1px', height: '14px', background: 'var(--border)' }} />
-                            <span style={{ fontSize: '13px', color: product.inStock ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>{product.inStock ? '✓ In Stock' : 'Out of Stock'}</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span style={{ fontSize: '13px', color: product.inStock ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>{product.inStock ? '✓ In Stock' : 'Out of Stock'}</span>
+                                {product.inStock && (
+                                    <span style={{ fontSize: '12px', background: 'var(--success-light)', color: 'var(--success-dark)', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>
+                                        {product.stockQuantity} remaining
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         {/* Price */}
@@ -106,7 +114,7 @@ export default function ProductDetailPage() {
                             <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', flexShrink: 0, background: 'var(--surface)' }}>
                                 <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ padding: '12px 18px', fontSize: '18px', border: 'none', background: 'transparent', cursor: 'pointer' }}>−</button>
                                 <span style={{ padding: '0 4px', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '16px', minWidth: '40px', textAlign: 'center' }}>{qty}</span>
-                                <button onClick={() => setQty(q => q + 1)} style={{ padding: '12px 18px', fontSize: '18px', border: 'none', background: 'transparent', cursor: 'pointer' }}>+</button>
+                                <button onClick={() => setQty(q => Math.min(product.stockQuantity, q + 1))} style={{ padding: '12px 18px', fontSize: '18px', border: 'none', background: 'transparent', cursor: 'pointer' }}>+</button>
                             </div>
                             <button onClick={() => { setAdded(true); setTimeout(() => setAdded(false), 2500); }} style={{ flex: 1, padding: '14px 24px', background: added ? 'var(--success)' : 'var(--primary)', color: '#fff', borderRadius: 'var(--radius-lg)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '15px', transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(238, 18, 23, 0.2)' }}>
                                 {added ? '✓ Added to Cart!' : `Add to Cart — $${(product.price * qty).toLocaleString()}`}
@@ -168,9 +176,7 @@ export default function ProductDetailPage() {
                             </div>
                         )}
                         {activeTab === 'reviews' && (
-                            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                                <p style={{ color: 'var(--text-muted)' }}>Reviews loading...</p>
-                            </div>
+                            <ReviewsSection reviews={product.reviewsList} initialRating={product.rating} />
                         )}
                     </div>
                 </div>

@@ -1,11 +1,14 @@
 'use client';
 import { useState } from 'react';
+
 interface ProductCardProps {
     id?: number; name: string; price: number; originalPrice?: number; discount?: number;
     rating?: number; reviews?: number; badgeColor?: string;
     emoji?: string; image?: string; isNew?: boolean; isBestSeller?: boolean;
+    stockQuantity?: number;
 }
-export default function ProductCard({ id = 1, name, price, originalPrice, discount, rating = 4.5, reviews = 128, emoji, image, isNew, isBestSeller }: ProductCardProps) {
+
+export default function ProductCard({ id = 1, name, price, originalPrice, discount, rating = 4.5, reviews = 128, emoji, image, isNew, isBestSeller, stockQuantity }: ProductCardProps) {
     const [wishlisted, setWishlisted] = useState(false);
     const [added, setAdded] = useState(false);
     return (
@@ -35,9 +38,16 @@ export default function ProductCard({ id = 1, name, price, originalPrice, discou
                         <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({reviews})</span>
                     </div>
                     <p style={{ fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '7px', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{name}</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '9px' }}>
-                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: 'var(--primary)' }}>${price}</span>
-                        {originalPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${originalPrice}</span>}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '9px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: 'var(--primary)' }}>${price}</span>
+                            {originalPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${originalPrice}</span>}
+                        </div>
+                        {stockQuantity !== undefined && (
+                            <span style={{ fontSize: '10px', fontWeight: 700, color: stockQuantity < 10 ? 'var(--danger)' : 'var(--success)' }}>
+                                {stockQuantity} left
+                            </span>
+                        )}
                     </div>
                     <button onClick={e => { e.preventDefault(); setAdded(true); setTimeout(() => setAdded(false), 2000); }} style={{ width: '100%', padding: '8px', background: added ? 'var(--success)' : 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontSize: '12px', fontWeight: 700, fontFamily: 'var(--font-body)', transition: 'all 0.2s' }}>
                         {added ? '✓ Added!' : '+ Add to Cart'}

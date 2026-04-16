@@ -65,7 +65,7 @@ export default function Navbar() {
 
                     {/* Desktop nav links */}
                     <nav className="nav-desktop-links" style={{ display: 'flex', gap: '20px', alignItems: 'center', flexShrink: 0 }}>
-                        {[{ label: 'Home', href: '/' }, { label: 'Shop', href: '/products' }, { label: 'About', href: '/about' }, { label: 'Contact', href: '/contact' }].map(link => (
+                        {[{ label: 'Home', href: '/' }, { label: 'Shop', href: '/products' }, { label: 'Services', href: '/services' }, { label: 'Pricing', href: '/pricing' }, { label: 'About', href: '/about' }, { label: 'Contact', href: '/contact' }].map(link => (
                             <Link key={link.label} href={link.href} style={{ fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', whiteSpace: 'nowrap', transition: 'color 0.2s' }}
                                 onMouseEnter={e => (e.currentTarget.style.color = 'var(--primary)')}
                                 onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
@@ -124,6 +124,8 @@ export default function Navbar() {
                             {[
                                 { icon: '🏠', label: 'Home', href: '/' },
                                 { icon: '🛍', label: 'Shop', href: '/products' },
+                                { icon: '⚒️', label: 'Services', href: '/services' },
+                                { icon: '🏷️', label: 'Pricing', href: '/pricing' },
                                 { icon: 'ℹ', label: 'About', href: '/about' },
                                 { icon: '📞', label: 'Contact', href: '/contact' },
                                 { icon: '👤', label: 'Account', href: '/account' },
