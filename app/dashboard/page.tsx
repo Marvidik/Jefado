@@ -96,88 +96,21 @@ export default function DashboardHome() {
                 <StatCard label="Conversion Rate" value="28%" change="1.8%" up sparkData={[22, 24, 23, 26, 25, 27, 26, 28]} color="#2563eb" />
             </div>
 
-            {/* ── Row 2: Bar + Donut ── */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-                <Card>
-                    <SectionHead title="Store Analytics" action={() => {}} actionLabel="Advanced Report" />
-                    <BarChartMock />
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px', borderTop: '1px solid #f1f5f9', paddingTop: '16px', color: '#64748b', fontSize: '13px', fontWeight: 500 }}>
-                        <span>20</span><span>22</span><span>24</span><span>26</span><span>28</span><span>30</span><span>02</span><span>04</span><span>06</span><span>08</span><span>10</span><span>12</span><span>14</span><span>16</span>
-                    </div>
-                </Card>
-                <Card style={{ display: 'flex', flexDirection: 'column' }}>
-                    <SectionHead title="Cart Analysis" />
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-                        <div style={{ position: 'relative', width: '160px', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '32px' }}>
-                            <svg viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
-                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#f1f5f9" strokeWidth="3" />
-                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#2563eb" strokeWidth="3" strokeDasharray="38, 100" />
-                            </svg>
-                            <span style={{ position: 'absolute', fontSize: '32px', fontWeight: 800, fontFamily: 'Outfit, sans-serif', color: '#0f172a' }}>38%</span>
-                        </div>
-                        <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', fontSize: '14px', background: '#f8fafc', padding: '16px', borderRadius: '12px' }}>
-                            <div style={{ color: '#64748b' }}>Abandoned Cart<br/><span style={{ color: '#334155', fontWeight: 700 }}>Lost Revenue</span></div>
-                            <div style={{ textAlign: 'right', fontWeight: 700, color: '#0f172a' }}>720<br/><span style={{ color: '#dc2626' }}>$5,900</span></div>
-                        </div>
-                    </div>
-                </Card>
-            </div>
-
-            {/* ── Row 3: Revenue Device + Traffic ── */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-                <Card>
-                    <SectionHead title="Revenue by Device" action={() => {}} actionLabel="Full Breakdown" />
-                    <div style={{ display: 'flex', alignItems: 'center', justifyItems: 'center', margin: '40px 0 60px', justifyContent: 'center' }}>
-                        <DonutChart segments={[{ label: 'Desktop', value: 64, color: '#2563eb' }, { label: 'Tablet', value: 15.3, color: '#93c5fd' }, { label: 'Mobile', value: 11.1, color: '#1e3a8a' }, { label: 'Unknown', value: 9.6, color: '#cbd5e1' }]} size={180} />
-                    </div>
-                </Card>
-                <Card>
-                    <SectionHead title="Traffic Sources" action={() => {}} actionLabel="Performance" />
-                    <div style={{ display: 'flex', gap: '24px', marginBottom: '32px' }}>
-                        <div style={{ flex: 1, padding: '24px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                            <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 8px', fontWeight: 600 }}>Store Visits</p>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '32px', fontWeight: 800, margin: 0, color: '#0f172a' }}>8,950</p>
-                            <span style={{ fontSize: '13px', color: '#059669', background: '#ecfdf5', padding: '4px 8px', borderRadius: '12px', fontWeight: 700, display: 'inline-block', marginTop: '8px' }}>+22% this week</span>
-                        </div>
-                        <div style={{ flex: 1, padding: '24px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                            <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 8px', fontWeight: 600 }}>Unique Visitors</p>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '32px', fontWeight: 800, margin: 0, color: '#0f172a' }}>1,520</p>
-                            <span style={{ fontSize: '13px', color: '#dc2626', background: '#fef2f2', padding: '4px 8px', borderRadius: '12px', fontWeight: 700, display: 'inline-block', marginTop: '8px' }}>-24% this week</span>
-                        </div>
-                    </div>
-                    <LineChart data={revenueData} color="#2563eb" height={160} labels={MONTHS} />
-                </Card>
-            </div>
-
             {/* ── Row 4: Bestsellers + Forecast ── */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
                 <Card noPad style={{ border: '2px solid #2563eb', overflow: 'hidden' }}>
                     <div style={{ padding: '28px 28px 0', background: '#eff6ff', borderBottom: '1px solid #bfdbfe' }}>
-                        <SectionHead title="Bestselling Products" action={() => {}} actionLabel="View Catalog" />
+                        <SectionHead title="Bestselling Products" action={() => { }} actionLabel="View Catalog" />
                     </div>
                     <div style={{ padding: '8px' }}>
                         <Table cols={['Product', 'Price', 'Units Sold', 'Net Profit']} rows={BESTSELLERS_ROWS} />
                     </div>
                 </Card>
                 <Card>
-                    <SectionHead title="Sales Forecast" action={() => {}} actionLabel="Prediction" />
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px', marginTop: '16px' }}>
-                        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '20px', borderRadius: '16px' }}>
-                            <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 8px', fontWeight: 600 }}>Revenue</p>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '24px', fontWeight: 800, margin: 0, color: '#059669' }}>+24.2%</p>
-                        </div>
-                        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '20px', borderRadius: '16px' }}>
-                            <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 8px', fontWeight: 600 }}>Net Profit</p>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '24px', fontWeight: 800, margin: 0, color: '#dc2626' }}>-2.5%</p>
-                        </div>
-                        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '20px', borderRadius: '16px' }}>
-                            <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 8px', fontWeight: 600 }}>Orders</p>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '24px', fontWeight: 800, margin: 0, color: '#059669' }}>+32.8%</p>
-                        </div>
-                        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '20px', borderRadius: '16px' }}>
-                            <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 8px', fontWeight: 600 }}>Visitors</p>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '24px', fontWeight: 800, margin: 0, color: '#059669' }}>+60.0%</p>
-                        </div>
+                    <SectionHead title="Store Analytics" action={() => { }} actionLabel="Advanced Report" />
+                    <BarChartMock />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px', borderTop: '1px solid #f1f5f9', paddingTop: '16px', color: '#64748b', fontSize: '13px', fontWeight: 500 }}>
+                        <span>20</span><span>22</span><span>24</span><span>26</span><span>28</span><span>30</span><span>02</span><span>04</span><span>06</span><span>08</span><span>10</span><span>12</span><span>14</span><span>16</span>
                     </div>
                 </Card>
             </div>
@@ -185,7 +118,7 @@ export default function DashboardHome() {
             {/* ── Latest Orders ── */}
             <Card noPad>
                 <div style={{ padding: '28px 28px 0' }}>
-                    <SectionHead title="Latest Orders" action={() => {}} actionLabel="All Orders" />
+                    <SectionHead title="Latest Orders" action={() => { }} actionLabel="All Orders" />
                 </div>
                 <div style={{ padding: '0 8px 8px' }}>
                     <Table cols={['Product Info', 'QTY', 'Date', 'Revenue', 'Net Profit', 'Status', 'Actions']} rows={ORDERS_ROWS} />

@@ -4,27 +4,33 @@ import { Card, PageHeader, Btn, Input, Select, Drawer, Badge } from '@/component
 
 export default function SettingsPage() {
     const [tab, setTab] = useState('Payouts');
-    const TABS = ['Profile', 'Store', 'Payouts', 'Billing', 'Security', 'Notifications'];
+    const TABS = ['Profile', 'Store', 'Payouts', 'Security'];
 
-    // Payment Form state
-    const [cardDrawer, setCardDrawer] = useState(false);
-    const [cardForm, setCardForm] = useState({ name: '', number: '', expiry: '', cvv: '' });
 
     // Payout Form state
     const [payoutDrawer, setPayoutDrawer] = useState(false);
-    const [payoutForm, setPayoutForm] = useState({ type: 'Bank Account (US)', bankName: '', accountNumber: '', routingNumber: '', accountName: '' });
+    const [payoutForm, setPayoutForm] = useState({ type: 'Bank Account (NG)', bankName: '', accountNumber: '', routingNumber: '', accountName: '' });
 
-    const handleAddCard = (e: React.FormEvent) => {
-        e.preventDefault();
-        // In a real app, this would submit the payload.
-        setCardDrawer(false);
-        setCardForm({ name: '', number: '', expiry: '', cvv: '' });
-    };
+    // Request Payout state
+    const [requestPayoutDrawer, setRequestPayoutDrawer] = useState(false);
+    const [requestForm, setRequestForm] = useState({ accountId: '', amount: '' });
+
+    const MOCK_ACCOUNTS = [
+        { id: 'acc_8821', type: 'USD Balance', amount: '$5,420.50' },
+        { id: 'acc_3392', type: 'NGN Balance', amount: '₦210,000.00' },
+        { id: 'acc_1102', type: 'EUR Balance', amount: '€1,200.00' }
+    ];
+
 
     const handleAddPayout = (e: React.FormEvent) => {
         e.preventDefault();
         setPayoutDrawer(false);
         setPayoutForm({ type: 'Bank Account (US)', bankName: '', accountNumber: '', routingNumber: '', accountName: '' });
+    };
+    const handleRequestPayout = (e: React.FormEvent) => {
+        e.preventDefault();
+        setRequestPayoutDrawer(false);
+        setRequestForm({ accountId: '', amount: '' });
     };
 
     return (
@@ -102,15 +108,8 @@ export default function SettingsPage() {
                                 <Input label="Confirm Password" type="password" value="" onChange={() => { }} placeholder="Repeat new password" />
                                 <Btn label="Update Password" />
                             </div>
-                            <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e8edf2' }}>
-                                <p style={{ fontWeight: 700, fontSize: '14px', marginBottom: '6px' }}>Two-Factor Authentication</p>
-                                <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '14px' }}>Add extra security to your seller account.</p>
-                                <Btn label="Enable 2FA" variant="success" />
-                            </div>
+
                         </Card>
-                    )}
-                    {tab === 'Notifications' && (
-                        <Card><p style={{ fontSize: '14px', color: '#94a3b8' }}>{tab} settings — coming soon.</p></Card>
                     )}
                     {tab === 'Payouts' && (
                         <Card>
@@ -119,7 +118,10 @@ export default function SettingsPage() {
                                     <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '15px', color: '#0f172a', margin: 0 }}>Payout Methods</h3>
                                     <p style={{ fontSize: '13px', color: '#64748b', margin: '4px 0 0' }}>Where we'll send your marketplace earnings.</p>
                                 </div>
-                                <Btn label="Add Payout Method" onClick={() => setPayoutDrawer(true)} small />
+                                <div style={{ display: 'flex', gap: '12px' }}>
+                                    <Btn label="Request for Payout" onClick={() => setRequestPayoutDrawer(true)} variant="secondary" small />
+                                    <Btn label="Add Payout Method" onClick={() => setPayoutDrawer(true)} small />
+                                </div>
                             </div>
 
                             <div style={{ padding: '20px', border: '1.5px solid #e2e8f0', borderRadius: '12px', background: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
@@ -157,103 +159,8 @@ export default function SettingsPage() {
                             </div>
                         </Card>
                     )}
-                    {tab === 'Billing' && (
-                        <Card>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '16px' }}>
-                                <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '15px' }}>Payment Methods</h3>
-                                <Btn label="Add New Card" onClick={() => setCardDrawer(true)} small />
-                            </div>
-                            <div className="responsive-grid" style={{ gap: '20px' }}>
-                                {/* Mock Card 1 */}
-                                <div style={{ background: 'linear-gradient(135deg, #1e293b, #0f172a)', borderRadius: '16px', padding: '24px', color: '#fff', position: 'relative', overflow: 'hidden' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                                        <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '16px' }}>Mastercard</span>
-                                        <div style={{ display: 'flex', position: 'relative', zIndex: 10 }}>
-                                            <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#eb001b', opacity: 0.8, zIndex: 2 }}></div>
-                                            <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#f79e1b', opacity: 0.8, marginLeft: '-12px', zIndex: 1 }}></div>
-                                        </div>
-                                    </div>
-                                    <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: '18px', letterSpacing: '4px', marginBottom: '8px' }}>**** **** **** 4242</div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#94a3b8' }}>
-                                        <span>James Okafor</span>
-                                        <span>12/28</span>
-                                    </div>
-                                    <div style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '8px', fontSize: '11px', color: '#34d399' }}>Primary</div>
-                                </div>
-                                {/* Mock Card 2 */}
-                                <div style={{ background: 'linear-gradient(135deg, var(--dash-primary), var(--dash-primary-dark))', borderRadius: '16px', padding: '24px', color: '#fff', position: 'relative', overflow: 'hidden' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                                        <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '16px', fontStyle: 'italic' }}>VISA</span>
-                                    </div>
-                                    <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: '18px', letterSpacing: '4px', marginBottom: '8px' }}>**** **** **** 5591</div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--dash-primary-light)' }}>
-                                        <span>James Okafor</span>
-                                        <span>08/25</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '15px', marginTop: '32px', marginBottom: '16px' }}>Billing History</h3>
-                            <div style={{ overflowX: 'auto' }}>
-                                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '400px' }}>
-                                    <tbody>
-                                        <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                            <td style={{ padding: '12px 16px 12px 0', color: '#0f172a', fontWeight: 600 }}>Pro Seller Plan - Monthly</td>
-                                            <td style={{ padding: '12px 16px', color: '#64748b' }}>Apr 1, 2026</td>
-                                            <td style={{ padding: '12px 16px', color: '#0f172a', fontWeight: 700 }}>$29.00</td>
-                                            <td style={{ padding: '12px 0', textAlign: 'right' }}><a href="#" style={{ color: 'var(--dash-primary)', textDecoration: 'none', fontWeight: 600 }}>Download</a></td>
-                                        </tr>
-                                        <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                            <td style={{ padding: '12px 16px 12px 0', color: '#0f172a', fontWeight: 600 }}>Pro Seller Plan - Monthly</td>
-                                            <td style={{ padding: '12px 16px', color: '#64748b' }}>Mar 1, 2026</td>
-                                            <td style={{ padding: '12px 16px', color: '#0f172a', fontWeight: 700 }}>$29.00</td>
-                                            <td style={{ padding: '12px 0', textAlign: 'right' }}><a href="#" style={{ color: 'var(--dash-primary)', textDecoration: 'none', fontWeight: 600 }}>Download</a></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </Card>
-                    )}
                 </div>
             </div>
-
-            {/* Add Payment Method Drawer */}
-            <Drawer open={cardDrawer} onClose={() => setCardDrawer(false)} title="Add Payment Method" maxWidth="480px">
-                <form onSubmit={handleAddCard} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    <div style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.5 }}>
-                        Securely add a new credit or debit card for billing defaults and subscription renewals.
-                    </div>
-
-                    <Card style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <div style={{ position: 'relative' }}>
-                            <div style={{ position: 'absolute', right: '16px', top: '42px', display: 'flex', gap: '6px' }}>
-                                <div style={{ width: '32px', height: '20px', borderRadius: '4px', background: '#f1f5f9', border: '1px solid #cbd5e1' }}></div>
-                                <div style={{ width: '32px', height: '20px', borderRadius: '4px', background: '#f1f5f9', border: '1px solid #cbd5e1' }}></div>
-                            </div>
-                            <Input label="Card Number" type="text" placeholder="0000 0000 0000 0000" required value={cardForm.number} onChange={v => setCardForm({ ...cardForm, number: v })} />
-                        </div>
-                        <Input label="Name on Card" type="text" placeholder="e.g. James Okafor" required value={cardForm.name} onChange={v => setCardForm({ ...cardForm, name: v })} />
-                        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                            <div style={{ flex: '1 1 150px' }}>
-                                <Input label="Expiry Date" type="text" placeholder="MM/YY" required value={cardForm.expiry} onChange={v => setCardForm({ ...cardForm, expiry: v })} />
-                            </div>
-                            <div style={{ flex: '1 1 100px' }}>
-                                <Input label="CVV" type="password" placeholder="123" required value={cardForm.cvv} onChange={v => setCardForm({ ...cardForm, cvv: v })} />
-                            </div>
-                        </div>
-                    </Card>
-
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '0 4px' }}>
-                        <input type="checkbox" defaultChecked style={{ accentColor: 'var(--dash-primary)', width: '16px', height: '16px' }} />
-                        <span style={{ fontSize: '13px', color: '#475569', fontWeight: 500 }}>Set as default payment method</span>
-                    </label>
-
-                    <div style={{ padding: '24px 0 8px', display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', background: '#fff', position: 'sticky', bottom: '-32px', zIndex: 10 }}>
-                        <Btn label="Cancel" variant="ghost" onClick={() => setCardDrawer(false)} />
-                        <Btn label="Save Card" submit />
-                    </div>
-                </form>
-            </Drawer>
             {/* Add Payout Method Drawer */}
             <Drawer open={payoutDrawer} onClose={() => setPayoutDrawer(false)} title="Add Payout Method" maxWidth="480px">
                 <form onSubmit={handleAddPayout} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -283,6 +190,40 @@ export default function SettingsPage() {
                     <div style={{ padding: '24px 0 8px', display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', background: '#fff', position: 'sticky', bottom: '-32px', zIndex: 10 }}>
                         <Btn label="Cancel" variant="ghost" onClick={() => setPayoutDrawer(false)} />
                         <Btn label="Save Bank Details" submit />
+                    </div>
+                </form>
+            </Drawer>
+
+            {/* Request Payout Drawer */}
+            <Drawer open={requestPayoutDrawer} onClose={() => setRequestPayoutDrawer(false)} title="Request for Payout" maxWidth="480px">
+                <form onSubmit={handleRequestPayout} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    <div style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.5 }}>
+                        Select common account to withdraw funds from. Processing usually takes 1-3 business days.
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <label style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Your Accounts & Balances</label>
+                        {MOCK_ACCOUNTS.map(acc => (
+                            <div key={acc.id} style={{ padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: requestForm.accountId === acc.id ? 'var(--dash-primary-light)' : '#f8fafc', borderColor: requestForm.accountId === acc.id ? 'var(--dash-primary)' : '#e2e8f0', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all 0.2s' }} onClick={() => setRequestForm({ ...requestForm, accountId: acc.id })}>
+                                <div>
+                                    <p style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{acc.type}</p>
+                                    <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>ID: {acc.id}</p>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                    <p style={{ fontSize: '15px', fontWeight: 800, color: 'var(--dash-primary)', margin: 0 }}>{acc.amount}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <Card style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        <Input label="Account ID" placeholder="Choose an account above or enter ID" required value={requestForm.accountId} onChange={v => setRequestForm({ ...requestForm, accountId: v })} />
+                        <Input label="Amount to Withdraw" type="text" placeholder="e.g. 500.00" required value={requestForm.amount} onChange={v => setRequestForm({ ...requestForm, amount: v })} />
+                    </Card>
+
+                    <div style={{ padding: '24px 0 8px', display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', background: '#fff', position: 'sticky', bottom: '-32px', zIndex: 10 }}>
+                        <Btn label="Cancel" variant="ghost" onClick={() => setRequestPayoutDrawer(false)} />
+                        <Btn label="Process Payout" submit />
                     </div>
                 </form>
             </Drawer>
