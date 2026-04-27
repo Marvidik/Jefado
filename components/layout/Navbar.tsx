@@ -79,13 +79,6 @@ export default function Navbar() {
                             onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'var(--primary-light)'; }}
                             onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
                         >👤</Link>
-                        <Link href="/account?tab=wishlist" title="Wishlist" style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', fontSize: '18px', color: 'var(--text-secondary)', transition: 'all 0.2s' }}
-                            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'var(--primary-light)'; }}
-                            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
-                        >
-                            ♡
-                            <span style={{ position: 'absolute', top: '1px', right: '1px', background: 'var(--secondary)', color: '#fff', fontSize: '8px', fontWeight: 700, width: '14px', height: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>3</span>
-                        </Link>
                         <Link href="/cart" title="Cart" style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', fontSize: '18px', color: 'var(--text-secondary)', transition: 'all 0.2s' }}
                             onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'var(--primary-light)'; }}
                             onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
@@ -130,7 +123,6 @@ export default function Navbar() {
                                 { icon: '📞', label: 'Contact', href: '/contact' },
                                 { icon: '👤', label: 'Account', href: '/account' },
                                 { icon: '🛒', label: 'Cart', href: '/cart' },
-                                { icon: '♡', label: 'Wishlist', href: '/account?tab=wishlist' },
                                 { icon: '🔑', label: 'Sign In', href: '/auth' },
                             ].map(item => (
                                 <Link key={item.label} href={item.href} onClick={() => setSidebarOpen(false)}

@@ -88,7 +88,7 @@ export default function ServiceDetailPage() {
                         <div style={{ background: 'var(--surface)', border: '2px solid var(--primary)', borderRadius: 'var(--radius-2xl)', padding: '32px', boxShadow: 'var(--shadow-xl)' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                                 <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600 }}>Starting Price</span>
-                                <span style={{ fontFamily: 'var(--font-display)', fontSize: '36px', fontWeight: 800, color: 'var(--primary)' }}>${service.price}</span>
+                                <span style={{ fontFamily: 'var(--font-display)', fontSize: '36px', fontWeight: 800, color: 'var(--primary)' }}>₦{service.price}</span>
                             </div>
 
                             <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '0 0 24px' }} />

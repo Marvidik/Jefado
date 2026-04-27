@@ -145,7 +145,7 @@ function OrderSidebar({ items, coupon, setCoupon }: { items: OrderItem[]; coupon
                                 {item.date ? `📅 ${item.date} @ ${item.time}` : `${item.color || ""} · ${item.seller}`}
                             </p>
                         </div>
-                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', color: 'var(--primary)', flexShrink: 0 }}>${(item.price * item.qty).toFixed(2)}</span>
+                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', color: 'var(--primary)', flexShrink: 0 }}>₦{(item.price * item.qty).toFixed(2)}</span>
                     </div>
                 ))}
             </div>
@@ -165,9 +165,9 @@ function OrderSidebar({ items, coupon, setCoupon }: { items: OrderItem[]; coupon
 
                 {/* Totals */}
                 {[
-                    { label: 'Subtotal', value: `$${subtotal.toFixed(2)}` },
+                    { label: 'Subtotal', value: `₦${subtotal.toFixed(2)}` },
                     { label: 'Shipping/Service Fee', value: 'FREE', green: true },
-                    ...(applied ? [{ label: `Coupon (${applied})`, value: `-$${couponSave.toFixed(2)}`, green: true }] : []),
+                    ...(applied ? [{ label: `Coupon (${applied})`, value: `-₦${couponSave.toFixed(2)}`, green: true }] : []),
                 ].map(row => (
                     <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '8px' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>{row.label}</span>
@@ -178,7 +178,7 @@ function OrderSidebar({ items, coupon, setCoupon }: { items: OrderItem[]; coupon
 
             <div style={{ borderTop: '2px solid var(--border)', paddingTop: '14px', display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px' }}>Total</span>
-                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: 'var(--primary)' }}>${total.toFixed(2)}</span>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: 'var(--primary)' }}>₦{total.toFixed(2)}</span>
             </div>
 
             {/* Trust */}
@@ -406,12 +406,12 @@ function ReviewStep({ items, form, onBack, onPlace }: { items: OrderItem[]; form
                                 </p>
                             </div>
                         </div>
-                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', color: 'var(--primary)' }}>${(item.price * item.qty).toFixed(2)}</span>
+                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', color: 'var(--primary)' }}>₦{(item.price * item.qty).toFixed(2)}</span>
                     </div>
                 ))}
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '15px' }}>
                     <span>Total</span>
-                    <span style={{ color: 'var(--primary)' }}>${subtotal.toFixed(2)}</span>
+                    <span style={{ color: 'var(--primary)' }}>₦{subtotal.toFixed(2)}</span>
                 </div>
             </div>
 
@@ -446,7 +446,7 @@ function OrderSuccess({ form, items }: { form: FormData; items: OrderItem[] }) {
                 <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '13px' }}>A confirmation has been sent to <strong>{form.email}</strong></p>
 
                 <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '16px', marginBottom: '24px', textAlign: 'left' }}>
-                    {[['Order Number', orderId], ['Total', `$${subtotal.toFixed(2)}`], [isService ? 'Service Location' : 'Shipping To', `${form.city}, ${form.country}`], [isService ? 'Appointment' : 'Estimated Delivery', isService ? `${items[0].date} @ ${items[0].time}` : '3–5 business days']].map(([k, v]) => (
+                    {[['Order Number', orderId], ['Total', `₦${subtotal.toFixed(2)}`], [isService ? 'Service Location' : 'Shipping To', `${form.city}, ${form.country}`], [isService ? 'Appointment' : 'Estimated Delivery', isService ? `${items[0].date} @ ${items[0].time}` : '3–5 business days']].map(([k, v]) => (
                         <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
                             <span style={{ color: 'var(--text-muted)' }}>{k}</span>
                             <span style={{ fontWeight: 600, color: k === 'Order Number' ? 'var(--primary)' : 'var(--text-primary)' }}>{v}</span>

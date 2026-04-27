@@ -38,7 +38,7 @@ export default function ServiceCard({ id, name, price, rating, reviewsCount, pro
                     <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div>
                             <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block' }}>Starting from</span>
-                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '18px', color: 'var(--primary)' }}>${price}</span>
+                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '18px', color: 'var(--primary)' }}>₦{price}</span>
                         </div>
                         <span style={{ padding: '6px 14px', background: 'var(--primary-light)', color: 'var(--primary)', borderRadius: 'var(--radius)', fontSize: '12px', fontWeight: 700 }}>Book Now →</span>
                     </div>

@@ -98,7 +98,7 @@ export default function ProductGrid() {
                             marginBottom: '14px',
                         }}>
                             <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>Only for:</p>
-                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: '#fff' }}>$299 USD</p>
+                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: '#fff' }}>₦299,000</p>
                         </div>
                         <button style={{
                             width: '100%', padding: '10px',

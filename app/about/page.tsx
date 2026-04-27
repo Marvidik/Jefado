@@ -4,7 +4,7 @@ export default function AboutPage() {
     return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh', fontFamily: 'var(--font-body)', overflow: 'hidden' }}>
             {/* Hero Section */}
-            <div style={{ 
+            <div className="about-hero" style={{ 
                 background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
                 padding: '120px 0 160px', 
                 textAlign: 'center',
@@ -46,14 +46,14 @@ export default function AboutPage() {
             </div>
 
             {/* Impact Grid */}
-            <div className="container" style={{ marginTop: '-80px', position: 'relative', zIndex: 10 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', marginBottom: '100px' }}>
+            <div className="container impact-grid" style={{ marginTop: '-80px', position: 'relative', zIndex: 10 }}>
+                <div className="impact-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', marginBottom: '100px' }}>
                     {[
                         { title: 'Global Velocity', val: '0.04ms', desc: 'Zero-latency transaction layer for instantaneous trade execution.' },
                         { title: 'Secure Prototcol', val: 'AES-512', desc: 'Military-grade encryption securing every identity and asset.' },
                         { title: 'Elite Network', val: '10k+', desc: 'A curated ecosystem of premium verified merchants and creators.' }
                     ].map((s, i) => (
-                        <div key={i} style={{
+                        <div key={i} className="impact-card" style={{
                             padding: '48px 40px',
                             background: 'var(--surface)',
                             backdropFilter: 'blur(20px)',
@@ -66,7 +66,7 @@ export default function AboutPage() {
                         onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                         >
                             <p style={{ color: 'var(--primary)', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '16px' }}>{s.title}</p>
-                            <p style={{ fontSize: '48px', fontWeight: 900, marginBottom: '20px', color: 'var(--text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-1px' }}>{s.val}</p>
+                            <p className="impact-val" style={{ fontSize: '48px', fontWeight: 900, marginBottom: '20px', color: 'var(--text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-1px' }}>{s.val}</p>
                             <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '15px' }}>{s.desc}</p>
                         </div>
                     ))}
@@ -74,10 +74,10 @@ export default function AboutPage() {
             </div>
 
             {/* Mission Section */}
-            <div style={{ background: 'var(--surface)', padding: '120px 0', borderTop: '1px solid var(--border)' }}>
-                <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '80px', alignItems: 'center' }}>
-                    <div>
-                        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '42px', fontWeight: 800, marginBottom: '32px', letterSpacing: '-1.5px', lineHeight: 1.1 }}>
+            <div className="mission-section" style={{ background: 'var(--surface)', padding: '120px 0', borderTop: '1px solid var(--border)' }}>
+                <div className="container" style={{ maxWidth: '800px', margin: '0 auto' }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <h2 className="mission-title" style={{ fontFamily: 'var(--font-display)', fontSize: '42px', fontWeight: 800, marginBottom: '32px', letterSpacing: '-1.5px', lineHeight: 1.1 }}>
                             Our Mission is to <span style={{ color: 'var(--primary)' }}>Empower</span> Every Merchant.
                         </h2>
                         <div style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-secondary)' }}>
@@ -88,7 +88,7 @@ export default function AboutPage() {
                                 By 2026, our goal is to become the primary layer for the global multi-vendor ecosystem, ensuring every transaction is backed by the most robust technology stack ever built.
                             </p>
                         </div>
-                        <div style={{ marginTop: '48px', display: 'flex', gap: '40px' }}>
+                        <div style={{ marginTop: '48px', display: 'flex', gap: '40px', justifyContent: 'center' }}>
                             <div>
                                 <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>32+</p>
                                 <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Global Nodes</p>
@@ -100,19 +100,21 @@ export default function AboutPage() {
                             </div>
                         </div>
                     </div>
-                    <div style={{ position: 'relative', borderRadius: '40px', overflow: 'hidden', aspectRatio: '1/1', background: 'linear-gradient(45deg, #1e293b, #0f172a)', border: '1px solid var(--border)' }}>
-                        <div style={{ position: 'absolute', inset: '40px', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '50%', animation: 'spin 30s linear infinite' }}></div>
-                        <div style={{ position: 'absolute', inset: '80px', border: '1px solid var(--primary)', borderRadius: '50%', opacity: 0.2, animation: 'spin 20s linear reverse infinite' }}></div>
-                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <span style={{ fontSize: '80px' }}>🌍</span>
-                        </div>
-                    </div>
                 </div>
             </div>
 
             <style jsx>{`
-                @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
                 .animate-in { animation: fadeInUp 0.6s ease both; }
+                
+                @media (max-width: 768px) {
+                    .about-hero { padding: 60px 0 60px !important; }
+                    .impact-grid { margin-top: -30px !important; padding: 0 16px !important; }
+                    .impact-container { grid-template-columns: 1fr !important; gap: 12px !important; }
+                    .impact-card { padding: 20px !important; borderRadius: 20px !important; }
+                    .impact-val { font-size: 24px !important; margin-bottom: 8px !important; }
+                    .mission-section { padding: 40px 0 !important; }
+                    .mission-title { font-size: 24px !important; }
+                }
             `}</style>
         </div>
     );

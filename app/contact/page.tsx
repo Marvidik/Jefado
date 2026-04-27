@@ -17,7 +17,7 @@ export default function ContactPage() {
     return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh', fontFamily: 'var(--font-body)', overflow: 'hidden' }}>
             {/* Hero & Contact Section */}
-            <div style={{ 
+            <div className="contact-hero" style={{ 
                 background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
                 padding: '100px 0 180px', 
                 position: 'relative'
@@ -26,14 +26,14 @@ export default function ContactPage() {
                 <div style={{ position: 'absolute', bottom: '-100px', left: '-100px', width: '500px', height: '500px', background: 'var(--secondary)', filter: 'blur(200px)', opacity: 0.1 }}></div>
 
                 <div className="container animate-in">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '80px', alignItems: 'center' }}>
+                    <div className="contact-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '80px', alignItems: 'center' }}>
                         
                         {/* Left Info */}
                         <div>
                             <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '100px', color: 'var(--primary)', fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '32px' }}>
                                 Comm Link Alpha
                             </div>
-                            <h1 style={{ 
+                            <h1 className="contact-title" style={{ 
                                 fontFamily: 'var(--font-display)', 
                                 fontWeight: 900, 
                                 fontSize: 'clamp(40px, 6vw, 68px)', 
@@ -44,7 +44,7 @@ export default function ContactPage() {
                             }}>
                                 Connect with the <span style={{ color: 'var(--primary)' }}>Hub.</span>
                             </h1>
-                            <p style={{ 
+                            <p className="contact-desc" style={{ 
                                 fontSize: '18px', 
                                 color: 'rgba(255,255,255,0.6)', 
                                 lineHeight: 1.7, 
@@ -53,14 +53,14 @@ export default function ContactPage() {
                                 Need technical assistance or merchant support? Our protocol is active 24/7 to ensure your global trade never stops.
                             </p>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                            <div className="contact-info-list" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                                 {[
                                     { label: 'Merchant Support', val: 'support@jefado.io', icon: '📩' },
                                     { label: 'Voice Relay', val: '+1 (888) 2026-HUB', icon: '📞' },
                                     { label: 'Headquarters', val: 'Silicon Valley Node 01, CA', icon: '📍' }
                                 ].map((item, i) => (
                                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                                        <div style={{ width: '64px', height: '64px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', backdropFilter: 'blur(10px)' }}>
+                                        <div className="contact-info-icon" style={{ width: '64px', height: '64px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', backdropFilter: 'blur(10px)' }}>
                                             {item.icon}
                                         </div>
                                         <div>
@@ -73,7 +73,7 @@ export default function ContactPage() {
                         </div>
 
                         {/* Right: Form Card */}
-                        <div style={{ 
+                        <div className="contact-form-card" style={{ 
                             background: 'rgba(255, 255, 255, 0.03)', 
                             backdropFilter: 'blur(40px)', 
                             border: '1px solid rgba(255,255,255,0.1)', 
@@ -92,7 +92,7 @@ export default function ContactPage() {
                                     >Send New Message</button>
                                 </div>
                             ) : (
-                                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                                <form className="contact-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                             <label style={{ fontSize: '11px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1px' }}>Identify</label>
@@ -164,6 +164,18 @@ export default function ContactPage() {
 
             <style jsx>{`
                 .animate-in { animation: fadeInUp 0.5s ease both; }
+                
+                @media (max-width: 768px) {
+                    .contact-hero { padding: 60px 0 100px !important; }
+                    .contact-grid { gap: 40px !important; }
+                    .contact-form-card { padding: 32px 24px !important; }
+                    .contact-form { gap: 16px !important; }
+                    .contact-form > div { gap: 4px !important; }
+                    .contact-title { font-size: 36px !important; margin-bottom: 16px !important; }
+                    .contact-desc { margin-bottom: 32px !important; font-size: 16px !important; }
+                    .contact-info-list { gap: 20px !important; }
+                    .contact-info-icon { width: 52px !important; height: 52px !important; fontSize: 22px !important; }
+                }
             `}</style>
         </div>
     );

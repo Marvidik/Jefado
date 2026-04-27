@@ -5,15 +5,18 @@ export default function Footer() {
             <div className="container" style={{ padding: '0 var(--gutter)' }}>
                 <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1.2fr 1fr 1fr 1.2fr', gap: '32px', paddingBottom: '40px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
 
-                    {/* Brand */}
+                    {/* Brand & Newsletter */}
                     <div>
                         <a href="/" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: '#fff', letterSpacing: '-0.5px', display: 'block', marginBottom: '14px' }}>
                             Jefado<span style={{ color: 'var(--accent)' }}>.</span>
                         </a>
-                        <p style={{ fontSize: '13px', lineHeight: 1.7, marginBottom: '16px', color: 'rgba(255,255,255,0.5)' }}>Your one-stop multi-vendor marketplace. Shop from thousands of verified sellers.</p>
-                        <div style={{ display: 'flex', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-                            <input placeholder="Enter your email" style={{ flex: 1, padding: '9px 12px', background: 'transparent', border: 'none', outline: 'none', color: '#fff', fontSize: '12px', fontFamily: 'var(--font-body)' }} />
-                            <button style={{ padding: '9px 14px', background: 'var(--accent)', color: '#fff', fontSize: '12px', fontWeight: 700, fontFamily: 'var(--font-body)', whiteSpace: 'nowrap' }}>Subscribe</button>
+                        <p style={{ fontSize: '13px', lineHeight: 1.7, marginBottom: '24px', color: 'rgba(255,255,255,0.5)' }}>Your one-stop multi-vendor marketplace. Shop from thousands of verified sellers.</p>
+                        <div style={{ display: 'flex', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+                            <input placeholder="Enter your email" style={{ flex: 1, padding: '16px 20px', background: 'rgba(255,255,255,0.05)', border: 'none', outline: 'none', color: '#fff', fontSize: '14px', fontFamily: 'var(--font-body)' }} />
+                            <button style={{ padding: '16px 24px', background: 'var(--accent)', color: '#fff', fontSize: '14px', fontWeight: 800, fontFamily: 'var(--font-body)', whiteSpace: 'nowrap', transition: 'all 0.2s' }}
+                                onMouseEnter={e => e.currentTarget.style.background = 'var(--primary)'}
+                                onMouseLeave={e => e.currentTarget.style.background = 'var(--accent)'}
+                            >Subscribe</button>
                         </div>
                     </div>
 
@@ -35,7 +38,6 @@ export default function Footer() {
                                 { label: 'My Account', href: '/account' },
                                 { label: 'Login / Register', href: '/auth' },
                                 { label: 'Cart', href: '/cart' },
-                                { label: 'Wishlist', href: '/account?tab=wishlist' },
                                 { label: 'Orders', href: '/account?tab=orders' },
                             ].map(item => (
                                 <a key={item.label} href={item.href} style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', transition: 'color 0.2s' }}
@@ -49,45 +51,52 @@ export default function Footer() {
                     {/* Quick Links */}
                     <div>
                         <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff', marginBottom: '16px' }}>Quick Links</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             {[
                                 { label: 'Privacy Policy', href: '#' },
                                 { label: 'Terms Of Use', href: '#' },
                                 { label: 'FAQ', href: '#' },
-                                { label: 'Contact', href: '#' },
-                                { label: 'Become a Seller', href: '/auth?type=seller' },
-                                { label: 'About Us', href: '#' },
+                                { label: 'Contact', href: '/contact' },
+                                { label: 'About Us', href: '/about' },
                             ].map(item => (
                                 <a key={item.label} href={item.href} style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', transition: 'color 0.2s' }}
                                     onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                                     onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.65)')}
                                 >{item.label}</a>
                             ))}
+                            <a href="/auth?type=seller" style={{ 
+                                marginTop: '8px',
+                                display: 'inline-block',
+                                textAlign: 'center',
+                                padding: '10px 20px',
+                                background: 'var(--primary)',
+                                border: '1.5px solid var(--primary)',
+                                color: '#fff',
+                                borderRadius: '100px',
+                                fontSize: '12px',
+                                fontWeight: 800,
+                                textTransform: 'uppercase',
+                                letterSpacing: '1px',
+                                transition: 'all 0.3s'
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'var(--primary-dark)'; e.currentTarget.style.borderColor = 'var(--primary-dark)'; e.currentTarget.style.boxShadow = '0 5px 15px rgba(238,18,23,0.3)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'var(--primary)'; e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.boxShadow = 'none'; }}
+                            >Become a Seller</a>
                         </div>
                     </div>
 
-                    {/* Download */}
+                    {/* Socials Column */}
                     <div>
-                        <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff', marginBottom: '6px' }}>Download App</h4>
-                        <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginBottom: '14px' }}>Save $3 with App — New User Only</p>
-                        <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-                            <div style={{ width: '68px', height: '68px', background: 'rgba(255,255,255,0.08)', borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>📱</div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                {['App Store', 'Google Play'].map(store => (
-                                    <a key={store} href="#" style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 'var(--radius)', padding: '5px 10px', fontSize: '11px', fontWeight: 600, color: '#fff' }}>
-                                        {store === 'App Store' ? '🍎' : '🤖'} {store}
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
-                        <div style={{ display: 'flex', gap: '10px' }}>
+                        <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff', marginBottom: '16px' }}>Connect</h4>
+                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                             {['𝕏', 'f', 'in', '📸'].map((s, i) => (
-                                <a key={i} href="#" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', color: '#fff', transition: 'all 0.2s' }}
-                                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'var(--accent)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'var(--accent)'; }}
-                                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.2)'; }}
+                                <a key={i} href="#" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', color: '#fff', background: 'rgba(255,255,255,0.05)', transition: 'all 0.2s' }}
+                                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'var(--accent)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'var(--accent)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-3px)'; }}
+                                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.05)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.15)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)'; }}
                                 >{s}</a>
                             ))}
                         </div>
+                        <p style={{ marginTop: '24px', fontSize: '11px', color: 'rgba(255,255,255,0.3)', lineHeight: 1.6 }}>Architecting the future of global commerce, today.</p>
                     </div>
                 </div>
                 <div style={{ padding: '18px 0', textAlign: 'center', fontSize: '12px', color: 'rgba(255,255,255,0.3)' }}>

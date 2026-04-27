@@ -49,10 +49,10 @@ function OrderSummary({ items, shipping, onCheckout }: {
             {/* Line items */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
                 {[
-                    { label: `Subtotal (${items.reduce((s, i) => s + i.qty, 0)} items)`, value: `$${subtotal.toFixed(2)}`, color: 'var(--text-primary)' },
-                    { label: 'You save', value: `-$${savings.toFixed(2)}`, color: 'var(--success)' },
-                    { label: `Shipping (${shipping.label})`, value: shipping.price === 0 ? 'FREE' : `$${shipping.price.toFixed(2)}`, color: shipping.price === 0 ? 'var(--success)' : 'var(--text-primary)' },
-                    ...(appliedCoupon ? [{ label: `Coupon (${appliedCoupon})`, value: `-$${couponSave.toFixed(2)}`, color: 'var(--success)' }] : []),
+                    { label: `Subtotal (${items.reduce((s, i) => s + i.qty, 0)} items)`, value: `₦${subtotal.toFixed(2)}`, color: 'var(--text-primary)' },
+                    { label: 'You save', value: `-₦${savings.toFixed(2)}`, color: 'var(--success)' },
+                    { label: `Shipping (${shipping.label})`, value: shipping.price === 0 ? 'FREE' : `₦${shipping.price.toFixed(2)}`, color: shipping.price === 0 ? 'var(--success)' : 'var(--text-primary)' },
+                    ...(appliedCoupon ? [{ label: `Coupon (${appliedCoupon})`, value: `-₦${couponSave.toFixed(2)}`, color: 'var(--success)' }] : []),
                 ].map(row => (
                     <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>{row.label}</span>
@@ -65,7 +65,7 @@ function OrderSummary({ items, shipping, onCheckout }: {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                 <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px' }}>Total</span>
-                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: 'var(--primary)' }}>${total.toFixed(2)}</span>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: 'var(--primary)' }}>₦{total.toFixed(2)}</span>
             </div>
 
             {/* Coupon */}
@@ -129,9 +129,9 @@ function CartItemRow({ item, onQtyChange, onRemove, onSaveForLater }: {
 
                 {/* Price */}
                 <div className="cart-item-price" style={{ flexShrink: 0, textAlign: 'right', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', gap: '4px' }}>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '18px', color: 'var(--primary)' }}>${(item.price * item.qty).toFixed(2)}</div>
-                    {item.qty > 1 && <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>${item.price} each</div>}
-                    <div style={{ fontSize: '11px', color: 'var(--success)', fontWeight: 600 }}>Save ${((item.originalPrice - item.price) * item.qty).toFixed(2)}</div>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '18px', color: 'var(--primary)' }}>₦{(item.price * item.qty).toFixed(2)}</div>
+                    {item.qty > 1 && <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>₦{item.price} each</div>}
+                    <div style={{ fontSize: '11px', color: 'var(--success)', fontWeight: 600 }}>Save ₦{((item.originalPrice - item.price) * item.qty).toFixed(2)}</div>
                 </div>
             </div>
         </div>
@@ -207,7 +207,7 @@ export default function CartPage() {
                                             <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{opt.desc}</p>
                                         </div>
                                         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', color: opt.price === 0 ? 'var(--success)' : 'var(--text-primary)', flexShrink: 0 }}>
-                                            {opt.price === 0 ? 'FREE' : `$${opt.price.toFixed(2)}`}
+                                            {opt.price === 0 ? 'FREE' : `₦${opt.price.toFixed(2)}`}
                                         </span>
                                     </label>
                                 ))}
@@ -224,7 +224,7 @@ export default function CartPage() {
                                             <div style={{ fontSize: '28px', width: '46px', height: '46px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', borderRadius: 'var(--radius)', flexShrink: 0 }}>{item.emoji}</div>
                                             <div style={{ flex: 1, minWidth: 0 }}>
                                                 <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</p>
-                                                <p style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 700, marginTop: '2px' }}>${item.price}</p>
+                                                <p style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 700, marginTop: '2px' }}>₦{item.price}</p>
                                             </div>
                                             <button onClick={() => moveToCart(item.id)} style={{ padding: '7px 14px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontSize: '12px', fontWeight: 700, fontFamily: 'var(--font-body)', flexShrink: 0 }}>Move to Cart</button>
                                         </div>

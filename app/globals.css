@@ -500,3 +500,32 @@ button {
     font-size: 18px !important;
   }
 }
+/* ── Premium UI ── */
+.premium-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-card:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  border-color: var(--primary);
+}
+
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.account-sidebar-btn {
+  transition: all 0.2s ease;
+}
+
+.account-sidebar-btn:hover {
+  background: var(--primary-light) !important;
+  color: var(--primary) !important;
+  transform: translateX(4px);
+}

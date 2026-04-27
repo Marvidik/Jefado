@@ -94,7 +94,7 @@ export default function ServicesPage() {
                 </div>
 
                 {/* Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+                <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
                     {filteredServices.length > 0 ? (
                         filteredServices.map(service => (
                             <ServiceCard key={service.id} {...service} />

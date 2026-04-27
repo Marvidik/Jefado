@@ -10,10 +10,10 @@ const CATEGORY_NAMES = [...new Set(ALL_PRODS.map(p => p.category))].sort();
 const BRANDS_LIST = BRANDS;
 const CATEGORIES_LIST = CATEGORY_NAMES;
 const PRICE_RANGES = [
-    { label: 'Under $100', min: 0, max: 100 },
-    { label: '$100 – $500', min: 100, max: 500 },
-    { label: '$500 – $1000', min: 500, max: 1000 },
-    { label: 'Over $1000', min: 1000, max: Infinity },
+    { label: 'Under ₦100', min: 0, max: 100 },
+    { label: '₦100 – ₦500', min: 100, max: 500 },
+    { label: '₦500 – ₦1000', min: 500, max: 1000 },
+    { label: 'Over ₦1000', min: 1000, max: Infinity },
 ];
 const SORT_OPTIONS = [
     { value: 'popular', label: 'Most Popular' },
@@ -57,8 +57,8 @@ function MiniProductCard({ p }: { p: Product }) {
                 <p style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '6px', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.name}</p>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: 'var(--primary)' }}>${p.price}</span>
-                        {p.originalPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${p.originalPrice}</span>}
+                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: 'var(--primary)' }}>₦{p.price}</span>
+                        {p.originalPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₦{p.originalPrice}</span>}
                     </div>
                     {p.stockQuantity !== undefined && p.inStock && (
                         <span style={{ fontSize: '10px', fontWeight: 700, color: p.stockQuantity < 10 ? 'var(--danger)' : 'var(--success)' }}>

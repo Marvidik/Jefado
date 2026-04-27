@@ -40,8 +40,8 @@ export default function ProductCard({ id = 1, name, price, originalPrice, discou
                     <p style={{ fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '7px', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{name}</p>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '9px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: 'var(--primary)' }}>${price}</span>
-                            {originalPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${originalPrice}</span>}
+                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: 'var(--primary)' }}>₦{price}</span>
+                            {originalPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₦{originalPrice}</span>}
                         </div>
                         {stockQuantity !== undefined && (
                             <span style={{ fontSize: '10px', fontWeight: 700, color: stockQuantity < 10 ? 'var(--danger)' : 'var(--success)' }}>

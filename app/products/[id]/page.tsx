@@ -98,12 +98,12 @@ export default function ProductDetailPage() {
 
                         {/* Price */}
                         <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '20px 24px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', color: 'var(--primary)', letterSpacing: '-1px' }}>${product.price}</span>
+                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', color: 'var(--primary)', letterSpacing: '-1px' }}>₦{product.price}</span>
                             {product.originalPrice && (
                                 <div>
-                                    <div style={{ fontSize: '16px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>${product.originalPrice}</div>
+                                    <div style={{ fontSize: '16px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₦{product.originalPrice}</div>
                                     <div style={{ background: 'var(--danger)', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '4px', display: 'inline-block', marginTop: '4px' }}>
-                                        Save ${product.originalPrice - product.price}
+                                        Save ₦{product.originalPrice - product.price}
                                     </div>
                                 </div>
                             )}
@@ -117,7 +117,7 @@ export default function ProductDetailPage() {
                                 <button onClick={() => setQty(q => Math.min(product.stockQuantity, q + 1))} style={{ padding: '12px 18px', fontSize: '18px', border: 'none', background: 'transparent', cursor: 'pointer' }}>+</button>
                             </div>
                             <button onClick={() => { setAdded(true); setTimeout(() => setAdded(false), 2500); }} style={{ flex: 1, padding: '14px 24px', background: added ? 'var(--success)' : 'var(--primary)', color: '#fff', borderRadius: 'var(--radius-lg)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '15px', transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(238, 18, 23, 0.2)' }}>
-                                {added ? '✓ Added to Cart!' : `Add to Cart — $${(product.price * qty).toLocaleString()}`}
+                                {added ? '✓ Added to Cart!' : `Add to Cart — ₦${(product.price * qty).toLocaleString()}`}
                             </button>
                             <button onClick={() => setWishlisted(!wishlisted)} style={{ width: '48px', height: '48px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', background: wishlisted ? '#fff5f5' : 'var(--surface)', cursor: 'pointer', transition: 'all 0.2s' }}>{wishlisted ? '❤️' : '🤍'}</button>
                         </div>
