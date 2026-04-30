@@ -1,6 +1,8 @@
 'use client';
 import { useState } from 'react';
-import { Review } from '@/lib/data';
+import { Review } from '@/services/types';
+import { useToast } from './Toast';
+import { createReview } from '@/services/publicService';
 
 function Stars({ rating, size = 16, interactive = false, onRating }: { rating: number; size?: number; interactive?: boolean; onRating?: (r: number) => void }) {
     return (
@@ -25,42 +27,59 @@ function Stars({ rating, size = 16, interactive = false, onRating }: { rating: n
     );
 }
 
-export default function ReviewsSection({ reviews = [], initialRating = 0 }: { reviews?: Review[]; initialRating?: number }) {
+export default function ReviewsSection({ reviews = [], initialRating = 0, productId, serviceId, ratingStats }: { reviews?: Review[]; initialRating?: number; productId?: number; serviceId?: number; ratingStats?: any }) {
+    const { success, error: toastError } = useToast();
     const [userRating, setUserRating] = useState(0);
     const [comment, setComment] = useState('');
     const [localReviews, setLocalReviews] = useState<Review[]>(reviews);
     const [submitting, setSubmitting] = useState(false);
 
-    const handleSubmitReview = (e: React.FormEvent) => {
+    const handleSubmitReview = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (userRating === 0) return alert('Please select a rating');
+        if (userRating === 0) return toastError('Please select a rating');
         setSubmitting(true);
         
-        // Simulate API call
-        setTimeout(() => {
-            const newReview: Review = {
-                id: Date.now(),
-                user: 'You (Guest User)',
+        try {
+            const payload: any = {
                 rating: userRating,
                 comment: comment,
-                date: new Date().toISOString().split('T')[0]
             };
+            if (productId) payload.product = productId;
+            if (serviceId) payload.service = serviceId;
+
+            const newReview = await createReview(payload);
             setLocalReviews([newReview, ...localReviews]);
             setUserRating(0);
             setComment('');
+            success('Review posted successfully!');
+        } catch (err) {
+            console.error("Failed to post review:", err);
+            toastError('Failed to post review. Please try again.');
+        } finally {
             setSubmitting(false);
-        }, 1000);
+        }
     };
 
-    const ratingCounts = [5, 4, 3, 2, 1].map(stars => ({
-        stars,
-        count: localReviews.filter(r => Math.round(r.rating) === stars).length,
-        percent: localReviews.length ? (localReviews.filter(r => Math.round(r.rating) === stars).length / localReviews.length) * 100 : 0
-    }));
+    const ratingCounts = [5, 4, 3, 2, 1].map(stars => {
+        if (ratingStats) {
+            const count = ratingStats[`stars_${stars}`] || 0;
+            const total = ratingStats.total_reviews || 1;
+            return { stars, count, percent: (count / total) * 100 };
+        }
+        return {
+            stars,
+            count: localReviews.filter(r => Math.round(r.rating) === stars).length,
+            percent: localReviews.length ? (localReviews.filter(r => Math.round(r.rating) === stars).length / localReviews.length) * 100 : 0
+        };
+    });
 
-    const avgRating = localReviews.length 
-        ? (localReviews.reduce((s, r) => s + r.rating, 0) / localReviews.length).toFixed(1)
-        : initialRating.toFixed(1);
+    const avgRating = ratingStats?.average_rating !== undefined 
+        ? parseFloat(ratingStats.average_rating).toFixed(1) 
+        : (localReviews.length 
+            ? (localReviews.reduce((s, r) => s + r.rating, 0) / localReviews.length).toFixed(1)
+            : initialRating.toFixed(1));
+
+    const totalReviewsCount = ratingStats?.total_reviews ?? localReviews.length;
 
     return (
         <div style={{ color: 'var(--text-primary)' }}>
@@ -72,7 +91,7 @@ export default function ReviewsSection({ reviews = [], initialRating = 0 }: { re
                         <span style={{ fontSize: '48px', fontWeight: 800, color: 'var(--primary)' }}>{avgRating}</span>
                         <div>
                             <Stars rating={parseFloat(avgRating)} size={20} />
-                            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Based on {localReviews.length} reviews</p>
+                            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Based on {totalReviewsCount} reviews</p>
                         </div>
                     </div>
 
@@ -81,7 +100,7 @@ export default function ReviewsSection({ reviews = [], initialRating = 0 }: { re
                             <div key={r.stars} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <span style={{ fontSize: '12px', fontWeight: 600, width: '50px' }}>{r.stars} Stars</span>
                                 <div style={{ flex: 1, height: '8px', background: 'var(--surface-2)', borderRadius: '4px', overflow: 'hidden' }}>
-                                    <div style={{ width: `${r.percent}%`, height: '100%', background: 'var(--secondary)', borderRadius: '4px transition: "width 0.5s ease"' }} />
+                                    <div style={{ width: `${r.percent}%`, height: '100%', background: 'var(--secondary)', borderRadius: '4px' }} />
                                 </div>
                                 <span style={{ fontSize: '12px', color: 'var(--text-muted)', width: '30px', textAlign: 'right' }}>{r.count}</span>
                             </div>
@@ -102,7 +121,7 @@ export default function ReviewsSection({ reviews = [], initialRating = 0 }: { re
                             <textarea 
                                 value={comment}
                                 onChange={e => setComment(e.target.value)}
-                                placeholder="Share your experience with this product..."
+                                placeholder="Share your experience..."
                                 required
                                 style={{ 
                                     width: '100%', 
@@ -129,7 +148,8 @@ export default function ReviewsSection({ reviews = [], initialRating = 0 }: { re
                                 fontWeight: 700, 
                                 cursor: submitting ? 'not-allowed' : 'pointer',
                                 transition: 'opacity 0.2s',
-                                opacity: submitting ? 0.7 : 1
+                                opacity: submitting ? 0.7 : 1,
+                                border: 'none'
                             }}
                         >
                             {submitting ? 'Submitting...' : 'Post Review'}
@@ -148,17 +168,17 @@ export default function ReviewsSection({ reviews = [], initialRating = 0 }: { re
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                     <div style={{ width: '40px', height: '40px', background: 'var(--primary-light)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '14px' }}>
-                                        {review.user.charAt(0)}
+                                        {review.user_name?.charAt(0) || '?'}
                                     </div>
                                     <div>
-                                        <p style={{ fontWeight: 700, fontSize: '15px' }}>{review.user}</p>
+                                        <p style={{ fontWeight: 700, fontSize: '15px' }}>{review.user_name}</p>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                             <Stars rating={review.rating} size={12} />
-                                            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{review.date}</span>
+                                            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{new Date(review.created_at).toLocaleDateString()}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div style={{ color: 'var(--success)', fontSize: '12px', fontWeight: 600 }}>✓ Verified Purchase</div>
+                                {review.is_verified_purchase && <div style={{ color: 'var(--success)', fontSize: '12px', fontWeight: 600 }}>✓ Verified Purchase</div>}
                             </div>
                             <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-secondary)' }}>{review.comment}</p>
                         </div>
@@ -170,6 +190,7 @@ export default function ReviewsSection({ reviews = [], initialRating = 0 }: { re
                 @media (max-width: 768px) {
                     .reviews-grid {
                         grid-template-columns: 1fr !important;
+                        gap: 24px !important;
                     }
                 }
             `}</style>

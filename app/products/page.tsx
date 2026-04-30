@@ -1,14 +1,11 @@
 'use client';
-import { useState, useMemo } from 'react';
-import { ALL_PRODUCTS, CATEGORIES as GLOBAL_CATEGORIES, Product } from '@/lib/data';
+import { useState, useMemo, useEffect } from 'react';
+import { getProducts } from '@/services/publicService';
+import { Product } from '@/services/types';
+import { CATEGORIES as GLOBAL_CATEGORIES } from '@/lib/data';
 
-const ALL_PRODS = ALL_PRODUCTS;
-
-const BRANDS = [...new Set(ALL_PRODS.map(p => p.brand))].sort();
-const CATEGORY_NAMES = [...new Set(ALL_PRODS.map(p => p.category))].sort();
-
-const BRANDS_LIST = BRANDS;
-const CATEGORIES_LIST = CATEGORY_NAMES;
+const BRANDS_LIST = ['Samsung', 'Apple', 'Sony', 'Huawei', 'LG', 'Panasonic', 'Dell', 'HP', 'Lenovo', 'Asus', 'Acer', 'Microsoft', 'Logitech', 'Razer', 'SteelSeries', 'HyperX', 'Corsair', 'Western Digital', 'Seagate', 'SanDisk', 'Kingston'];
+const CATEGORIES_LIST = ['fashion', 'electronics', 'home', 'sports', 'health', 'automotive', 'toys', 'beauty', 'office', 'garden', 'pet', 'grocery'];
 const PRICE_RANGES = [
     { label: 'Under ₦100', min: 0, max: 100 },
     { label: '₦100 – ₦500', min: 100, max: 500 },
@@ -34,43 +31,70 @@ function Stars({ rating, size = 13 }: { rating: number; size?: number }) {
     return <span style={{ display: 'inline-flex', gap: '1px' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ fontSize: size, color: i <= Math.round(rating) ? 'var(--secondary)' : '#e2e8f0' }}>★</span>)}</span>;
 }
 
+import { useCart } from '@/context/CartContext';
+
 function MiniProductCard({ p }: { p: Product }) {
+    const { addToCart } = useCart();
     const [added, setAdded] = useState(false);
     const [wish, setWish] = useState(false);
     return (
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', transition: 'all 0.2s', cursor: 'pointer' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-hover)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--primary)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; (e.currentTarget as HTMLDivElement).style.transform = ''; (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border)'; }}
+        <a href={`/products/${p.slug}`} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', transition: 'all 0.2s', cursor: 'pointer', textDecoration: 'none', color: 'inherit', display: 'block' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = 'var(--shadow-hover)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'var(--primary)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = 'none'; (e.currentTarget as HTMLAnchorElement).style.transform = ''; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'var(--border)'; }}
         >
             <div style={{ position: 'relative', background: 'var(--surface-2)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} className="product-card-img" />
+                {p.image ? (
+                    <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} />
+                ) : (
+                    <span style={{ fontSize: '50px' }}>{p.emoji || '📦'}</span>
+                )}
                 <div style={{ position: 'absolute', top: '6px', left: '6px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
                     {p.discount && <span style={{ background: 'var(--danger)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '3px' }}>-{p.discount}%</span>}
-                    {p.isNew && <span style={{ background: 'var(--success)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '3px' }}>NEW</span>}
-                    {p.isBestSeller && <span style={{ background: 'var(--warning)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '3px' }}>HOT</span>}
+                    {p.is_new && <span style={{ background: 'var(--success)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '3px' }}>NEW</span>}
+                    {p.is_best_seller && <span style={{ background: 'var(--accent)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '3px' }}>HOT</span>}
                 </div>
-                <button onClick={() => setWish(!wish)} style={{ position: 'absolute', top: '6px', right: '6px', width: '28px', height: '28px', background: 'var(--surface)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', boxShadow: 'var(--shadow-sm)' }}>{wish ? '❤️' : '🤍'}</button>
-                {!p.inStock && <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)' }}>OUT OF STOCK</div>}
+                <button onClick={(e) => { e.preventDefault(); setWish(!wish); }} style={{ position: 'absolute', top: '6px', right: '6px', width: '28px', height: '28px', background: 'var(--surface)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', boxShadow: 'var(--shadow-sm)', border: 'none', cursor: 'pointer' }}>{wish ? '❤️' : '🤍'}</button>
             </div>
             <div style={{ padding: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}><Stars rating={p.rating} /><span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({p.reviews.toLocaleString()})</span></div>
-                <p style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '6px', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.name}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}><Stars rating={parseFloat(p.rating as any)} /><span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({p.review_count})</span></div>
+                <p style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '6px', lineHeight: 1.35, height: '2.7em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.name}</p>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: 'var(--primary)' }}>₦{p.price}</span>
-                        {p.originalPrice && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₦{p.originalPrice}</span>}
+                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: 'var(--primary)' }}>₦{(parseFloat(p.price as any) || 0).toLocaleString()}</span>
+                        {(p.original || (p as any).original_price) && <span style={{ fontSize: '11px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₦{(parseFloat((p.original || (p as any).original_price) as any) || 0).toLocaleString()}</span>}
                     </div>
-                    {p.stockQuantity !== undefined && p.inStock && (
-                        <span style={{ fontSize: '10px', fontWeight: 700, color: p.stockQuantity < 10 ? 'var(--danger)' : 'var(--success)' }}>
-                            {p.stockQuantity} left
-                        </span>
-                    )}
                 </div>
-                <button disabled={!p.inStock} onClick={() => { setAdded(true); setTimeout(() => setAdded(false), 2000); }} style={{ width: '100%', padding: '7px', background: added ? 'var(--success)' : p.inStock ? 'var(--primary)' : 'var(--border)', color: p.inStock ? '#fff' : 'var(--text-muted)', borderRadius: 'var(--radius)', fontSize: '12px', fontWeight: 700, fontFamily: 'var(--font-body)', transition: 'all 0.2s', cursor: p.inStock ? 'pointer' : 'not-allowed' }}>
-                    {added ? '✓ Added!' : '+ Add to Cart'}
+                <button 
+                    disabled={p.stock_qty === 0 || added} 
+                    onClick={(e) => { 
+                        e.preventDefault(); 
+                        addToCart({
+                            id: p.id,
+                            slug: p.slug,
+                            name: p.name,
+                            price: parseFloat(p.price),
+                            originalPrice: p.original ? parseFloat(p.original) : undefined,
+                            image: p.image || undefined,
+                            emoji: p.emoji || undefined,
+                            qty: 1,
+                            seller: p.shop || 'Jefado',
+                            category: p.category?.toString()
+                        });
+                        setAdded(true); 
+                        setTimeout(() => setAdded(false), 2000); 
+                    }} 
+                    style={{ 
+                        width: '100%', padding: '7px', 
+                        background: added ? 'var(--success)' : p.stock_qty > 0 ? 'var(--primary)' : 'var(--border)', 
+                        color: (p.stock_qty > 0 || added) ? '#fff' : 'var(--text-muted)', 
+                        borderRadius: 'var(--radius)', fontSize: '12px', fontWeight: 700, fontFamily: 'var(--font-body)', 
+                        transition: 'all 0.2s', cursor: (p.stock_qty > 0 && !added) ? 'pointer' : 'not-allowed', border: 'none' 
+                    }}
+                >
+                    {p.stock_qty === 0 ? 'Out of Stock' : added ? '✓ Added!' : '+ Add to Cart'}
                 </button>
             </div>
-        </div>
+        </a>
     );
 }
 
@@ -154,7 +178,37 @@ export default function ProductsPage() {
     const [sort, setSort] = useState('popular');
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [totalResults, setTotalResults] = useState(0);
+    const [loading, setLoading] = useState(true);
     const PER_PAGE = 12;
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true);
+            try {
+                const params: any = {
+                    page,
+                    page_size: PER_PAGE,
+                    search: search || undefined,
+                    ordering: sort === 'price-asc' ? 'price' : sort === 'price-desc' ? '-price' : sort === 'rating' ? '-rating' : sort === 'newest' ? '-id' : '-id',
+                    category: filters.categories.join(',') || undefined,
+                    min_price: filters.priceRange?.min,
+                    max_price: filters.priceRange?.max === Infinity ? undefined : filters.priceRange?.max,
+                    min_rating: filters.minRating || undefined
+                };
+                const response = await getProducts(params);
+                const actualData = (response as any).data || response;
+                setProducts(actualData.results || []);
+                setTotalResults(actualData.count || 0);
+            } catch (err) {
+                console.error("Failed to fetch products", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, [filters, sort, search, page]);
 
     const activeCategoryLabel = useMemo(() => {
         if (filters.categories.length === 1) {
@@ -164,25 +218,7 @@ export default function ProductsPage() {
         return 'All Products';
     }, [filters.categories]);
 
-    const filtered = useMemo(() => {
-        let list = [...ALL_PRODS];
-        if (search) list = list.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.brand.toLowerCase().includes(search.toLowerCase()));
-        if (filters.brands.length) list = list.filter(p => filters.brands.includes(p.brand));
-        if (filters.categories.length) list = list.filter(p => filters.categories.includes(p.category));
-        if (filters.priceRange) list = list.filter(p => p.price >= filters.priceRange!.min && p.price <= filters.priceRange!.max);
-        if (filters.minRating) list = list.filter(p => p.rating >= filters.minRating!);
-        if (filters.inStockOnly) list = list.filter(p => p.inStock);
-        if (sort === 'price-asc') list.sort((a, b) => a.price - b.price);
-        else if (sort === 'price-desc') list.sort((a, b) => b.price - a.price);
-        else if (sort === 'rating') list.sort((a, b) => b.rating - a.rating);
-        else if (sort === 'discount') list.sort((a, b) => (b.discount ?? 0) - (a.discount ?? 0));
-        else if (sort === 'newest') list.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
-        else list.sort((a, b) => b.reviews - a.reviews);
-        return list;
-    }, [filters, sort, search]);
-
-    const totalPages = Math.ceil(filtered.length / PER_PAGE);
-    const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+    const totalPages = Math.ceil(totalResults / PER_PAGE);
     const activeCount = filters.brands.length + filters.categories.length + (filters.priceRange ? 1 : 0) + (filters.minRating ? 1 : 0) + (filters.inStockOnly ? 1 : 0);
 
     return (
@@ -195,7 +231,7 @@ export default function ProductsPage() {
 
                 <div style={{ marginBottom: '18px' }}>
                     <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', color: 'var(--text-primary)', letterSpacing: '-0.5px', marginBottom: '4px', textTransform: 'capitalize' }}>{activeCategoryLabel}</h1>
-                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{filtered.length} products found</p>
+                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{totalResults} products found</p>
                 </div>
 
                 <div className="products-layout">
@@ -215,16 +251,21 @@ export default function ProductsPage() {
                             </div>
                         </div>
 
-                        {paginated.length === 0 ? (
+                        {loading ? (
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '100px 0' }}>
+                                <div className="loader" style={{ width: '40px', height: '40px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                            </div>
+                        ) : products.length === 0 ? (
                             <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '48px', textAlign: 'center' }}>
                                 <p style={{ fontSize: '40px', marginBottom: '12px' }}>🔍</p>
                                 <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '18px', marginBottom: '6px' }}>No products found</h3>
                                 <p style={{ color: 'var(--text-muted)', marginBottom: '16px' }}>Try adjusting your filters.</p>
-                                <button onClick={() => { setFilters({ brands: [], categories: [], priceRange: null, minRating: null, inStockOnly: false }); setSearch(''); }} style={{ padding: '9px 22px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, fontFamily: 'var(--font-body)', fontSize: '13px' }}>Clear Filters</button>
+                                <button onClick={() => { setFilters({ brands: [], categories: [], priceRange: null, minRating: null, inStockOnly: false }); setSearch(''); }} style={{ padding: '9px 22px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, fontFamily: 'var(--font-body)', fontSize: '13px', border: 'none', cursor: 'pointer' }}>Clear Filters</button>
                             </div>
                         ) : (
                             <div className="products-grid">
-                                {paginated.map(p => <MiniProductCard key={p.id} p={p} />)}
+                                {products.map(p => <MiniProductCard key={p.id} p={p} />)}
                             </div>
                         )}
 

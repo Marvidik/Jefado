@@ -1,229 +1,317 @@
 'use client';
-import { useState } from 'react';
-import { Card, PageHeader, Btn, Input, Select, Drawer, Badge } from '@/components/dashboard/ui';
+import { useState, useEffect } from 'react';
+import { Card, PageHeader, Btn, Input, Select, Drawer, Badge, Table } from '@/components/dashboard/ui';
+import { useToast } from '@/components/ui/Toast';
+import { Icons } from '@/components/dashboard/icons';
+import { 
+    getSellerProfile, 
+    patchSellerProfile, 
+    getBankAccounts, 
+    createBankAccount, 
+    deleteBankAccount, 
+    getPayoutRequests, 
+    createPayoutRequest,
+    changeSellerPassword
+} from '@/services/sellerService';
+import { SellerProfile, BankAccount, PayoutRequest } from '@/services/types';
 
 export default function SettingsPage() {
-    const [tab, setTab] = useState('Payouts');
+    const { success, error: toastError } = useToast();
+    const [tab, setTab] = useState('Profile');
     const TABS = ['Profile', 'Store', 'Payouts', 'Security'];
 
+    // Profile & Store Data
+    const [profile, setProfile] = useState<SellerProfile | null>(null);
+    const [loadingProfile, setLoadingProfile] = useState(true);
+    const [saving, setSaving] = useState(false);
 
-    // Payout Form state
+    // Payouts Data
+    const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
+    const [payoutRequests, setPayoutRequests] = useState<PayoutRequest[]>([]);
+    const [loadingPayouts, setLoadingPayouts] = useState(false);
+
+    // Form states
+    const [profileForm, setProfileForm] = useState({ store_name: '', description: '', location: '', rc_number: '', business_type: '', business_address: '' });
+    const [passForm, setPassForm] = useState({ old_password: '', new_password: '', confirm_password: '' });
+    const [bankDrawer, setBankDrawer] = useState(false);
+    const [bankForm, setBankForm] = useState({ bank_name: '', account_name: '', account_number: '', is_default: true });
+    
     const [payoutDrawer, setPayoutDrawer] = useState(false);
-    const [payoutForm, setPayoutForm] = useState({ type: 'Bank Account (NG)', bankName: '', accountNumber: '', routingNumber: '', accountName: '' });
+    const [payoutForm, setPayoutForm] = useState({ amount: '', bank_account: '' });
 
-    // Request Payout state
-    const [requestPayoutDrawer, setRequestPayoutDrawer] = useState(false);
-    const [requestForm, setRequestForm] = useState({ accountId: '', amount: '' });
-
-    const MOCK_ACCOUNTS = [
-        { id: 'acc_8821', type: 'USD Balance', amount: '$5,420.50' },
-        { id: 'acc_3392', type: 'NGN Balance', amount: '₦210,000.00' },
-        { id: 'acc_1102', type: 'EUR Balance', amount: '€1,200.00' }
-    ];
-
-
-    const handleAddPayout = (e: React.FormEvent) => {
-        e.preventDefault();
-        setPayoutDrawer(false);
-        setPayoutForm({ type: 'Bank Account (US)', bankName: '', accountNumber: '', routingNumber: '', accountName: '' });
+    const fetchData = async () => {
+        setLoadingProfile(true);
+        try {
+            const data = await getSellerProfile();
+            setProfile(data);
+            setProfileForm({
+                store_name: data.store_name || '',
+                description: data.description || '',
+                location: data.location || '',
+                rc_number: data.rc_number || '',
+                business_type: data.business_type || '',
+                business_address: data.business_address || ''
+            });
+        } catch (err) {
+            console.error('Failed to load profile:', err);
+        } finally {
+            setLoadingProfile(false);
+        }
     };
-    const handleRequestPayout = (e: React.FormEvent) => {
+
+    const fetchPayouts = async () => {
+        setLoadingPayouts(true);
+        try {
+            const [banks, reqs] = await Promise.all([getBankAccounts(), getPayoutRequests()]);
+            setBankAccounts(banks);
+            setPayoutRequests(reqs);
+        } catch (err) {
+            console.error('Failed to load payouts:', err);
+        } finally {
+            setLoadingPayouts(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+        if (tab === 'Payouts') fetchPayouts();
+    }, [tab]);
+
+    const handleSaveProfile = async (e: React.FormEvent) => {
         e.preventDefault();
-        setRequestPayoutDrawer(false);
-        setRequestForm({ accountId: '', amount: '' });
+        setSaving(true);
+        try {
+            await patchSellerProfile(profileForm);
+            success('Profile updated successfully.');
+            fetchData();
+        } catch (err) {
+            toastError('Failed to update profile.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleUpdatePassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (passForm.new_password.length < 8) return toastError('New password must be at least 8 characters long');
+        if (passForm.new_password !== passForm.confirm_password) return toastError('Passwords do not match');
+        setSaving(true);
+        try {
+            await changeSellerPassword({
+                old_password: passForm.old_password,
+                new_password: passForm.new_password,
+                confirm_password: passForm.confirm_password
+            });
+            success('Password updated successfully.');
+            setPassForm({ old_password: '', new_password: '', confirm_password: '' });
+        } catch (err) {
+            toastError('Failed to update password.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleAddBank = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
+        try {
+            await createBankAccount(bankForm);
+            setBankDrawer(false);
+            fetchPayouts();
+            success('Bank account added successfully.');
+        } catch (err) {
+            toastError('Failed to add bank account.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleRequestPayout = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
+        try {
+            await createPayoutRequest(payoutForm);
+            setPayoutDrawer(false);
+            fetchPayouts();
+            success('Payout request sent successfully.');
+        } catch (err) {
+            toastError('Failed to request payout.');
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <style>{`
-                .settings-layout { display: flex; gap: 20px; align-items: flex-start; }
-                .settings-sidebar { width: 200px; flex-shrink: 0; }
-                .responsive-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-                @media (max-width: 768px) {
+                .settings-layout { display: flex; gap: 24px; align-items: flex-start; }
+                .settings-sidebar { width: 220px; flex-shrink: 0; position: sticky; top: 0; }
+                .tab-btn { width: 100%; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 500; color: #64748b; background: transparent; border: none; cursor: pointer; text-align: left; transition: all 0.2s; display: flex; align-items: center; gap: 12px; }
+                .tab-btn:hover { background: #f8fafc; color: #0f172a; }
+                .tab-btn.active { background: #eff6ff; color: #2563eb; font-weight: 700; }
+                .responsive-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+                @media (max-width: 900px) {
                     .settings-layout { flex-direction: column; }
-                    .settings-sidebar { width: 100%; display: flex; overflow-x: auto; padding-bottom: 8px; }
-                    .settings-sidebar button { white-space: nowrap; flex-shrink: 0; }
+                    .settings-sidebar { width: 100%; position: static; }
+                    .settings-sidebar-inner { display: flex; overflow-x: auto; padding-bottom: 8px; gap: 8px; }
+                    .tab-btn { white-space: nowrap; width: auto; }
                 }
             `}</style>
 
-            <PageHeader title="Settings" subtitle="Account and store preferences" />
+            <PageHeader title="Account Settings" subtitle="Manage your profile, store information, and security preferences." />
+            
             <div className="settings-layout">
                 <div className="settings-sidebar">
-                    <Card style={{ padding: '8px', display: 'flex', flexDirection: 'column', gap: '2px', ...{ flexWrap: 'nowrap' } as any }}>
+                    <Card style={{ padding: '8px' }} className="settings-sidebar-inner">
                         {TABS.map(t => (
-                            <button key={t} onClick={() => setTab(t)} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', fontSize: '13px', fontWeight: tab === t ? 700 : 400, color: tab === t ? 'var(--dash-primary)' : '#64748b', background: tab === t ? 'var(--dash-primary-light)' : 'transparent', border: 'none', cursor: 'pointer', fontFamily: '"Plus Jakarta Sans", sans-serif', textAlign: 'left', transition: 'all 0.15s' }}>{t}</button>
+                            <button key={t} onClick={() => setTab(t)} className={`tab-btn ${tab === t ? 'active' : ''}`}>
+                                {t}
+                            </button>
                         ))}
                     </Card>
                 </div>
-                <div style={{ flex: 1, width: '100%' }}>
+
+                <div style={{ flex: 1, width: '100%', minWidth: 0 }}>
                     {tab === 'Profile' && (
-                        <Card>
-                            <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '15px', marginBottom: '20px' }}>Profile Information</h3>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '18px', background: '#f8fafc', borderRadius: '10px', marginBottom: '22px', flexWrap: 'wrap' }}>
-                                <div style={{ width: '68px', height: '68px', borderRadius: '50%', background: 'linear-gradient(135deg,var(--dash-primary),var(--dash-primary-dark))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 800, fontSize: '26px', flexShrink: 0 }}>J</div>
-                                <div>
-                                    <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '16px', marginBottom: '3px' }}>James Okafor</p>
-                                    <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '10px' }}>james@jefado.com · Pro Seller</p>
-                                    <Btn label="Upload Photo" small />
-                                </div>
-                            </div>
-                            <div className="responsive-grid" style={{ marginBottom: '14px' }}>
-                                <Input label="First Name" value="James" onChange={() => { }} placeholder="First name" />
-                                <Input label="Last Name" value="Okafor" onChange={() => { }} placeholder="Last name" />
-                                <Input label="Email" value="james@jefado.com" onChange={() => { }} type="email" placeholder="Email" />
-                                <Input label="Phone" value="+234 801 234 5678" onChange={() => { }} type="tel" placeholder="Phone" />
-                            </div>
-                            <div style={{ marginBottom: '18px' }}>
-                                <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '5px' }}>Bio</label>
-                                <textarea rows={3} defaultValue="Pro seller specializing in electronics and gadgets." style={{ width: '100%', padding: '10px 14px', border: '1.5px solid #e8edf2', borderRadius: '8px', fontSize: '13px', fontFamily: '"Plus Jakarta Sans", sans-serif', outline: 'none', background: '#f8fafc', resize: 'vertical' }} onFocus={e => (e.currentTarget.style.borderColor = 'var(--dash-primary)')} onBlur={e => (e.currentTarget.style.borderColor = '#e8edf2')} />
-                            </div>
-                            <Btn label="Save Changes" />
-                        </Card>
-                    )}
-                    {tab === 'Store' && (
-                        <Card>
-                            <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '15px', marginBottom: '20px' }}>Store Settings</h3>
-                            <div className="responsive-grid" style={{ marginBottom: '14px' }}>
-                                <div style={{ gridColumn: '1 / -1' }}><Input label="Store Name" value="TechZone Store" onChange={() => { }} /></div>
-                                <div style={{ gridColumn: '1 / -1' }}>
-                                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '5px' }}>Store Description</label>
-                                    <textarea rows={3} defaultValue="Premium electronics and gadgets at the best prices." style={{ width: '100%', padding: '10px 14px', border: '1.5px solid #e8edf2', borderRadius: '8px', fontSize: '13px', fontFamily: '"Plus Jakarta Sans", sans-serif', outline: 'none', background: '#f8fafc', resize: 'vertical' }} />
-                                </div>
-                                <Select label="Category" value="Electronics" onChange={() => { }} options={['Electronics', 'Fashion', 'Home', 'Sports']} />
-                                <Select label="Currency" value="USD ($)" onChange={() => { }} options={['USD ($)', 'EUR (€)', 'GBP (£)', 'NGN (₦)']} />
-                            </div>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px', cursor: 'pointer' }}>
-                                <input type="checkbox" defaultChecked style={{ accentColor: 'var(--dash-primary)', width: '15px', height: '15px' }} />
-                                <span style={{ fontSize: '13px', color: '#475569' }}>Show store in marketplace directory</span>
-                            </label>
-                            <Btn label="Save Settings" />
-                        </Card>
-                    )}
-                    {tab === 'Security' && (
-                        <Card>
-                            <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '15px', marginBottom: '20px' }}>Security Settings</h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxWidth: '420px', marginBottom: '24px' }}>
-                                <Input label="Current Password" type="password" value="••••••••" onChange={() => { }} />
-                                <Input label="New Password" type="password" value="" onChange={() => { }} placeholder="Min. 8 characters" />
-                                <Input label="Confirm Password" type="password" value="" onChange={() => { }} placeholder="Repeat new password" />
-                                <Btn label="Update Password" />
-                            </div>
-
-                        </Card>
-                    )}
-                    {tab === 'Payouts' && (
-                        <Card>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '16px' }}>
-                                <div>
-                                    <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '15px', color: '#0f172a', margin: 0 }}>Payout Methods</h3>
-                                    <p style={{ fontSize: '13px', color: '#64748b', margin: '4px 0 0' }}>Where we'll send your marketplace earnings.</p>
-                                </div>
-                                <div style={{ display: 'flex', gap: '12px' }}>
-                                    <Btn label="Request for Payout" onClick={() => setRequestPayoutDrawer(true)} variant="secondary" small />
-                                    <Btn label="Add Payout Method" onClick={() => setPayoutDrawer(true)} small />
-                                </div>
-                            </div>
-
-                            <div style={{ padding: '20px', border: '1.5px solid #e2e8f0', borderRadius: '12px', background: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🏦</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                            <Card style={{ padding: '32px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '32px', flexWrap: 'wrap' }}>
+                                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb, #1e293b)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: '28px', flexShrink: 0, boxShadow: '0 8px 16px rgba(37,99,235,0.2)' }}>
+                                        {profile?.store_name?.[0] || 'M'}
+                                    </div>
                                     <div>
-                                        <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '15px', color: '#0f172a', margin: '0 0 2px' }}>JPMorgan Chase Bank</p>
-                                        <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>Checking •••• 9821</p>
+                                        <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 4px' }}>{profile?.store_name}</h3>
+                                        <p style={{ color: '#64748b', fontSize: '14px', margin: '0 0 16px' }}>Verified Merchant Terminal · {profile?.location}</p>
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#059669', background: '#ecfdf5', padding: '4px 10px', borderRadius: '8px' }}>Active Default</span>
-                                    <button style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: '14px', padding: '8px', display: 'flex', alignItems: 'center' }}>🗑️</button>
-                                </div>
-                            </div>
+                                <form onSubmit={handleSaveProfile} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                                    <div className="responsive-grid">
+                                        <Input label="Business Location" value={profileForm.location} onChange={v => setProfileForm({...profileForm, location: v})} placeholder="City, Country" />
+                                        <Input label="RC Registration Number" value={profileForm.rc_number} onChange={v => setProfileForm({...profileForm, rc_number: v})} placeholder="e.g. RC-000000" />
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        <label style={{ fontSize: '13px', fontWeight: 700, color: '#334155' }}>Operational Bio</label>
+                                        <textarea rows={4} value={profileForm.description} onChange={e => setProfileForm({...profileForm, description: e.target.value})} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: '#f8fafc', outline: 'none', fontSize: '14px', resize: 'vertical' }} />
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                        <Btn label={saving ? "Saving Changes..." : "Commit Profile Changes"} submit disabled={saving} />
+                                    </div>
+                                </form>
+                            </Card>
+                        </div>
+                    )}
 
-                            <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: '15px', marginTop: '32px', marginBottom: '16px' }}>Recent Payouts</h3>
-                            <div style={{ overflowX: 'auto' }}>
-                                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '400px' }}>
-                                    <tbody>
-                                        <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                            <td style={{ padding: '12px 16px 12px 0', color: '#0f172a', fontWeight: 600 }}>Withdrawal to Chase Bank</td>
-                                            <td style={{ padding: '12px 16px', color: '#64748b' }}>Apr 4, 2026</td>
-                                            <td style={{ padding: '12px 16px', color: '#059669', fontWeight: 700 }}>+$1,245.50</td>
-                                            <td style={{ padding: '12px 0', textAlign: 'right' }}><Badge status="Completed" /></td>
-                                        </tr>
-                                        <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                            <td style={{ padding: '12px 16px 12px 0', color: '#0f172a', fontWeight: 600 }}>Withdrawal to Chase Bank</td>
-                                            <td style={{ padding: '12px 16px', color: '#64748b' }}>Mar 20, 2026</td>
-                                            <td style={{ padding: '12px 16px', color: '#059669', fontWeight: 700 }}>+$860.00</td>
-                                            <td style={{ padding: '12px 0', textAlign: 'right' }}><Badge status="Completed" /></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                    {tab === 'Store' && (
+                        <Card style={{ padding: '32px' }}>
+                            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px' }}>Store Front Configuration</h3>
+                            <form onSubmit={handleSaveProfile} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                                <Input label="Public Store Name" value={profileForm.store_name} onChange={v => setProfileForm({...profileForm, store_name: v})} required />
+                                <div className="responsive-grid">
+                                    <Select label="Entity Type" value={profileForm.business_type} onChange={v => setProfileForm({...profileForm, business_type: v})} options={['Individual', 'Registered Business', 'Limited Liability']} />
+                                    <Input label="Registered Address" value={profileForm.business_address} onChange={v => setProfileForm({...profileForm, business_address: v})} placeholder="Official company address" />
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
+                                    <Btn label={saving ? "Serialising..." : "Update Storefront"} submit disabled={saving} />
+                                </div>
+                            </form>
+                        </Card>
+                    )}
+
+                    {tab === 'Payouts' && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                            <Card style={{ padding: '32px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
+                                    <div>
+                                        <h3 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>Payout Protocols</h3>
+                                        <p style={{ color: '#64748b', fontSize: '14px', marginTop: '4px' }}>Manage your linked financial accounts.</p>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '12px' }}>
+                                        <Btn label="Request Withdrawal" variant="secondary" onClick={() => setPayoutDrawer(true)} />
+                                        <Btn label="Link Bank Account" onClick={() => setBankDrawer(true)} />
+                                    </div>
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    {bankAccounts.map(acc => (
+                                        <div key={acc.id} style={{ padding: '20px', border: '1.5px solid #e2e8f0', borderRadius: '16px', background: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🏦</div>
+                                                <div>
+                                                    <p style={{ fontWeight: 700, margin: 0 }}>{acc.bank_name}</p>
+                                                    <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>{acc.account_name} · •••• {acc.account_number.slice(-4)}</p>
+                                                </div>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                                {acc.is_default && <span style={{ fontSize: '11px', fontWeight: 800, color: '#059669', background: '#ecfdf5', padding: '4px 8px', borderRadius: '6px', textTransform: 'uppercase' }}>Primary</span>}
+                                                <button onClick={() => deleteBankAccount(acc.id).then(fetchPayouts)} style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: '20px' }}>{Icons.trash}</button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {bankAccounts.length === 0 && <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8', border: '2px dashed #e2e8f0', borderRadius: '16px' }}>No financial sources linked.</div>}
+                                </div>
+
+                                <h3 style={{ fontSize: '16px', fontWeight: 700, marginTop: '40px', marginBottom: '20px' }}>Recent Payout Requests</h3>
+                                <div style={{ overflowX: 'auto' }}>
+                                    <Table 
+                                        cols={['Request ID', 'Amount', 'Status', 'Timestamp']} 
+                                        rows={payoutRequests.map(r => [
+                                            <span key="id" style={{ fontWeight: 600 }}>#{r.id}</span>,
+                                            <span key="amt" style={{ fontWeight: 800, color: '#059669' }}>₦{(parseFloat(r.amount) || 0).toLocaleString()}</span>,
+                                            <Badge key="st" status={r.status === 'SUCCESS' ? 'Completed' : r.status === 'PENDING' ? 'Processing' : 'Refunded'} label={r.status} />,
+                                            <span key="ts" style={{ color: '#94a3b8', fontSize: '12px' }}>{r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</span>
+                                        ])}
+                                    />
+                                </div>
+                            </Card>
+                        </div>
+                    )}
+
+                    {tab === 'Security' && (
+                        <Card style={{ padding: '32px' }}>
+                            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px' }}>Password & Security</h3>
+                            <form onSubmit={handleUpdatePassword} style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '480px' }}>
+                                <Input label="Current Password" type="password" required value={passForm.old_password} onChange={v => setPassForm({...passForm, old_password: v})} />
+                                <Input label="New Password" type="password" required value={passForm.new_password} onChange={v => setPassForm({...passForm, new_password: v})} />
+                                <Input label="Confirm New Password" type="password" required value={passForm.confirm_password} onChange={v => setPassForm({...passForm, confirm_password: v})} />
+                                <div style={{ paddingTop: '8px' }}>
+                                    <Btn label={saving ? "Updating..." : "Change Password"} submit disabled={saving || passForm.new_password.length < 8} />
+                                    {passForm.new_password && passForm.new_password.length < 8 && (
+                                        <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '8px', fontWeight: 600 }}>Password must be at least 8 characters</p>
+                                    )}
+                                </div>
+                            </form>
                         </Card>
                     )}
                 </div>
             </div>
-            {/* Add Payout Method Drawer */}
-            <Drawer open={payoutDrawer} onClose={() => setPayoutDrawer(false)} title="Add Payout Method" maxWidth="480px">
-                <form onSubmit={handleAddPayout} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    <div style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.5 }}>
-                        Connect a bank account to receive automated payouts from your store sales.
-                    </div>
 
-                    <Card style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <Select label="Account Type" value={payoutForm.type} onChange={v => setPayoutForm({ ...payoutForm, type: v })} options={['Bank Account (US)', 'Bank Account (International)', 'PayPal']} />
-                        <Input label="Bank Name" type="text" placeholder="e.g. Bank of America" required value={payoutForm.bankName} onChange={v => setPayoutForm({ ...payoutForm, bankName: v })} />
-                        <Input label="Account Holder Name" type="text" placeholder="e.g. James Okafor" required value={payoutForm.accountName} onChange={v => setPayoutForm({ ...payoutForm, accountName: v })} />
-                        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                            <div style={{ flex: '1 1 150px' }}>
-                                <Input label="Routing Number" type="text" placeholder="9 digits" required value={payoutForm.routingNumber} onChange={v => setPayoutForm({ ...payoutForm, routingNumber: v })} />
-                            </div>
-                            <div style={{ flex: '1 1 150px' }}>
-                                <Input label="Account Number" type="text" placeholder="••••••••" required value={payoutForm.accountNumber} onChange={v => setPayoutForm({ ...payoutForm, accountNumber: v })} />
-                            </div>
-                        </div>
-                    </Card>
-
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '0 4px' }}>
-                        <input type="checkbox" defaultChecked style={{ accentColor: 'var(--dash-primary)', width: '16px', height: '16px' }} />
-                        <span style={{ fontSize: '13px', color: '#475569', fontWeight: 500 }}>Set as default for incoming transfers</span>
+            {/* Link Bank Drawer */}
+            <Drawer open={bankDrawer} onClose={() => setBankDrawer(false)} title="Link Financial Source">
+                <form onSubmit={handleAddBank} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    <p style={{ fontSize: '14px', color: '#64748b' }}>Authorise a secure terminal for your marketplace earnings disbursement.</p>
+                    <Input label="Universal Bank Name" required value={bankForm.bank_name} onChange={v => setBankForm({...bankForm, bank_name: v})} placeholder="e.g. Zenith Bank" />
+                    <Input label="Account Identity (Full Name)" required value={bankForm.account_name} onChange={v => setBankForm({...bankForm, account_name: v})} placeholder="e.g. James Okafor" />
+                    <Input label="Account Number" required value={bankForm.account_number} onChange={v => setBankForm({...bankForm, account_number: v})} placeholder="10 Digits" />
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                        <input type="checkbox" checked={bankForm.is_default} onChange={e => setBankForm({...bankForm, is_default: e.target.checked})} style={{ width: '18px', height: '18px', accentColor: '#2563eb' }} />
+                        <span style={{ fontSize: '14px', fontWeight: 600 }}>Set as Primary Payout Protocol</span>
                     </label>
-
-                    <div style={{ padding: '24px 0 8px', display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', background: '#fff', position: 'sticky', bottom: '-32px', zIndex: 10 }}>
-                        <Btn label="Cancel" variant="ghost" onClick={() => setPayoutDrawer(false)} />
-                        <Btn label="Save Bank Details" submit />
+                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '16px' }}>
+                        <Btn label="Abort" variant="secondary" onClick={() => setBankDrawer(false)} />
+                        <Btn label={saving ? "Syncing..." : "Link Account"} submit disabled={saving} />
                     </div>
                 </form>
             </Drawer>
 
-            {/* Request Payout Drawer */}
-            <Drawer open={requestPayoutDrawer} onClose={() => setRequestPayoutDrawer(false)} title="Request for Payout" maxWidth="480px">
+            {/* Payout Request Drawer */}
+            <Drawer open={payoutDrawer} onClose={() => setPayoutDrawer(false)} title="Initiate Payout">
                 <form onSubmit={handleRequestPayout} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    <div style={{ fontSize: '14px', color: '#64748b', lineHeight: 1.5 }}>
-                        Select common account to withdraw funds from. Processing usually takes 1-3 business days.
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        <label style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Your Accounts & Balances</label>
-                        {MOCK_ACCOUNTS.map(acc => (
-                            <div key={acc.id} style={{ padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0', background: requestForm.accountId === acc.id ? 'var(--dash-primary-light)' : '#f8fafc', borderColor: requestForm.accountId === acc.id ? 'var(--dash-primary)' : '#e2e8f0', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'all 0.2s' }} onClick={() => setRequestForm({ ...requestForm, accountId: acc.id })}>
-                                <div>
-                                    <p style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{acc.type}</p>
-                                    <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>ID: {acc.id}</p>
-                                </div>
-                                <div style={{ textAlign: 'right' }}>
-                                    <p style={{ fontSize: '15px', fontWeight: 800, color: 'var(--dash-primary)', margin: 0 }}>{acc.amount}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <Card style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <Input label="Account ID" placeholder="Choose an account above or enter ID" required value={requestForm.accountId} onChange={v => setRequestForm({ ...requestForm, accountId: v })} />
-                        <Input label="Amount to Withdraw" type="text" placeholder="e.g. 500.00" required value={requestForm.amount} onChange={v => setRequestForm({ ...requestForm, amount: v })} />
-                    </Card>
-
-                    <div style={{ padding: '24px 0 8px', display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', background: '#fff', position: 'sticky', bottom: '-32px', zIndex: 10 }}>
-                        <Btn label="Cancel" variant="ghost" onClick={() => setRequestPayoutDrawer(false)} />
-                        <Btn label="Process Payout" submit />
+                    <p style={{ fontSize: '14px', color: '#64748b' }}>Transfer accumulated terminal revenue to your primary bank account.</p>
+                    <Select label="Destination Protocol" required value={payoutForm.bank_account} onChange={v => setPayoutForm({...payoutForm, bank_account: v})} options={bankAccounts.map(a => ({ label: `${a.bank_name} (••${a.account_number.slice(-4)})`, value: a.id.toString() }))} />
+                    <Input label="Valuation to Withdraw (₦)" required type="text" value={payoutForm.amount} onChange={v => setPayoutForm({...payoutForm, amount: v})} placeholder="0.00" />
+                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '16px' }}>
+                        <Btn label="Abort" variant="secondary" onClick={() => setPayoutDrawer(false)} />
+                        <Btn label={saving ? "Processing..." : "Initiate Withdrawal"} submit disabled={saving || !payoutForm.bank_account} />
                     </div>
                 </form>
             </Drawer>

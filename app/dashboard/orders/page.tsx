@@ -1,158 +1,265 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Badge, Card, PageHeader, Btn, Pagination, StatCard, LineChart, Table, Select, Input } from '@/components/dashboard/ui';
 import { Icons } from '@/components/dashboard/icons';
-
-const ORDERS = [
-    { id: '#53200002', customer: 'Alice Johnson', product: 'Sony WH-1000XM5', items: 1, date: 'Jan 10, 2026', amount: 253.82, profit: 60.76, status: 'Completed', payment: 'Card' },
-    { id: '#53200003', customer: 'Bob Smith', product: 'MacBook Pro 14"', items: 5, date: 'Sep 4, 2026', amount: 556.24, profit: 66.41, status: 'Processing', payment: 'PayPal' },
-    { id: '#53200004', customer: 'Carol White', product: 'Nike Air Max 90', items: 7, date: 'Aug 30, 2026', amount: 115.26, profit: 85.66, status: 'Refunded', payment: 'Card' },
-    { id: '#53200005', customer: 'David Brown', product: 'iPhone 15 Pro Max', items: 3, date: 'Aug 29, 2026', amount: 675.51, profit: 84.80, status: 'Completed', payment: 'Bank' },
-    { id: '#53200006', customer: 'Eva Martinez', product: 'Samsung Galaxy S25', items: 4, date: 'Dec 26, 2026', amount: 810.71, profit: 46.52, status: 'Processing', payment: 'Card' },
-    { id: '#53200007', customer: 'Frank Lee', product: 'iPad Pro 12.9"', items: 5, date: 'Apr 27, 2026', amount: 897.90, profit: 81.54, status: 'Completed', payment: 'Card' },
-    { id: '#53200008', customer: 'Grace Kim', product: 'Bose QC45', items: 3, date: 'May 5, 2026', amount: 563.43, profit: 17.46, status: 'Pending', payment: 'PayPal' },
-    { id: '#53200009', customer: 'Henry Adams', product: 'AirPods Pro', items: 5, date: 'Oct 15, 2026', amount: 883.96, profit: 43.08, status: 'Refunded', payment: 'Card' },
-    { id: '#53200010', customer: 'Iris Chen', product: 'LG OLED 55"', items: 4, date: 'Jul 12, 2026', amount: 163.15, profit: 66.65, status: 'Completed', payment: 'Bank' },
-    { id: '#53200012', customer: 'Jack Wilson', product: 'Anker Power Bank', items: 2, date: 'Jun 28, 2026', amount: 376.34, profit: 49.08, status: 'Completed', payment: 'Card' },
-];
+import { getSellerOrders, getOrderAnalytics, updateOrderStatus } from '@/services/sellerService';
+import { Order } from '@/services/types';
 
 function SectionTitle({ title, action }: { title: string, action?: string }) {
     return (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 800, color: '#0f172a', margin: 0 }}>{title}</h3>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '18px', fontWeight: 800, color: '#0f172a', margin: 0 }}>{title}</h3>
             {action && <button style={{ background: 'none', border: 'none', fontSize: '13px', color: '#2563eb', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>{action} {Icons.arrowUp}</button>}
         </div>
     );
 }
 
 export default function OrdersPage() {
-    const revenueData = [45, 52, 48, 60, 55, 65, 80, 75, 85, 95, 90, 100];
-    const MONTHS = ['16', '18', '20', '22', '24', '26', '28', '30', '02', '04', '06', '08', '10'];
-
-    const [selected, setSelected] = useState<typeof ORDERS[0] | null>(null);
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [analytics, setAnalytics] = useState<any>(null);
+    const [selected, setSelected] = useState<Order | null>(null);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('All Statuses');
-    const [dateFilter, setDateFilter] = useState('All Time');
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
+    const [updatingId, setUpdatingId] = useState<number | null>(null);
+    const [updateError, setUpdateError] = useState<string | null>(null);
+    const PER = 10;
 
-    const filtered = ORDERS.filter(o => {
-        const matchSearch = o.customer.toLowerCase().includes(search.toLowerCase()) || o.id.toLowerCase().includes(search.toLowerCase());
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const [ordersData, analyticsData] = await Promise.all([
+                getSellerOrders({ page, page_size: PER, search: search || undefined }),
+                getOrderAnalytics().catch(() => null)
+            ]);
+            
+            if (Array.isArray(ordersData)) {
+                setOrders(ordersData);
+                setTotal(ordersData.length);
+            } else {
+                setOrders((ordersData as any).results || []);
+                setTotal((ordersData as any).count || 0);
+            }
+            setAnalytics(analyticsData);
+        } catch (err) {
+            console.error('Failed to fetch orders:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [page, search]);
+
+    const filtered = orders.filter(o => {
         const matchStatus = statusFilter === 'All Statuses' || o.status === statusFilter;
-        return matchSearch && matchStatus;
+        return matchStatus;
     });
 
-    const rows = filtered.map(o => [
-        <span key="id" style={{ fontWeight: 700, color: '#2563eb' }}>{o.id}</span>,
-        <div key="c" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e2e8f0', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>📦</div>
-            <div>
-               <div style={{ fontWeight: 600, color: '#334155' }}>{o.items} items</div>
+    const handleStatusUpdate = async (id: number, newStatus: string) => {
+        setUpdatingId(id);
+        setUpdateError(null);
+        try {
+            await updateOrderStatus(id, newStatus);
+            setOrders(prev => prev.map(o => o.id === id ? { ...o, status: newStatus as any } : o));
+            if (selected && selected.id === id) {
+                setSelected({ ...selected, status: newStatus as any });
+            }
+        } catch (err: any) {
+            console.error('Failed to update order status:', err);
+            const mainMsg = err?.response?.data?.message || err?.message || 'Failed to update order status';
+            const detail = err?.response?.data?.data?.detail;
+            setUpdateError(detail ? `${mainMsg}: ${detail}` : mainMsg);
+        } finally {
+            setUpdatingId(null);
+        }
+    };
+
+    const rows = filtered.map(o => {
+        const firstItemName = o.items?.[0]?.product_name || o.items?.[0]?.name || 'Unknown Item';
+        
+        return [
+            <span key="id" style={{ fontWeight: 700, color: '#2563eb' }}>#{o.id}</span>,
+            <div key="c" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#f8fafc', border: '1px solid #e2e8f0', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>📦</div>
+                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '180px' }}>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '13px' }}>{firstItemName}</div>
+                    <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>{o.items?.length || 0} Items</div>
+                </div>
+            </div>,
+            <span key="d" style={{ color: '#64748b' }}>{new Date(o.created_at).toLocaleDateString()}</span>,
+            <span key="cust" style={{ fontWeight: 600, color: '#0f172a' }}>{o.buyer_name}</span>,
+            <span key="amt" style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px' }}>₦{parseFloat(o.total_amount).toLocaleString()}</span>,
+            <Badge key="s" status={
+                o.status === 'COMPLETED' || o.status === 'PAID' ? 'Completed' :
+                    o.status === 'CANCELLED' ? 'Refunded' :
+                        o.status === 'PROCESSING' ? 'Processing' : 'Pending'
+            } label={o.status} />,
+            <div key="a" style={{ display: 'flex', gap: '12px', color: '#94a3b8', cursor: 'pointer' }} onClick={() => setSelected(o)}>
+                <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', transition: 'color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '8px' }} onMouseEnter={e => {e.currentTarget.style.color = '#2563eb'; e.currentTarget.style.background = '#eff6ff';}} onMouseLeave={e => {e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.background = 'transparent';}}>{Icons.edit}</button>
             </div>
-        </div>,
-        <span key="d" style={{ color: '#64748b' }}>{o.date}</span>,
-        <span key="cust" style={{ fontWeight: 600, color: '#0f172a' }}>{o.customer}</span>,
-        <span key="amt" style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '15px' }}>${o.amount.toFixed(2)}</span>,
-        `$${o.profit.toFixed(2)}`,
-        <Badge key="s" status={o.status} />,
-        <div key="a" style={{ display: 'flex', gap: '12px', color: '#9ca3af', cursor: 'pointer' }} onClick={() => setSelected(o)}>
-            <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#2563eb'} onMouseLeave={e => e.currentTarget.style.color = '#9ca3af'}>{Icons.edit}</button>
-            <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#dc2626'} onMouseLeave={e => e.currentTarget.style.color = '#9ca3af'}>{Icons.trash}</button>
-        </div>
-    ]);
+        ];
+    });
+
+    const kpi = analytics?.cards || {};
+    const chartData = analytics?.chart || [];
+    const ALL_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const fullChartData = ALL_MONTHS.map(m => {
+        const entry = chartData.find((c: any) => c.month === m);
+        return { month: m, orders: entry ? (entry.orders || 0) : 0 };
+    });
+    const maxOrders = Math.max(...fullChartData.map(x => x.orders), 5);
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            <PageHeader title="Orders" subtitle="Track and manage your order pipeline.">
-                <Btn label="Export CSV" variant="secondary" />
-                <Btn label="Create Order" icon={Icons.plus} />
+            <PageHeader title="Order Management" subtitle="Monitor and optimize your fulfillment pipeline across the global network.">
+                <Btn label="Refresh" variant="secondary" onClick={fetchData} />
             </PageHeader>
 
-            {/* ── KPI Cards ── */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
-                <StatCard label="Revenue" value="$7,825" change="22%" up sparkData={[30, 35, 28, 40, 38, 44, 42, 48]} color="#2563eb" />
-                <StatCard label="Orders" value="920" change="25%" up={false} sparkData={[50, 45, 42, 40, 38, 34, 30, 28]} color="#dc2626" />
-                <StatCard label="Visitors" value="15.5K" change="49%" up sparkData={[20, 28, 25, 35, 32, 40, 38, 48]} color="#059669" />
-                <StatCard label="Conversion" value="28%" change="1.8%" up sparkData={[22, 24, 23, 26, 25, 27, 26, 28]} color="#2563eb" />
+                <StatCard label="Total Revenue" value={`₦${parseFloat(kpi.revenue?.value || '0').toLocaleString()}`} change={`${kpi.revenue?.change_pct || 0}%`} up={(kpi.revenue?.change_pct || 0) >= 0} color="#2563eb" />
+                <StatCard label="Total Orders" value={kpi.orders?.value?.toString() || '0'} change={`${kpi.orders?.change_pct || 0}%`} up={(kpi.orders?.change_pct || 0) >= 0} color="#2563eb" />
+                <StatCard label="Total Visitors" value={kpi.visitors?.value?.toLocaleString() || '0'} change={`${kpi.visitors?.change_pct || 0}%`} up={(kpi.visitors?.change_pct || 0) >= 0} color="#059669" />
+                <StatCard label="Conversion Rate" value={`${((kpi.conversion?.value || 0) * 100).toFixed(2)}%`} change={`${kpi.conversion?.change_pct || 0}%`} up={(kpi.conversion?.change_pct || 0) >= 0} color="#2563eb" />
             </div>
-
-            {/* ── Orders Update Chart ── */}
-            <Card>
-                <SectionTitle title="Orders Update" action="View Details" />
-                <LineChart data={revenueData} color="#2563eb" height={260} labels={MONTHS} />
-            </Card>
 
             <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                    {/* ── Latest Orders Table ── */}
+                    <Card style={{ marginBottom: '24px' }}>
+                        <SectionTitle title="Order Volume Trend" />
+                        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: '180px', padding: '20px 0 0', gap: '4px' }}>
+                            {fullChartData.map((c: any, i: number) => {
+                                const height = (c.orders / maxOrders) * 150;
+                                return (
+                                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                                        <div style={{ width: '100%', height: `${Math.max(height, 4)}px`, background: c.orders > 0 ? '#2563eb' : '#f1f5f9', borderRadius: '4px', opacity: c.orders > 0 ? 1 : 0.4, transition: 'all 0.3s' }} />
+                                        <span style={{ fontSize: '9px', fontWeight: 700, color: '#94a3b8' }}>{c.month}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </Card>
+
                     <Card noPad>
                         <div style={{ padding: '28px 28px 0' }}>
-                            <SectionTitle title="Latest Orders" />
+                            <SectionTitle title="Deployment Registry (Orders)" />
                             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '24px' }}>
-                                <div style={{ flex: '1 1 250px' }}>
-                                    <Input value={search} onChange={setSearch} placeholder="Search by Order ID or Customer..." suffix={Icons.search} />
+                                <div style={{ flex: '1 1 300px' }}>
+                                    <Input value={search} onChange={setSearch} placeholder="Search by Order ID or Buyer Name..." suffix={Icons.search} />
                                 </div>
                                 <div style={{ flex: '1 1 150px' }}>
-                                    <Select value={statusFilter} onChange={setStatusFilter} options={['All Statuses', 'Pending', 'Processing', 'Shipping', 'Completed', 'Refunded']} />
-                                </div>
-                                <div style={{ flex: '1 1 150px' }}>
-                                    <Select value={dateFilter} onChange={setDateFilter} options={['All Time', 'Today', 'This Week', 'This Month']} />
+                                    <Select value={statusFilter} onChange={setStatusFilter} options={['All Statuses', 'PENDING', 'PAID', 'PROCESSING', 'COMPLETED', 'CANCELLED']} />
                                 </div>
                             </div>
                         </div>
-                        <div style={{ padding: '0 8px 8px' }}>
-                            <Table cols={['Order ID', 'Items', 'Date', 'Customer', 'Revenue', 'Net Profit', 'Status', 'Actions']} rows={rows} />
+                        <div style={{ padding: '0 8px 8px', minHeight: loading ? '300px' : 'auto', position: 'relative' }}>
+                            {loading && (
+                                <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
+                                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--primary)' }}>Refreshing Data…</div>
+                                </div>
+                            )}
+                            <Table cols={['Order ID', 'Payload', 'Timestamp', 'Customer', 'Valuation', 'Status', 'Terminal']} rows={rows} />
+                            {!loading && orders.length === 0 && (
+                                <div style={{ padding: '48px', textAlign: 'center', color: '#64748b' }}>
+                                    No active orders found in the registry.
+                                </div>
+                            )}
+                        </div>
+                        <div style={{ padding: '0 28px 28px' }}>
+                            <Pagination 
+                                page={page} 
+                                total={total} 
+                                perPage={PER} 
+                                onPage={setPage} 
+                            />
                         </div>
                     </Card>
                 </div>
 
-                {/* Highly Modernized Side panel */}
                 {selected && (
-                    <div style={{ flex: '1 1 300px', width: '100%', maxWidth: '380px' }}>
-                        <Card style={{ position: 'sticky', top: '80px', animation: 'slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                    <div style={{ flex: '1 1 300px', width: '100%', maxWidth: '400px' }}>
+                        <Card style={{ position: 'sticky', top: '80px', animation: 'slideInRight 0.3s ease' }}>
                             <style>{`@keyframes slideInRight { from { transform: translateX(20px); opacity: 0;} to { transform: translateX(0); opacity: 1;} }`}</style>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                                 <div>
-                                    <Badge status={selected.status} />
-                                    <h4 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: '24px', color: '#0f172a', margin: '12px 0 4px' }}>{selected.id}</h4>
-                                    <p style={{ fontSize: '13px', color: '#64748b', margin: 0, fontWeight: 500 }}>{selected.date}</p>
+                                    <Badge status={
+                                        selected.status === 'COMPLETED' || selected.status === 'PAID' ? 'Completed' :
+                                            selected.status === 'CANCELLED' ? 'Refunded' :
+                                                selected.status === 'PROCESSING' ? 'Processing' : 'Pending'
+                                    } label={selected.status} />
+                                    <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: '#0f172a', margin: '12px 0 4px' }}>#{selected.id}</h4>
+                                    <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>Ordered on {new Date(selected.created_at).toLocaleString()}</p>
                                 </div>
-                                <button onClick={() => setSelected(null)} style={{ color: '#64748b', background: '#f8fafc', border: 'none', cursor: 'pointer', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
-                                    onMouseEnter={e => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
-                                    onMouseLeave={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#64748b'; }}
-                                >✕</button>
+                                <button onClick={() => setSelected(null)} style={{ background: '#f8fafc', border: 'none', cursor: 'pointer', width: '32px', height: '32px', borderRadius: '50%' }}>✕</button>
                             </div>
-                            
-                            <div style={{ background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>Customer</span>
-                                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>{selected.customer}</span>
+
+                            <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span style={{ fontSize: '13px', color: '#64748b' }}>Customer</span>
+                                    <span style={{ fontSize: '14px', fontWeight: 700 }}>{selected.buyer_name}</span>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>Product</span>
-                                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>{selected.product}</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span style={{ fontSize: '13px', color: '#64748b' }}>Contact</span>
+                                    <span style={{ fontSize: '14px', fontWeight: 700 }}>{selected.buyer_email}</span>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>Items</span>
-                                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>{selected.items}</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <span style={{ fontSize: '13px', color: '#64748b' }}>Phone</span>
+                                    <span style={{ fontSize: '14px', fontWeight: 700 }}>{selected.buyer_phone || 'N/A'}</span>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed #cbd5e1', paddingTop: '16px', marginTop: '4px' }}>
-                                    <span style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>Total Amount</span>
-                                    <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: '20px', color: '#059669' }}>${selected.amount.toFixed(2)}</span>
+
+                                <div style={{ borderTop: '1px dashed #cbd5e1', paddingTop: '16px' }}>
+                                    <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '8px' }}>Delivery Address</p>
+                                    <p style={{ fontSize: '13px', fontWeight: 600, color: '#334155', margin: 0, lineHeight: 1.5 }}>
+                                        {selected.address}<br />
+                                        {selected.city}, {selected.state} {selected.postal_code}<br />
+                                        {selected.country}
+                                    </p>
+                                </div>
+
+                                <div style={{ borderTop: '1px dashed #cbd5e1', paddingTop: '16px' }}>
+                                    <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '12px' }}>Items</p>
+                                    {selected.items?.map((it, i) => (
+                                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                            <span style={{ fontSize: '13px' }}>{it.product_name || it.service_name || it.name} x {it.quantity}</span>
+                                            <span style={{ fontWeight: 600 }}>₦{parseFloat(it.price).toLocaleString()}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', display: 'flex', justifyContent: 'space-between' }}>
+                                    <span style={{ fontWeight: 700 }}>Total Value</span>
+                                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: '#059669' }}>₦{parseFloat(selected.total_amount).toLocaleString()}</span>
                                 </div>
                             </div>
 
-                            <p style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.5px' }}>Update Order Status</p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                {['Pending', 'Processing', 'Shipping', 'Completed', 'Refunded'].map((s) => (
-                                    <button key={s} 
-                                        style={{ padding: '14px 16px', borderRadius: '12px', border: `1.5px solid ${selected.status === s ? '#2563eb' : '#e2e8f0'}`, background: selected.status === s ? '#eff6ff' : '#fff', color: selected.status === s ? '#2563eb' : '#475569', fontWeight: selected.status === s ? 700 : 600, fontSize: '14px', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                                        onMouseEnter={e => { if (selected.status !== s) { e.currentTarget.style.borderColor = '#93c5fd'; e.currentTarget.style.background = '#f8fafc'; } }}
-                                        onMouseLeave={e => { if (selected.status !== s) { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.background = '#fff'; } }}
+                            <p style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: '16px' }}>Update Status</p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                {['PENDING', 'PAID', 'PROCESSING', 'COMPLETED', 'CANCELLED'].map((s) => (
+                                    <button key={s}
+                                        disabled={updatingId === selected.id}
+                                        onClick={() => handleStatusUpdate(selected.id, s)}
+                                        style={{ padding: '12px 16px', borderRadius: '10px', border: `1.5px solid ${selected.status === s ? '#2563eb' : '#e2e8f0'}`, background: selected.status === s ? '#eff6ff' : '#fff', color: selected.status === s ? '#2563eb' : '#475569', fontWeight: 600, fontSize: '13px', cursor: updatingId === selected.id ? 'not-allowed' : 'pointer', textAlign: 'left', display: 'flex', justifyContent: 'space-between', transition: 'all 0.2s', opacity: updatingId === selected.id && selected.status !== s ? 0.6 : 1 }}
                                     >
-                                        {s}
-                                        {selected.status === s && <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2563eb' }}></span>}
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            {s}
+                                            {updatingId === selected.id && selected.status === s && (
+                                                <div className="spinner-small" style={{ width: '12px', height: '12px', border: '2px solid #2563eb', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
+                                            )}
+                                        </div>
+                                        {selected.status === s && updatingId !== selected.id && <span>✓</span>}
                                     </button>
                                 ))}
+                                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                             </div>
+                            
+                            {updateError && (
+                                <div style={{ marginTop: '16px', padding: '12px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '10px', color: '#b91c1c', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ fontSize: '16px' }}>⚠️</span>
+                                    {updateError}
+                                </div>
+                            )}
                         </Card>
                     </div>
                 )}

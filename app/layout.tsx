@@ -7,11 +7,18 @@ export const metadata: Metadata = {
   description: "Your one-stop shop for everything. Shop from thousands of vendors.",
 };
 
+import { ToastProvider } from "@/components/ui/Toast";
+import { CartProvider } from "@/context/CartContext";
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body>
-        <ConditionalLayout>{children}</ConditionalLayout>
+        <CartProvider>
+          <ToastProvider>
+            <ConditionalLayout>{children}</ConditionalLayout>
+          </ToastProvider>
+        </CartProvider>
       </body>
     </html>
   );

@@ -1,22 +1,39 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProductCard from '../ui/ProductCard';
-import { ALL_PRODUCTS } from '@/lib/data';
+import { getProducts } from '@/services/publicService';
+import { Product } from '@/services/types';
 
 const tabs = ['All Products', 'Fashion', 'Electronics', 'Home', 'Sports'];
 
-const ALL_PRODS = ALL_PRODUCTS;
-const productsByTab: Record<string, typeof ALL_PRODS> = {
-    'All Products': ALL_PRODS.slice(0, 8),
-    'Fashion': ALL_PRODS.filter(p => p.category === 'fashion').slice(0, 8),
-    'Electronics': ALL_PRODS.filter(p => p.category === 'electronics').slice(0, 8),
-    'Home': ALL_PRODS.filter(p => p.category === 'home').slice(0, 8),
-    'Sports': ALL_PRODS.filter(p => p.category === 'sports').slice(0, 8),
+const CATEGORY_MAP: Record<string, string | undefined> = {
+    'All Products': undefined,
+    'Fashion': 'fashion',
+    'Electronics': 'electronics',
+    'Home': 'home',
+    'Sports': 'sports',
 };
 
 export default function ProductGrid() {
     const [activeTab, setActiveTab] = useState('All Products');
-    const products = productsByTab[activeTab] ?? productsByTab['All Products'];
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true);
+            try {
+                const category = CATEGORY_MAP[activeTab];
+                const data = await getProducts({ category, page_size: 12 });
+                setProducts(data?.results || []);
+            } catch (err) {
+                console.error("Failed to fetch products for tab:", activeTab, err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, [activeTab]);
 
     return (
         <section className="container" style={{ padding: '0 var(--gutter) 28px' }}>
@@ -64,12 +81,25 @@ export default function ProductGrid() {
                 <div className="pg-grid" style={{
                     flex: 1,
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(4, 1fr)',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
                     gap: '12px',
+                    minHeight: '400px',
+                    position: 'relative'
                 }}>
-                    {products.slice(0, 8).map((p) => (
-                        <ProductCard key={p.id} {...p} />
-                    ))}
+                    {loading ? (
+                        <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div className="loader" style={{ width: '32px', height: '32px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                        </div>
+                    ) : (
+                        products.map((p) => (
+                            <ProductCard key={p.id} {...p as any} />
+                        ))
+                    )}
+                    {(!loading && products.length === 0) && (
+                        <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+                            No products found in this category.
+                        </div>
+                    )}
                 </div>
 
                 {/* Sidebar Ad */}

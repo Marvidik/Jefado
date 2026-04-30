@@ -1,5 +1,36 @@
 'use client';
+import { useState } from 'react';
+
 export default function Footer() {
+    const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+    const handleSubscribe = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email) return;
+        setLoading(true);
+        setStatus('idle');
+        try {
+            const res = await fetch('/api/brevo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'subscribe', email }),
+            });
+            if (res.ok) {
+                setStatus('success');
+                setEmail('');
+            } else {
+                setStatus('error');
+            }
+        } catch (err) {
+            setStatus('error');
+        } finally {
+            setLoading(false);
+            setTimeout(() => setStatus('idle'), 3000);
+        }
+    };
+
     return (
         <footer style={{ background: 'var(--announce-bg)', color: 'rgba(255,255,255,0.75)', paddingTop: '52px', marginTop: '12px' }}>
             <div className="container" style={{ padding: '0 var(--gutter)' }}>
@@ -8,16 +39,32 @@ export default function Footer() {
                     {/* Brand & Newsletter */}
                     <div>
                         <a href="/" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: '#fff', letterSpacing: '-0.5px', display: 'block', marginBottom: '14px' }}>
-                            Jefado<span style={{ color: 'var(--accent)' }}>.</span>
+                            JEFEDO<span style={{ color: 'var(--accent)' }}>.</span>
                         </a>
                         <p style={{ fontSize: '13px', lineHeight: 1.7, marginBottom: '24px', color: 'rgba(255,255,255,0.5)' }}>Your one-stop multi-vendor marketplace. Shop from thousands of verified sellers.</p>
-                        <div style={{ display: 'flex', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
-                            <input placeholder="Enter your email" style={{ flex: 1, padding: '16px 20px', background: 'rgba(255,255,255,0.05)', border: 'none', outline: 'none', color: '#fff', fontSize: '14px', fontFamily: 'var(--font-body)' }} />
-                            <button style={{ padding: '16px 24px', background: 'var(--accent)', color: '#fff', fontSize: '14px', fontWeight: 800, fontFamily: 'var(--font-body)', whiteSpace: 'nowrap', transition: 'all 0.2s' }}
-                                onMouseEnter={e => e.currentTarget.style.background = 'var(--primary)'}
-                                onMouseLeave={e => e.currentTarget.style.background = 'var(--accent)'}
-                            >Subscribe</button>
-                        </div>
+                        <form onSubmit={handleSubscribe} style={{ position: 'relative' }}>
+                            <div style={{ display: 'flex', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+                                <input 
+                                    type="email"
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="Enter your email" 
+                                    style={{ flex: 1, padding: '16px 20px', background: 'rgba(255,255,255,0.05)', border: 'none', outline: 'none', color: '#fff', fontSize: '14px', fontFamily: 'var(--font-body)' }} 
+                                />
+                                <button 
+                                    type="submit"
+                                    disabled={loading}
+                                    style={{ padding: '16px 24px', background: 'var(--accent)', color: '#fff', fontSize: '14px', fontWeight: 800, fontFamily: 'var(--font-body)', whiteSpace: 'nowrap', transition: 'all 0.2s', cursor: loading ? 'not-allowed' : 'pointer' }}
+                                    onMouseEnter={e => !loading && (e.currentTarget.style.background = 'var(--primary)')}
+                                    onMouseLeave={e => !loading && (e.currentTarget.style.background = 'var(--accent)')}
+                                >
+                                    {loading ? '...' : 'Subscribe'}
+                                </button>
+                            </div>
+                            {status === 'success' && <p style={{ position: 'absolute', bottom: '-24px', left: '0', fontSize: '11px', color: 'var(--success)', fontWeight: 700 }}>✓ Subscribed successfully!</p>}
+                            {status === 'error' && <p style={{ position: 'absolute', bottom: '-24px', left: '0', fontSize: '11px', color: 'var(--danger)', fontWeight: 700 }}>⚠ Subscription failed.</p>}
+                        </form>
                     </div>
 
                     {/* Support */}
@@ -25,7 +72,7 @@ export default function Footer() {
                         <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff', marginBottom: '16px' }}>Support</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             <p style={{ fontSize: '12px', lineHeight: 1.6 }}>111 Bijoy Sarani, Dhaka, DH 1515, Bangladesh.</p>
-                            <p style={{ fontSize: '12px' }}>📧 support@jefado.com</p>
+                            <p style={{ fontSize: '12px' }}>📧 support@jefedo.com</p>
                             <p style={{ fontSize: '12px' }}>📞 +88015-88888-9999</p>
                         </div>
                     </div>
@@ -64,7 +111,7 @@ export default function Footer() {
                                     onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.65)')}
                                 >{item.label}</a>
                             ))}
-                            <a href="/auth?type=seller" style={{ 
+                            <a href="/auth?type=seller" style={{
                                 marginTop: '8px',
                                 display: 'inline-block',
                                 textAlign: 'center',
@@ -79,8 +126,8 @@ export default function Footer() {
                                 letterSpacing: '1px',
                                 transition: 'all 0.3s'
                             }}
-                            onMouseEnter={e => { e.currentTarget.style.background = 'var(--primary-dark)'; e.currentTarget.style.borderColor = 'var(--primary-dark)'; e.currentTarget.style.boxShadow = '0 5px 15px rgba(238,18,23,0.3)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = 'var(--primary)'; e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.boxShadow = 'none'; }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'var(--primary-dark)'; e.currentTarget.style.borderColor = 'var(--primary-dark)'; e.currentTarget.style.boxShadow = '0 5px 15px rgba(238,18,23,0.3)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'var(--primary)'; e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.boxShadow = 'none'; }}
                             >Become a Seller</a>
                         </div>
                     </div>
@@ -100,7 +147,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div style={{ padding: '18px 0', textAlign: 'center', fontSize: '12px', color: 'rgba(255,255,255,0.3)' }}>
-                    © {new Date().getFullYear()} Jefado. All rights reserved.
+                    © {new Date().getFullYear()} Jefedo. All rights reserved.
                 </div>
             </div>
         </footer>

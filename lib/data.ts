@@ -26,6 +26,7 @@ export interface Product {
     stockQuantity: number;
     seller: string;
     description: string;
+    soldCount?: number;
     specs?: [string, string][];
 }
 
@@ -42,6 +43,8 @@ export interface Service {
     category: string;
     description: string;
     isActive: boolean;
+    location?: string;
+    originalPrice?: number;
 }
 
 export const CATEGORIES = [

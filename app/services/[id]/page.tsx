@@ -1,37 +1,63 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { ALL_SERVICES } from '@/lib/data';
+import { getServiceDetail } from '@/services/publicService';
+import { ServiceDetail as IServiceDetail } from '@/services/types';
+import { useToast } from '@/components/ui/Toast';
 import ReviewsSection from '@/components/ui/ReviewsSection';
 
 export default function ServiceDetailPage() {
     const params = useParams();
-    const serviceId = parseInt(params.id as string);
-    const service = useMemo(() => ALL_SERVICES.find(s => s.id === serviceId), [serviceId]);
+    const [bookingDate, setBookingDate] = useState('');
+    const [bookingTime, setBookingTime] = useState('');
+    const [added, setAdded] = useState(false);
 
-    const [selectedDate, setSelectedDate] = useState('');
-    const [selectedTime, setSelectedTime] = useState('');
-    const [activeTab, setActiveTab] = useState<'info' | 'reviews'>('info');
-    const [booking, setBooking] = useState(false);
+    const [service, setService] = useState<IServiceDetail | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    if (!service) {
+    useEffect(() => {
+        const fetchService = async () => {
+            try {
+                setLoading(true);
+                const response = await getServiceDetail(params.id as string);
+                const actualData = (response as any).data || response;
+                setService(actualData);
+            } catch (err: any) {
+                setError(err.detail || 'Could not fetch service details.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchService();
+    }, [params.id]);
+
+    if (loading) return (
+        <div className="container" style={{ padding: '100px 0', textAlign: 'center' }}>
+            <div className="loader" style={{ width: '40px', height: '40px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 20px' }} />
+            <p style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Syncing Service Provider Terminal...</p>
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+    );
+
+    if (error || !service) {
         return (
             <div className="container" style={{ padding: '100px 0', textAlign: 'center' }}>
-                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', marginBottom: '16px' }}>Service Not Found</h1>
+                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', marginBottom: '16px' }}>{error || 'Service Not Found'}</h1>
                 <a href="/services" style={{ color: 'var(--primary)', fontWeight: 700 }}>Back to Services</a>
             </div>
         );
     }
 
+    const { success, error: toastError } = useToast();
     const handleBookNow = () => {
-        if (!selectedDate || !selectedTime) {
-            alert('Please select a date and time for your booking.');
+        if (!bookingDate || !bookingTime) {
+            toastError('Please select a date and time for your booking.');
             return;
         }
-        setBooking(true);
-        // Simulate redirecting to checkout with booking info
+        setAdded(true);
         setTimeout(() => {
-            window.location.href = `/checkout?type=service&id=${service.id}&date=${selectedDate}&time=${selectedTime}`;
+            window.location.href = `/checkout?type=service&id=${service.slug}&date=${bookingDate}&time=${bookingTime}`;
         }, 500);
     };
 
@@ -56,7 +82,7 @@ export default function ServiceDetailPage() {
                             {service.image ? (
                                 <img src={service.image} alt={service.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             ) : (
-                                <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '120px' }}>{service.emoji}</div>
+                                <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '120px' }}>{service.emoji || '🛠️'}</div>
                             )}
                             <div style={{ position: 'absolute', top: '20px', left: '20px' }}>
                                 <span style={{ background: 'var(--primary)', color: '#fff', fontSize: '12px', fontWeight: 700, padding: '6px 16px', borderRadius: '30px' }}>{service.category}</span>
@@ -69,15 +95,27 @@ export default function ServiceDetailPage() {
                             
                             <div style={{ marginTop: '32px', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
                                 <div style={{ background: 'var(--surface-2)', padding: '16px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-                                    <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>Provider</p>
-                                    <p style={{ fontWeight: 700, fontSize: '15px' }}>{service.provider}</p>
-                                </div>
+                                     <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '18px' }}>{(service.seller || (service as any).provider)?.store_name || 'Unknown Provider'}</p>
+                                     <div style={{ display: 'flex', gap: '16px', marginTop: '4px' }}>
+                                         <p style={{ fontSize: '12px', color: 'var(--success)', fontWeight: 700 }}>{(service.seller || (service as any).provider)?.response_rate_pct || 0}% Response Rate</p>
+                                         <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Verified Provider</p>
+                                     </div>
+                                     <a href={`/shop/${(service.seller || (service as any).provider)?.slug || '#'}`} style={{ display: 'inline-block', marginTop: '12px', padding: '10px 20px', border: '1.5px solid var(--primary)', borderRadius: 'var(--radius)', fontSize: '13px', fontWeight: 700, color: 'var(--primary)', textDecoration: 'none' }}>View Store Profile →</a>
+                                 </div>
                                 <div style={{ background: 'var(--surface-2)', padding: '16px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
                                     <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>Rating</p>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                         <span style={{ color: 'var(--secondary)' }}>★</span>
-                                        <p style={{ fontWeight: 700, fontSize: '15px' }}>{service.rating} ({service.reviewsCount} reviews)</p>
+                                        <p style={{ fontWeight: 700, fontSize: '15px' }}>{service.rating} ({service.review_count} reviews)</p>
                                     </div>
+                                </div>
+                                <div style={{ background: 'var(--surface-2)', padding: '16px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
+                                    <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>Location</p>
+                                    <p style={{ fontWeight: 700, fontSize: '15px' }}>{(service.seller || (service as any).provider)?.location || 'Unknown'}</p>
+                                </div>
+                                <div style={{ background: 'var(--surface-2)', padding: '16px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
+                                    <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>Availability</p>
+                                    <p style={{ fontWeight: 700, fontSize: '15px', color: 'var(--success)' }}>Active</p>
                                 </div>
                             </div>
                         </div>
@@ -87,8 +125,11 @@ export default function ServiceDetailPage() {
                     <div style={{ position: 'sticky', top: '100px', height: 'fit-content' }}>
                         <div style={{ background: 'var(--surface)', border: '2px solid var(--primary)', borderRadius: 'var(--radius-2xl)', padding: '32px', boxShadow: 'var(--shadow-xl)' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                                <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600 }}>Starting Price</span>
-                                <span style={{ fontFamily: 'var(--font-display)', fontSize: '36px', fontWeight: 800, color: 'var(--primary)' }}>₦{service.price}</span>
+                                <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600 }}>Service Fee</span>
+                                <div style={{ textAlign: 'right' }}>
+                                     <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '32px', color: 'var(--primary)' }}>₦{parseFloat(service.price).toLocaleString()}</span>
+                                     {service.original && <span style={{ fontSize: '14px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₦{parseFloat(service.original).toLocaleString()}</span>}
+                                </div>
                             </div>
 
                             <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '0 0 24px' }} />
@@ -97,8 +138,8 @@ export default function ServiceDetailPage() {
                                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '12px', color: 'var(--text-primary)' }}>1. Select Date</label>
                                 <input 
                                     type="date" 
-                                    value={selectedDate}
-                                    onChange={e => setSelectedDate(e.target.value)}
+                                    value={bookingDate}
+                                    onChange={e => setBookingDate(e.target.value)}
                                     min={new Date().toISOString().split('T')[0]}
                                     style={{ 
                                         width: '100%', 
@@ -119,13 +160,13 @@ export default function ServiceDetailPage() {
                                     {timeSlots.map(time => (
                                         <button 
                                             key={time}
-                                            onClick={() => setSelectedTime(time)}
+                                            onClick={() => setBookingTime(time)}
                                             style={{ 
                                                 padding: '10px', 
                                                 borderRadius: 'var(--radius)', 
-                                                border: `1.5px solid ${selectedTime === time ? 'var(--primary)' : 'var(--border)'}`, 
-                                                background: selectedTime === time ? 'var(--primary-light)' : 'var(--surface)', 
-                                                color: selectedTime === time ? 'var(--primary)' : 'var(--text-secondary)',
+                                                border: `1.5px solid ${bookingTime === time ? 'var(--primary)' : 'var(--border)'}`, 
+                                                background: bookingTime === time ? 'var(--primary-light)' : 'var(--surface)', 
+                                                color: bookingTime === time ? 'var(--primary)' : 'var(--text-secondary)',
                                                 fontSize: '13px',
                                                 fontWeight: 600,
                                                 cursor: 'pointer',
@@ -140,7 +181,7 @@ export default function ServiceDetailPage() {
 
                             <button 
                                 onClick={handleBookNow}
-                                disabled={booking}
+                                disabled={added}
                                 style={{ 
                                     width: '100%', 
                                     padding: '16px', 
@@ -149,35 +190,22 @@ export default function ServiceDetailPage() {
                                     borderRadius: 'var(--radius-xl)', 
                                     fontSize: '16px', 
                                     fontWeight: 800, 
-                                    cursor: booking ? 'wait' : 'pointer',
+                                    cursor: added ? 'wait' : 'pointer',
                                     boxShadow: '0 8px 25px rgba(238, 18, 23, 0.25)',
                                     transition: 'all 0.2s'
                                 }}
                             >
-                                {booking ? 'Processing...' : 'Reserve Service Now'}
+                                {added ? 'Processing...' : 'Reserve Service Now'}
                             </button>
                             
                             <p style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', marginTop: '16px' }}>No payment charged until you confirm on the next step.</p>
-                        </div>
-
-                        {/* Provider Stats */}
-                        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '20px', marginTop: '24px', display: 'flex', gap: '20px' }}>
-                            <div style={{ flex: 1, textAlign: 'center' }}>
-                                <p style={{ fontSize: '18px', fontWeight: 800, color: 'var(--success)' }}>98%</p>
-                                <p style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Response Rate</p>
-                            </div>
-                            <div style={{ width: '1px', background: 'var(--border)' }} />
-                            <div style={{ flex: 1, textAlign: 'center' }}>
-                                <p style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>2.4k</p>
-                                <p style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Jobs Done</p>
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Reviews Section */}
                 <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-2xl)', padding: '48px' }}>
-                    <ReviewsSection reviews={service.reviewsList} initialRating={service.rating} />
+                    <ReviewsSection reviews={service.reviews as any} initialRating={service.rating} serviceId={service.id} ratingStats={service.rating_stats} />
                 </div>
             </div>
 

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icons } from './icons';
+import { getSellerProfile } from '@/services/sellerService';
 
 const MENU_GROUPS = [
     {
@@ -16,16 +17,17 @@ const MENU_GROUPS = [
         ]
     },
     {
-        name: 'Product',
+        name: 'Inventory Catalog',
         items: [
             { icon: Icons.products, href: '/dashboard/products', label: 'Products Master' },
             { icon: Icons.services, href: '/dashboard/services', label: 'Services Master' },
         ]
     },
     {
-        name: 'Admin',
+        name: 'Financial & Account',
         items: [
-            { icon: Icons.settings, href: '/dashboard/settings', label: 'Settings & Admin' },
+            { icon: Icons.dollar, href: '/dashboard/payouts', label: 'Payout Registry' },
+            { icon: Icons.settings, href: '/dashboard/settings', label: 'Account Settings' },
         ]
     }
 ];
@@ -35,6 +37,11 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [expanded, setExpanded] = useState(true);
+    const [shopSlug, setShopSlug] = useState<string | null>(null);
+
+    useEffect(() => {
+        getSellerProfile().then(p => setShopSlug(p.slug)).catch(() => { });
+    }, []);
 
     useEffect(() => {
         const check = () => {
@@ -212,11 +219,11 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                     <div style={{ height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: expanded ? '0 24px' : '0', width: '100%', flexShrink: 0 }}>
                         {expanded ? (
                             <Link href="/dashboard" style={{ fontWeight: 800, fontSize: '22px', color: '#2563eb', textDecoration: 'none', letterSpacing: '-0.5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                DEALPORT
+                                JEFEDO
                             </Link>
                         ) : (
                             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <span style={{ color: '#2563eb', fontWeight: 800, fontSize: '22px' }}>D</span>
+                                <span style={{ color: '#2563eb', fontWeight: 800, fontSize: '22px' }}>J</span>
                             </div>
                         )}
                         {!isMobile && (
@@ -246,9 +253,9 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                     </nav>
 
                     <div style={{ padding: '24px', flexShrink: 0, borderTop: '1px solid #e2e8f0' }}>
-                         <Link href="/" title="Your Shop" className="ds-nav-link" style={{ padding: '12px', border: '1px solid #e2e8f0', borderRadius: '8px', justifyContent: expanded ? 'flex-start' : 'center', color: '#0f172a', fontWeight: 600 }}>
+                        <Link href={shopSlug ? `/shop/${shopSlug}` : '#'} title="View Your Shop" target="_blank" className="ds-nav-link" style={{ padding: '12px', border: '1px solid #e2e8f0', borderRadius: '8px', justifyContent: expanded ? 'flex-start' : 'center', color: '#0f172a', fontWeight: 600 }}>
                             <span className="ds-nav-icon" style={{ margin: expanded ? '0 12px 0 0' : 0 }}>{Icons.store}</span>
-                            {expanded && <span className="ds-nav-label" style={{ flex: 1 }}>Your Shop</span>}
+                            {expanded && <span className="ds-nav-label" style={{ flex: 1 }}>View Your Shop</span>}
                             {expanded && <span style={{ color: '#94a3b8' }}>↗</span>}
                         </Link>
                     </div>
@@ -266,15 +273,8 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                                 {pathname === '/dashboard' ? 'Dashboard' : pathname.split('/').pop()?.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase() || '')}
                             </h2>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap', justifyContent: 'flex-end', flex: 1 }}>
-                            <div style={{ position: 'relative', minWidth: '200px', flex: '1 1 200px', maxWidth: '400px' }}>
-                                <input type="text" placeholder="Search..." style={{ width: '100%', padding: '10px 16px 10px 40px', borderRadius: '24px', border: 'none', background: '#f8fafc', fontSize: '13px', outline: 'none' }} />
-                                <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>{Icons.search}</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', color: '#64748b' }}>
-                                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}>🔔</button>
-                                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold' }}>A</div>
-                            </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', justifyContent: 'flex-end', flex: 1 }}>
+                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold' }}>A</div>
                         </div>
                     </header>
                     <main className="ds-body">

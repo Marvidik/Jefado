@@ -1,15 +1,20 @@
 'use client';
-import { useState, useMemo, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { ALL_PRODUCTS, ALL_SERVICES } from '@/lib/data';
+import { useState, useMemo, Suspense, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Script from 'next/script';
+import { useToast } from '@/components/ui/Toast';
+import { getProductDetail, getServiceDetail } from '@/services/publicService';
+import { checkoutProduct, checkoutService, verifyPayment } from '@/services/checkoutService';
+import { getAddresses } from '@/services/accountService';
+import { tokenStorage } from '@/services/axiosInstance';
+import { ProductDetail, ServiceDetail, Address } from '@/services/types';
 
 /* ── Types ──────────────────────────────── */
 interface FormData {
     firstName: string; lastName: string; email: string; phone: string;
     address: string; city: string; state: string; zip: string; country: string;
     saveAddress: boolean;
-    cardNumber: string; cardName: string; expiry: string; cvv: string;
-    paymentMethod: 'card' | 'paypal' | 'bank' | 'mobile';
+    bookingNotes: string;
 }
 
 interface OrderItem {
@@ -19,17 +24,19 @@ interface OrderItem {
     price: number;
     qty: number;
     color?: string;
+    image?: string;
     seller: string;
     date?: string;
     time?: string;
 }
 
-const COUNTRIES = ['United States', 'United Kingdom', 'Canada', 'Australia', 'Germany', 'France', 'Nigeria', 'South Africa', 'India', 'Singapore'];
-const US_STATES = ['Alabama', 'Alaska', 'Arizona', 'California', 'Colorado', 'Florida', 'Georgia', 'Illinois', 'New York', 'Texas', 'Washington'];
+const COUNTRIES = ['Nigeria', 'Ghana', 'Kenya', 'South Africa'];
+const NIGERIAN_STATES = ['Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT - Abuja', 'Gombe', 'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'];
+const PAYSTACK_PUBLIC_KEY = process.env.NEXT_PUBLIC_PAYSTACK_KEY || '';
 
 /* ── Step indicator ─────────────────────── */
 function StepBar({ step, isService }: { step: number; isService: boolean }) {
-    const steps = [isService ? 'Service Location' : 'Shipping', 'Payment', 'Review'];
+    const steps = [isService ? 'Service Details' : 'Shipping Details', 'Review order'];
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '32px', gap: '0' }}>
             {steps.map((label, i) => {
@@ -109,8 +116,7 @@ function SelectField({ label, value, onChange, options, required }: {
 }
 
 /* ── Order summary sidebar ──────────────── */
-function OrderSidebar({ items, coupon, setCoupon }: { items: OrderItem[]; coupon: number; setCoupon: (n: number) => void }) {
-    const [code, setCode] = useState('');
+function OrderSidebar({ items, coupon, setCoupon, couponCode, setCouponCode }: { items: OrderItem[]; coupon: number; setCoupon: (n: number) => void; couponCode: string; setCouponCode: (s: string) => void }) {
     const [error, setError] = useState('');
     const [applied, setApplied] = useState('');
 
@@ -122,7 +128,7 @@ function OrderSidebar({ items, coupon, setCoupon }: { items: OrderItem[]; coupon
     const VALID: Record<string, number> = { SAVE10: 10, JEFADO20: 20, WELCOME15: 15 };
 
     const apply = () => {
-        const k = code.toUpperCase().trim();
+        const k = couponCode.toUpperCase().trim();
         if (VALID[k]) { setCoupon(VALID[k]); setApplied(k); setError(''); }
         else { setError('Invalid code'); setCoupon(0); setApplied(''); }
     };
@@ -135,8 +141,12 @@ function OrderSidebar({ items, coupon, setCoupon }: { items: OrderItem[]; coupon
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '18px' }}>
                 {items.map(item => (
                     <div key={item.id} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                        <div style={{ width: '48px', height: '48px', background: 'var(--surface-2)', borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0, position: 'relative', border: '1px solid var(--border)' }}>
-                            {item.emoji}
+                        <div style={{ width: '48px', height: '48px', background: 'var(--surface-2)', borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                            {item.image ? (
+                                <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                                <span style={{ fontSize: '24px' }}>{item.emoji}</span>
+                            )}
                             <span style={{ position: 'absolute', top: '-6px', right: '-6px', background: 'var(--primary)', color: '#fff', fontSize: '9px', fontWeight: 700, width: '16px', height: '16px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.qty}</span>
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -154,7 +164,7 @@ function OrderSidebar({ items, coupon, setCoupon }: { items: OrderItem[]; coupon
                 {/* Coupon */}
                 <div style={{ marginBottom: '14px' }}>
                     <div style={{ display: 'flex', gap: '6px' }}>
-                        <input value={code} onChange={e => { setCode(e.target.value); setError(''); }} placeholder="Coupon code"
+                        <input value={couponCode} onChange={e => { setCouponCode(e.target.value); setError(''); }} placeholder="Coupon code"
                             style={{ flex: 1, padding: '8px 11px', border: `1.5px solid ${error ? 'var(--danger)' : 'var(--border)'}`, borderRadius: 'var(--radius)', fontSize: '12px', fontFamily: 'var(--font-body)', outline: 'none', background: 'var(--surface-2)', minWidth: 0 }}
                         />
                         <button onClick={apply} style={{ padding: '8px 12px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontSize: '12px', fontWeight: 700, fontFamily: 'var(--font-body)', flexShrink: 0 }}>Apply</button>
@@ -198,7 +208,8 @@ function ShippingStep({ form, setForm, onNext, isService }: {
 }) {
     const set = (k: keyof FormData) => (v: string | boolean) => setForm({ ...form, [k]: v });
 
-    const valid = form.firstName && form.lastName && form.email && form.phone && form.address && form.city && form.zip && form.country;
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
+    const valid = form.firstName && form.lastName && isEmailValid && form.phone && form.address && form.city && form.zip && form.country;
 
     return (
         <div>
@@ -218,7 +229,7 @@ function ShippingStep({ form, setForm, onNext, isService }: {
             {/* Email + Phone */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                 <Field label="Email Address" value={form.email} onChange={set('email') as (v: string) => void} placeholder="john@example.com" type="email" required />
-                <Field label="Phone Number" value={form.phone} onChange={set('phone') as (v: string) => void} placeholder="+1 234 567 8900" type="tel" required />
+                <Field label="Phone Number" value={form.phone} onChange={set('phone') as (v: string) => void} placeholder="08123456789" type="tel" required />
             </div>
 
             {/* Address */}
@@ -229,14 +240,33 @@ function ShippingStep({ form, setForm, onNext, isService }: {
             {/* City + State + Zip */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                 <Field label="City" value={form.city} onChange={set('city') as (v: string) => void} placeholder="New York" required />
-                <SelectField label="State" value={form.state} onChange={set('state') as (v: string) => void} options={US_STATES} />
+                <SelectField label="State" value={form.state} onChange={set('state') as (v: string) => void} options={NIGERIAN_STATES} />
                 <Field label="ZIP / Postal Code" value={form.zip} onChange={set('zip') as (v: string) => void} placeholder="10001" required maxLength={10} />
             </div>
 
             {/* Country */}
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: '14px' }}>
                 <SelectField label="Country" value={form.country} onChange={set('country') as (v: string) => void} options={COUNTRIES} required />
             </div>
+
+            {/* Booking Notes (Service Only) */}
+            {isService && (
+                <div style={{ marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                        <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Booking Notes</label>
+                        <textarea 
+                            value={form.bookingNotes}
+                            onChange={e => set('bookingNotes')(e.target.value)}
+                            placeholder="Any specific requests or instructions for the service provider?"
+                            style={{ 
+                                padding: '10px 14px', fontSize: '14px', border: '1.5px solid var(--border)', 
+                                borderRadius: 'var(--radius)', outline: 'none', fontFamily: 'var(--font-body)', 
+                                background: 'var(--surface)', color: 'var(--text-primary)', minHeight: '80px', width: '100%' 
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Save address */}
             <label style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-secondary)' }}>
@@ -244,130 +274,18 @@ function ShippingStep({ form, setForm, onNext, isService }: {
                 Save this {isService ? 'location' : 'address'} for future orders
             </label>
 
-            <button onClick={() => valid && onNext()} style={{ width: '100%', padding: '14px', background: valid ? 'var(--primary)' : 'var(--border)', color: valid ? '#fff' : 'var(--text-muted)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', transition: 'all 0.2s', boxShadow: valid ? '0 4px 20px rgba(26,86,219,0.25)' : 'none' }}>
-                Continue to Payment →
+            <button onClick={() => valid && onNext()} style={{ width: '100%', padding: '14px', background: valid ? 'var(--primary)' : 'var(--border)', color: valid ? '#fff' : 'var(--text-muted)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', transition: 'all 0.2s', boxShadow: valid ? '0 4px 20px rgba(238,18,23,0.25)' : 'none' }}>
+                Review Order →
             </button>
         </div>
     );
 }
 
-/* ── Step 2: Payment form ───────────────── */
-function PaymentStep({ form, setForm, onNext, onBack }: {
-    form: FormData; setForm: (f: FormData) => void; onNext: () => void; onBack: () => void;
-}) {
-    const set = (k: keyof FormData) => (v: string) => setForm({ ...form, [k]: v });
-
-    const formatCard = (v: string) => v.replace(/\D/g, '').slice(0, 16).replace(/(.{4})/g, '$1 ').trim();
-    const formatExpiry = (v: string) => {
-        const digits = v.replace(/\D/g, '').slice(0, 4);
-        return digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
-    };
-
-    const payMethods = [
-        { id: 'card' as const, label: 'Credit / Debit Card', icon: '💳' },
-        { id: 'paypal' as const, label: 'PayPal', icon: '🅿️' },
-        { id: 'bank' as const, label: 'Bank Transfer', icon: '🏦' },
-        { id: 'mobile' as const, label: 'Mobile Money', icon: '📱' },
-    ];
-
-    const cardValid = form.paymentMethod !== 'card' || (form.cardNumber.length >= 19 && form.cardName && form.expiry.length === 5 && form.cvv.length >= 3);
-
-    return (
-        <div>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', marginBottom: '20px', color: 'var(--text-primary)' }}>Payment Method</h2>
-
-            {/* Payment method tabs */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '24px' }}>
-                {payMethods.map(m => (
-                    <button key={m.id} onClick={() => setForm({ ...form, paymentMethod: m.id })} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '14px 8px', background: form.paymentMethod === m.id ? 'var(--primary-light)' : 'var(--surface)', border: `2px solid ${form.paymentMethod === m.id ? 'var(--primary)' : 'var(--border)'}`, borderRadius: 'var(--radius-lg)', cursor: 'pointer', transition: 'all 0.2s' }}>
-                        <span style={{ fontSize: '24px' }}>{m.icon}</span>
-                        <span style={{ fontSize: '11px', fontWeight: 600, color: form.paymentMethod === m.id ? 'var(--primary)' : 'var(--text-secondary)', textAlign: 'center', lineHeight: 1.2 }}>{m.label}</span>
-                    </button>
-                ))}
-            </div>
-
-            {/* Card form */}
-            {form.paymentMethod === 'card' && (
-                <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '20px', marginBottom: '20px' }}>
-                    {/* Visual card preview */}
-                    <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))', borderRadius: 'var(--radius-lg)', padding: '20px 24px', marginBottom: '20px', color: '#fff', minHeight: '120px', position: 'relative', overflow: 'hidden' }}>
-                        <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '120px', height: '120px', borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
-                        <div style={{ position: 'absolute', bottom: '-30px', right: '40px', width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
-                        <div style={{ marginBottom: '16px', fontSize: '13px', letterSpacing: '2px', opacity: 0.7 }}>JEFADO BANK</div>
-                        <div style={{ fontFamily: 'var(--font-display)', fontSize: '18px', letterSpacing: '3px', marginBottom: '16px' }}>
-                            {form.cardNumber || '•••• •••• •••• ••••'}
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                            <div><div style={{ opacity: 0.6, marginBottom: '2px', fontSize: '10px' }}>CARD HOLDER</div>{form.cardName || 'YOUR NAME'}</div>
-                            <div><div style={{ opacity: 0.6, marginBottom: '2px', fontSize: '10px' }}>EXPIRES</div>{form.expiry || 'MM/YY'}</div>
-                        </div>
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                        <Field label="Card Number" value={form.cardNumber} onChange={v => set('cardNumber')(formatCard(v))} placeholder="1234 5678 9012 3456" required />
-                        <Field label="Cardholder Name" value={form.cardName} onChange={set('cardName') as (v: string) => void} placeholder="John Doe" required />
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-                            <Field label="Expiry Date" value={form.expiry} onChange={v => set('expiry')(formatExpiry(v))} placeholder="MM/YY" required maxLength={5} />
-                            <Field label="CVV" value={form.cvv} onChange={v => set('cvv')(v.replace(/\D/g, '').slice(0, 4))} placeholder="•••" type="password" required maxLength={4} />
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* PayPal */}
-            {form.paymentMethod === 'paypal' && (
-                <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '28px', marginBottom: '20px', textAlign: 'center' }}>
-                    <p style={{ fontSize: '48px', marginBottom: '12px' }}>🅿️</p>
-                    <p style={{ fontWeight: 600, fontSize: '15px', marginBottom: '6px' }}>Pay with PayPal</p>
-                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>You'll be redirected to PayPal to complete your payment securely.</p>
-                </div>
-            )}
-
-            {/* Bank */}
-            {form.paymentMethod === 'bank' && (
-                <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '20px', marginBottom: '20px' }}>
-                    <p style={{ fontWeight: 600, fontSize: '14px', marginBottom: '14px' }}>Bank Transfer Details</p>
-                    {[['Bank Name', 'Jefado National Bank'], ['Account Name', 'Jefado Retail Ltd'], ['Account Number', '0123456789'], ['Routing Number', '021000021'], ['Reference', 'Your Order Number']].map(([k, v]) => (
-                        <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '8px 0', borderBottom: '1px solid var(--border)' }}>
-                            <span style={{ color: 'var(--text-muted)' }}>{k}</span>
-                            <span style={{ fontWeight: 600 }}>{v}</span>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {/* Mobile money */}
-            {form.paymentMethod === 'mobile' && (
-                <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '20px', marginBottom: '20px' }}>
-                    <p style={{ fontWeight: 600, fontSize: '14px', marginBottom: '14px' }}>Mobile Money</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
-                        {['M-Pesa', 'Airtel Money', 'MTN Momo', 'Flutterwave'].map(p => (
-                            <button key={p} style={{ padding: '12px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius)', background: 'var(--surface)', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', cursor: 'pointer' }}>{p}</button>
-                        ))}
-                    </div>
-                    <Field label="Mobile Number" value={form.phone} onChange={v => setForm({ ...form, phone: v })} placeholder="+234 801 234 5678" type="tel" required />
-                </div>
-            )}
-
-            <div style={{ display: 'flex', gap: '12px' }}>
-                <button onClick={onBack} style={{ flex: 1, padding: '13px', border: '1.5px solid var(--border)', color: 'var(--text-secondary)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '14px', cursor: 'pointer', background: 'var(--surface)' }}>← Back</button>
-                <button onClick={() => cardValid && onNext()} style={{ flex: 2, padding: '13px', background: cardValid ? 'var(--primary)' : 'var(--border)', color: cardValid ? '#fff' : 'var(--text-muted)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '14px', cursor: cardValid ? 'pointer' : 'not-allowed', transition: 'all 0.2s', boxShadow: cardValid ? '0 4px 20px rgba(26,86,219,0.25)' : 'none' }}>
-                    Review Order →
-                </button>
-            </div>
-        </div>
-    );
-}
 
 /* ── Step 3: Review & confirm ───────────── */
-function ReviewStep({ items, form, onBack, onPlace }: { items: OrderItem[]; form: FormData; onBack: () => void; onPlace: () => void; }) {
+function ReviewStep({ items, form, onBack, onPlace, loading }: { items: OrderItem[]; form: FormData; onBack: () => void; onPlace: () => void; loading: boolean }) {
     const [agreed, setAgreed] = useState(false);
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
-
-    const payLabel: Record<FormData['paymentMethod'], string> = {
-        card: `Card ending in ${form.cardNumber.slice(-4)}`,
-        paypal: 'PayPal', bank: 'Bank Transfer', mobile: 'Mobile Money',
-    };
 
     return (
         <div>
@@ -384,21 +302,19 @@ function ReviewStep({ items, form, onBack, onPlace }: { items: OrderItem[]; form
                 <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{form.country} · {form.phone}</p>
             </div>
 
-            {/* Payment summary */}
-            <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '14px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px' }}>💳 Payment</p>
-                </div>
-                <p style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{payLabel[form.paymentMethod]}</p>
-            </div>
-
             {/* Items */}
             <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '20px' }}>
                 <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', marginBottom: '12px' }}>🛍 Summary ({items.reduce((s, i) => s + i.qty, 0)})</p>
                 {items.map(item => (
                     <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--border-light)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <span style={{ fontSize: '22px' }}>{item.emoji}</span>
+                            <div style={{ width: '40px', height: '40px', background: 'var(--surface-2)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                                {item.image ? (
+                                    <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    <span style={{ fontSize: '20px' }}>{item.emoji}</span>
+                                )}
+                            </div>
                             <div>
                                 <p style={{ fontSize: '12px', fontWeight: 500 }}>{item.name}</p>
                                 <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
@@ -423,8 +339,24 @@ function ReviewStep({ items, form, onBack, onPlace }: { items: OrderItem[]; form
 
             <div style={{ display: 'flex', gap: '12px' }}>
                 <button onClick={onBack} style={{ flex: 1, padding: '13px', border: '1.5px solid var(--border)', color: 'var(--text-secondary)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '14px', cursor: 'pointer', background: 'var(--surface)' }}>← Back</button>
-                <button onClick={() => agreed && onPlace()} style={{ flex: 2, padding: '13px', background: agreed ? 'var(--success)' : 'var(--border)', color: agreed ? '#fff' : 'var(--text-muted)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '14px', cursor: agreed ? 'pointer' : 'not-allowed', transition: 'all 0.2s', boxShadow: agreed ? '0 4px 20px rgba(34,197,94,0.3)' : 'none' }}>
-                    ✓ Place Order
+                <button 
+                    disabled={!agreed || loading}
+                    onClick={() => agreed && !loading && onPlace()} 
+                    style={{ 
+                        flex: 2, 
+                        padding: '13px', 
+                        background: (agreed && !loading) ? 'var(--success)' : 'var(--border)', 
+                        color: (agreed && !loading) ? '#fff' : 'var(--text-muted)', 
+                        borderRadius: 'var(--radius)', 
+                        fontFamily: 'var(--font-body)', 
+                        fontWeight: 800, 
+                        fontSize: '14px', 
+                        cursor: (agreed && !loading) ? 'pointer' : 'not-allowed', 
+                        transition: 'all 0.2s', 
+                        boxShadow: (agreed && !loading) ? '0 4px 20px rgba(34,197,94,0.3)' : 'none' 
+                    }}
+                >
+                    {loading ? 'Processing Transaction...' : '✓ Place Order'}
                 </button>
             </div>
         </div>
@@ -442,8 +374,8 @@ function OrderSuccess({ form, items }: { form: FormData; items: OrderItem[] }) {
             <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '40px 32px', animation: 'fadeInUp 0.5s ease' }}>
                 <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '36px', boxShadow: '0 8px 30px rgba(34,197,94,0.3)' }}>✓</div>
                 <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', marginBottom: '8px', color: 'var(--text-primary)' }}>{isService ? 'Booking Confirmed!' : 'Order Placed!'}</h2>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '4px', fontSize: '14px' }}>Thank you, <strong>{form.firstName}</strong>! Your {isService ? 'booking' : 'order'} is confirmed.</p>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '13px' }}>A confirmation has been sent to <strong>{form.email}</strong></p>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '4px', fontSize: '14px' }}>Thank you, <strong>{form.firstName}</strong>! Your {isService ? 'booking' : 'order'} has been received.</p>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '13px' }}>Once your payment is confirmed by our system, your order will be processed and you'll receive a confirmation at <strong>{form.email}</strong></p>
 
                 <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '16px', marginBottom: '24px', textAlign: 'left' }}>
                     {[['Order Number', orderId], ['Total', `₦${subtotal.toFixed(2)}`], [isService ? 'Service Location' : 'Shipping To', `${form.city}, ${form.country}`], [isService ? 'Appointment' : 'Estimated Delivery', isService ? `${items[0].date} @ ${items[0].time}` : '3–5 business days']].map(([k, v]) => (
@@ -463,39 +395,218 @@ function OrderSuccess({ form, items }: { form: FormData; items: OrderItem[] }) {
     );
 }
 
+import { useCart } from '@/context/CartContext';
+
 /* ── Checkout Content with Params ────────── */
 function CheckoutContent() {
+    const { success, error: toastError } = useToast();
+    const { cartItems, clearCart, isInitialized } = useCart();
     const searchParams = useSearchParams();
+    const router = useRouter();
     const [step, setStep] = useState(1);
     const [form, setForm] = useState<FormData>(EMPTY_FORM);
     const [coupon, setCoupon] = useState(0);
+    const [couponCode, setCouponCode] = useState('');
     const [placed, setPlaced] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [loadingData, setLoadingData] = useState(true);
 
-    const type = searchParams.get('type');
+    const type = searchParams.get('type') || (searchParams.get('id') ? 'product' : 'cart');
     const id = searchParams.get('id');
     const date = searchParams.get('date');
     const time = searchParams.get('time');
+    const qtyParam = searchParams.get('qty');
+
+    const [item, setItem] = useState<ProductDetail | ServiceDetail | null>(null);
+
+    useEffect(() => {
+        const reference = searchParams.get('reference');
+
+        const load = async () => {
+            try {
+                if (reference) {
+                    setPlaced(true);
+                    clearCart();
+                    return;
+                }
+
+                const fetchAddress = async () => {
+                    try {
+                        if (!tokenStorage.getAccessToken()) return;
+                        const response = await getAddresses();
+                        const addresses = (response as any).data || response;
+                        if (Array.isArray(addresses)) {
+                            const def = addresses.find(a => a.is_default) || addresses[0];
+                            if (def) {
+                                setForm(prev => ({ ...prev, firstName: def.full_name?.split(' ')[0] || '', lastName: def.full_name?.split(' ').slice(1).join(' ') || '', address: def.street_address || '', city: def.city || '', state: def.state || '', zip: def.postal_code || '', country: def.country || 'Nigeria', phone: def.phone || '', email: def.email || prev.email || '' }));
+                            }
+                        }
+                    } catch (e) {}
+                };
+
+                if (id) {
+                    const fetchItem = async () => {
+                        try {
+                            const response = type === 'service' ? await getServiceDetail(id) : await getProductDetail(id);
+                            const data = (response as any).data || response;
+                            if (data) {
+                                setItem(data);
+                            } else {
+                                toastError("Could not find the requested item.");
+                            }
+                        } catch (e) {
+                            toastError("Failed to load item details. Please try again.");
+                        }
+                    };
+                    await Promise.all([fetchItem(), fetchAddress()]);
+                } else if (type === 'cart') {
+                    if (isInitialized && cartItems.length === 0 && !reference) {
+                        router.push('/cart');
+                        return;
+                    }
+                    if (isInitialized) await fetchAddress();
+                } else if (!reference) {
+                    router.push('/');
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                if (isInitialized) setLoadingData(false);
+                setLoading(false);
+            }
+        };
+        load();
+    }, [id, type, searchParams, router, toastError, cartItems.length, clearCart, isInitialized]);
 
     const items = useMemo<OrderItem[]>(() => {
-        if (type === 'service' && id) {
-            const service = ALL_SERVICES.find(s => s.id === parseInt(id));
-            if (service) {
-                return [{
-                    id: service.id,
-                    name: service.name,
-                    emoji: service.emoji,
-                    price: service.price,
-                    qty: 1,
-                    seller: service.provider,
-                    date: date || undefined,
-                    time: time || undefined,
-                }];
-            }
+        if (type === 'cart') {
+            return cartItems.map(i => ({
+                id: i.id,
+                name: i.name,
+                emoji: i.emoji || '📦',
+                image: i.image,
+                price: i.price,
+                qty: i.qty,
+                seller: i.seller,
+            }));
         }
-        return DEFAULT_ITEMS;
-    }, [type, id, date, time]);
+        if (!item) return [];
+        return [{
+            id: item.id,
+            name: item.name,
+            emoji: (item as any).emoji || '📦',
+            image: item.image || undefined,
+            price: parseFloat(item.price as any),
+            qty: qtyParam ? parseInt(qtyParam) : 1,
+            seller: (item as any).seller?.store_name || (item as any).provider?.store_name || 'Jefado',
+            date: date || undefined,
+            time: time || undefined,
+        }];
+    }, [item, type, cartItems, date, time, qtyParam]);
+
+    const handlePlaceOrder = async () => {
+        if (loading || (type !== 'cart' && !item) || (type === 'cart' && items.length === 0)) return;
+        setLoading(true);
+        try {
+            if (type === 'service') {
+                const normalizeTime = (t: string) => {
+                    if (!t) return '';
+                    const parts = t.split(' ');
+                    if (parts.length !== 2) return t;
+                    const [time, modifier] = parts;
+                    let [hours, minutes] = time.split(':');
+                    let h = parseInt(hours, 10);
+                    if (modifier === 'PM' && h < 12) h += 12;
+                    if (modifier === 'AM' && h === 12) h = 0;
+                    return `${h.toString().padStart(2, '0')}:${minutes}:00`;
+                };
+
+                const response = await checkoutService({
+                    buyer_name: `${form.firstName} ${form.lastName}`,
+                    buyer_email: form.email,
+                    buyer_phone: form.phone,
+                    booking_date: date!,
+                    booking_time: normalizeTime(time!),
+                    booking_notes: `Address: ${form.address}, ${form.city}, ${form.state}. ${form.bookingNotes}`,
+                    coupon_code: couponCode || undefined,
+                    items: [{ item_id: item!.id, quantity: qtyParam ? parseInt(qtyParam) : 1 }]
+                });
+                
+                const actualData = (response as any).data || response;
+                if (actualData.access_code && (window as any).PaystackPop) {
+                    const handler = (window as any).PaystackPop.setup({
+                        key: PAYSTACK_PUBLIC_KEY,
+                        email: form.email,
+                        amount: Math.round(parseFloat(actualData.total_amount) * 100),
+                        access_code: actualData.access_code,
+                        onClose: () => { setLoading(false); toastError("Payment window closed."); },
+                        callback: (res: any) => {
+                            setPlaced(true);
+                            clearCart();
+                            success("Service booking received!");
+                        }
+                    });
+                    handler.openIframe();
+                } else if (actualData.payment_url) {
+                    window.location.href = actualData.payment_url;
+                } else {
+                    setPlaced(true);
+                    clearCart();
+                }
+            } else {
+                // Products (single or cart)
+                const payloadItems = items.map(i => ({ item_id: i.id, quantity: i.qty }));
+                const response = await checkoutProduct({
+                    buyer_name: `${form.firstName} ${form.lastName}`,
+                    buyer_email: form.email,
+                    buyer_phone: form.phone,
+                    address: form.address,
+                    city: form.city,
+                    state: form.state,
+                    country: form.country,
+                    postal_code: form.zip,
+                    coupon_code: couponCode || undefined,
+                    items: payloadItems
+                });
+                
+                const actualData = (response as any).data || response;
+                if (actualData.access_code && (window as any).PaystackPop) {
+                    const handler = (window as any).PaystackPop.setup({
+                        key: PAYSTACK_PUBLIC_KEY,
+                        email: form.email,
+                        amount: Math.round(parseFloat(actualData.total_amount) * 100),
+                        access_code: actualData.access_code,
+                        onClose: () => { setLoading(false); toastError("Payment window closed."); },
+                        callback: (res: any) => {
+                            setPlaced(true);
+                            clearCart();
+                            success("Order received!");
+                        }
+                    });
+                    handler.openIframe();
+                } else if (actualData.payment_url) {
+                    window.location.href = actualData.payment_url;
+                } else {
+                    setPlaced(true);
+                    clearCart();
+                }
+            }
+        } catch (err: any) {
+            toastError(err.detail || err.message || 'Order placement failed. Please verify your details.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const isService = type === 'service';
+
+    if (loadingData) return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', gap: '20px' }}>
+            <div style={{ width: '40px', height: '40px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: 'var(--text-secondary)' }}>Syncing Secure Terminal...</p>
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+    );
 
     if (placed) return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: '48px', paddingBottom: '60px' }}>
@@ -511,21 +622,24 @@ function CheckoutContent() {
                 <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Secure Checkout</p>
             </div>
 
+            <Script src="https://js.paystack.co/v1/inline.js" strategy="lazyOnload" />
             <StepBar step={step} isService={isService} />
 
             {/* Responsive two-column layout */}
             <div className="checkout-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '24px', alignItems: 'flex-start', maxWidth: '1000px', margin: '0 auto' }}>
 
-                {/* Left: form steps */}
-                <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '28px', minWidth: 0 }}>
-                    {step === 1 && <ShippingStep form={form} setForm={setForm} onNext={() => setStep(2)} isService={isService} />}
-                    {step === 2 && <PaymentStep form={form} setForm={setForm} onNext={() => setStep(3)} onBack={() => setStep(1)} />}
-                    {step === 3 && <ReviewStep items={items} form={form} onBack={() => setStep(2)} onPlace={() => setPlaced(true)} />}
+                {/* Left: Forms */}
+                <div style={{ flex: '1 1 65%', minWidth: 0 }}>
+                    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '28px', minWidth: 0 }}>
+                        {step === 1 && <ShippingStep form={form} setForm={setForm} onNext={() => setStep(2)} isService={isService} />}
+                        {step === 2 && <ReviewStep items={items} form={form} onBack={() => setStep(1)} onPlace={handlePlaceOrder} loading={loading} />}
+                    </div>
+
                 </div>
 
                 {/* Right: order summary */}
                 <div style={{ minWidth: 0 }}>
-                    <OrderSidebar items={items} coupon={coupon} setCoupon={setCoupon} />
+                    <OrderSidebar items={items} coupon={coupon} setCoupon={setCoupon} couponCode={couponCode} setCouponCode={setCouponCode} />
                 </div>
             </div>
             <style jsx>{`
@@ -542,15 +656,11 @@ function CheckoutContent() {
 /* ── Main Checkout Page ──────────────────── */
 const EMPTY_FORM: FormData = {
     firstName: '', lastName: '', email: '', phone: '',
-    address: '', city: '', state: '', zip: '', country: '',
-    saveAddress: false,
-    cardNumber: '', cardName: '', expiry: '', cvv: '',
-    paymentMethod: 'card',
+    address: '', city: '', state: '', zip: '', country: 'Nigeria',
+    saveAddress: true,
+    bookingNotes: '',
 };
 
-const DEFAULT_ITEMS: OrderItem[] = [
-    { id: 1, name: 'Sony WH-1000XM5 Noise Cancelling Headphones', emoji: '🎧', price: 279, qty: 1, color: 'Midnight Black', seller: 'TechZone Store' },
-];
 
 export default function CheckoutPage() {
     return (

@@ -1,19 +1,35 @@
 'use client';
-import { useState, useMemo } from 'react';
-import { ALL_SERVICES, SERVICE_CATEGORIES } from '@/lib/data';
+import { useState, useEffect } from 'react';
+import { getServices } from '@/services/publicService';
+import { Service } from '@/services/types';
+import { SERVICE_CATEGORIES } from '@/lib/data';
 import ServiceCard from '@/components/ui/ServiceCard';
 
 export default function ServicesPage() {
     const [search, setSearch] = useState('');
     const [activeCategory, setActiveCategory] = useState('all');
+    const [services, setServices] = useState<Service[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const filteredServices = useMemo(() => {
-        return ALL_SERVICES.filter(s => {
-            const matchesSearch = s.name.toLowerCase().includes(search.toLowerCase()) || s.provider.toLowerCase().includes(search.toLowerCase());
-            const matchesCategory = activeCategory === 'all' || s.category === activeCategory;
-            return matchesSearch && matchesCategory;
-        });
-    }, [search, activeCategory]);
+    useEffect(() => {
+        const fetchServices = async () => {
+            setLoading(true);
+            try {
+                const response = await getServices({
+                    category: activeCategory === 'all' ? undefined : activeCategory,
+                    search: search || undefined,
+                    page_size: 20
+                });
+                const actualData = (response as any).data || response;
+                setServices(actualData.results || []);
+            } catch (err) {
+                console.error("Failed to fetch services (category:", activeCategory, "):", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchServices();
+    }, [activeCategory, search]);
 
     return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: '80px' }}>
@@ -94,10 +110,14 @@ export default function ServicesPage() {
                 </div>
 
                 {/* Grid */}
-                <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
-                    {filteredServices.length > 0 ? (
-                        filteredServices.map(service => (
-                            <ServiceCard key={service.id} {...service} />
+                <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px', minHeight: '400px' }}>
+                    {loading ? (
+                        <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div className="loader" style={{ width: '40px', height: '40px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                        </div>
+                    ) : services.length > 0 ? (
+                        services.map(service => (
+                            <ServiceCard key={service.id} {...service as any} />
                         ))
                     ) : (
                         <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '80px 0' }}>

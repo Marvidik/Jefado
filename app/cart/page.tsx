@@ -1,40 +1,23 @@
 'use client';
 import { useState } from 'react';
-
-interface CartItem {
-    id: number; name: string; brand: string; price: number;
-    originalPrice: number; emoji: string; color: string;
-    qty: number; seller: string; inStock: boolean;
-}
-
-const INITIAL_CART: CartItem[] = [
-    { id: 1, name: 'Sony WH-1000XM5 Noise Cancelling Wireless Headphones', brand: 'Sony', price: 279, originalPrice: 399, emoji: '🎧', color: 'Midnight Black', qty: 1, seller: 'TechZone Store', inStock: true },
-    { id: 2, name: 'Logitech MX Master 3S Wireless Performance Mouse', brand: 'Logitech', price: 89, originalPrice: 120, emoji: '🖱️', color: 'Graphite', qty: 2, seller: 'PeriphHQ', inStock: true },
-    { id: 3, name: 'Anker 737 Power Bank 24000mAh 140W USB-C', brand: 'Anker', price: 89, originalPrice: 129, emoji: '🔋', color: 'Black', qty: 1, seller: 'TechZone Store', inStock: true },
-];
-
-const SHIPPING_OPTIONS = [
-    { id: 'standard', label: 'Standard Delivery', desc: '5-7 business days', price: 0 },
-    { id: 'express', label: 'Express Delivery', desc: '2-3 business days', price: 9.99 },
-    { id: 'overnight', label: 'Overnight Delivery', desc: 'Next business day', price: 24.99 },
-];
+import { useCart, CartItem } from '@/context/CartContext';
 
 const VALID_COUPONS: Record<string, number> = { SAVE10: 10, JEFADO20: 20, WELCOME15: 15 };
 
 /* ── Order Summary ───────────────────────── */
-function OrderSummary({ items, shipping, onCheckout }: {
+function OrderSummary({ items, onCheckout }: {
     items: CartItem[];
-    shipping: typeof SHIPPING_OPTIONS[0];
     onCheckout: () => void;
 }) {
+    const shippingPrice = 0;
     const [coupon, setCoupon] = useState('');
     const [appliedCoupon, setAppliedCoupon] = useState('');
     const [couponError, setCouponError] = useState('');
 
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
-    const savings = items.reduce((s, i) => s + (i.originalPrice - i.price) * i.qty, 0);
+    const savings = items.reduce((s, i) => s + ((i.originalPrice || i.price) - i.price) * i.qty, 0);
     const couponSave = appliedCoupon ? (subtotal * VALID_COUPONS[appliedCoupon]) / 100 : 0;
-    const total = subtotal + shipping.price - couponSave;
+    const total = subtotal + shippingPrice - couponSave;
 
     const applyCoupon = () => {
         const key = coupon.toUpperCase().trim();
@@ -49,10 +32,10 @@ function OrderSummary({ items, shipping, onCheckout }: {
             {/* Line items */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
                 {[
-                    { label: `Subtotal (${items.reduce((s, i) => s + i.qty, 0)} items)`, value: `₦${subtotal.toFixed(2)}`, color: 'var(--text-primary)' },
-                    { label: 'You save', value: `-₦${savings.toFixed(2)}`, color: 'var(--success)' },
-                    { label: `Shipping (${shipping.label})`, value: shipping.price === 0 ? 'FREE' : `₦${shipping.price.toFixed(2)}`, color: shipping.price === 0 ? 'var(--success)' : 'var(--text-primary)' },
-                    ...(appliedCoupon ? [{ label: `Coupon (${appliedCoupon})`, value: `-₦${couponSave.toFixed(2)}`, color: 'var(--success)' }] : []),
+                    { label: `Subtotal (${items.reduce((s, i) => s + i.qty, 0)} items)`, value: `₦${subtotal.toLocaleString()}`, color: 'var(--text-primary)' },
+                    { label: 'You save', value: `-₦${savings.toLocaleString()}`, color: 'var(--success)' },
+                    { label: 'Shipping', value: 'FREE', color: 'var(--success)' },
+                    ...(appliedCoupon ? [{ label: `Coupon (${appliedCoupon})`, value: `-₦${couponSave.toLocaleString()}`, color: 'var(--success)' }] : []),
                 ].map(row => (
                     <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>{row.label}</span>
@@ -65,7 +48,7 @@ function OrderSummary({ items, shipping, onCheckout }: {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                 <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px' }}>Total</span>
-                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: 'var(--primary)' }}>₦{total.toFixed(2)}</span>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: 'var(--primary)' }}>₦{total.toLocaleString()}</span>
             </div>
 
             {/* Coupon */}
@@ -105,15 +88,19 @@ function CartItemRow({ item, onQtyChange, onRemove, onSaveForLater }: {
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '16px' }}>
             <div className="cart-item-inner">
                 {/* Image */}
-                <div className="cart-item-img" style={{ width: '100px', height: '100px', flexShrink: 0, background: 'var(--surface-2)', borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px', border: '1px solid var(--border)' }}>
-                    {item.emoji}
+                <div className="cart-item-img" style={{ width: '100px', height: '100px', flexShrink: 0, background: 'var(--surface-2)', borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                    {item.image ? (
+                        <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                        <span>{item.emoji}</span>
+                    )}
                 </div>
 
                 {/* Info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 700, marginBottom: '3px' }}>{item.brand} · {item.seller}</p>
+                    <p style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 700, marginBottom: '3px' }}>{item.seller}</p>
                     <p style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-primary)', lineHeight: 1.4, marginBottom: '4px' }}>{item.name}</p>
-                    <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px' }}>Color: <strong>{item.color}</strong></p>
+                    {item.category && <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px' }}>Category: <strong>{item.category}</strong></p>}
 
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
                         {/* Qty */}
@@ -129,9 +116,11 @@ function CartItemRow({ item, onQtyChange, onRemove, onSaveForLater }: {
 
                 {/* Price */}
                 <div className="cart-item-price" style={{ flexShrink: 0, textAlign: 'right', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', gap: '4px' }}>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '18px', color: 'var(--primary)' }}>₦{(item.price * item.qty).toFixed(2)}</div>
-                    {item.qty > 1 && <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>₦{item.price} each</div>}
-                    <div style={{ fontSize: '11px', color: 'var(--success)', fontWeight: 600 }}>Save ₦{((item.originalPrice - item.price) * item.qty).toFixed(2)}</div>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '18px', color: 'var(--primary)' }}>₦{(item.price * item.qty).toLocaleString()}</div>
+                    {item.qty > 1 && <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>₦{item.price.toLocaleString()} each</div>}
+                    {item.originalPrice && item.originalPrice > item.price && (
+                        <div style={{ fontSize: '11px', color: 'var(--success)', fontWeight: 600 }}>Save ₦{((item.originalPrice - item.price) * item.qty).toLocaleString()}</div>
+                    )}
                 </div>
             </div>
         </div>
@@ -140,15 +129,24 @@ function CartItemRow({ item, onQtyChange, onRemove, onSaveForLater }: {
 
 /* ── Main Cart Page ───────────────────────── */
 export default function CartPage() {
-    const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
+    const { cartItems, updateQty, removeFromCart, addToCart } = useCart();
     const [savedItems, setSavedItems] = useState<CartItem[]>([]);
-    const [selectedShipping, setSelectedShipping] = useState(SHIPPING_OPTIONS[0]);
     const [orderPlaced, setOrderPlaced] = useState(false);
 
-    const updateQty = (id: number, qty: number) => setCartItems(p => p.map(i => i.id === id ? { ...i, qty } : i));
-    const removeItem = (id: number) => setCartItems(p => p.filter(i => i.id !== id));
-    const saveForLater = (id: number) => { const it = cartItems.find(i => i.id === id); if (it) { setSavedItems(p => [...p, it]); setCartItems(p => p.filter(i => i.id !== id)); } };
-    const moveToCart = (id: number) => { const it = savedItems.find(i => i.id === id); if (it) { setCartItems(p => [...p, it]); setSavedItems(p => p.filter(i => i.id !== id)); } };
+    const saveForLater = (id: number) => { 
+        const it = cartItems.find(i => i.id === id); 
+        if (it) { 
+            setSavedItems(p => [...p, it]); 
+            removeFromCart(id); 
+        } 
+    };
+    const moveToCart = (id: number) => { 
+        const it = savedItems.find(i => i.id === id); 
+        if (it) { 
+            addToCart(it);
+            setSavedItems(p => p.filter(i => i.id !== id)); 
+        } 
+    };
 
     if (orderPlaced) return (
         <div style={{ background: 'var(--bg)', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
@@ -191,27 +189,8 @@ export default function CartPage() {
                         {/* Cart items */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
                             {cartItems.map(item => (
-                                <CartItemRow key={item.id} item={item} onQtyChange={updateQty} onRemove={removeItem} onSaveForLater={saveForLater} />
+                                <CartItemRow key={item.id} item={item} onQtyChange={updateQty} onRemove={removeFromCart} onSaveForLater={saveForLater} />
                             ))}
-                        </div>
-
-                        {/* Shipping */}
-                        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '20px', marginBottom: '16px' }}>
-                            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', marginBottom: '14px' }}>🚚 Shipping Method</h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                {SHIPPING_OPTIONS.map(opt => (
-                                    <label key={opt.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', border: `1.5px solid ${selectedShipping.id === opt.id ? 'var(--primary)' : 'var(--border)'}`, background: selectedShipping.id === opt.id ? 'var(--primary-light)' : 'var(--surface-2)', borderRadius: 'var(--radius)', cursor: 'pointer' }}>
-                                        <input type="radio" name="shipping" checked={selectedShipping.id === opt.id} onChange={() => setSelectedShipping(opt)} style={{ accentColor: 'var(--primary)', width: '15px', height: '15px', flexShrink: 0 }} />
-                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                            <p style={{ fontWeight: 600, fontSize: '13px' }}>{opt.label}</p>
-                                            <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{opt.desc}</p>
-                                        </div>
-                                        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', color: opt.price === 0 ? 'var(--success)' : 'var(--text-primary)', flexShrink: 0 }}>
-                                            {opt.price === 0 ? 'FREE' : `₦${opt.price.toFixed(2)}`}
-                                        </span>
-                                    </label>
-                                ))}
-                            </div>
                         </div>
 
                         {/* Saved for Later */}
@@ -236,7 +215,7 @@ export default function CartPage() {
 
                     {/* Right: Order Summary */}
                     <div style={{ minWidth: 0 }}>
-                        <OrderSummary items={cartItems} shipping={selectedShipping} onCheckout={() => { window.location.href = '/checkout'; }} />
+                        <OrderSummary items={cartItems} onCheckout={() => { window.location.href = '/checkout'; }} />
                     </div>
                 </div>
             </div>
