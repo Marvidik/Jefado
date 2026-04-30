@@ -5,6 +5,10 @@ import ConditionalLayout from "@/components/layout/ConditionalLayout";
 export const metadata: Metadata = {
   title: "Jefado — Multi-Vendor Marketplace",
   description: "Your one-stop shop for everything. Shop from thousands of vendors.",
+  icons: {
+    icon: "/images/fav.jpg?v=2",
+    apple: "/images/fav.jpg?v=2",
+  }
 };
 
 import { ToastProvider } from "@/components/ui/Toast";

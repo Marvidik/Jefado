@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -61,20 +62,22 @@ export default function Navbar() {
       `}</style>
 
             <header style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 100, boxShadow: 'var(--shadow-sm)' }}>
-                <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '62px' }}>
+                <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '80px' }}>
 
                     {/* Logo */}
-                    <Link href="/" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', color: 'var(--primary)', letterSpacing: '-0.5px', flexShrink: 0 }}>
-                        JEFEDO<span style={{ color: 'var(--secondary)' }}>.</span>
+                    <Link href="/" style={{ display: 'flex', alignItems: 'center', height: '64px', flexShrink: 0 }}>
+                        <img src="/images/newlogo.png" alt="JEFEDO" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
                     </Link>
 
                     {/* Category button — desktop only */}
+                    {/* 
                     <button className="nav-desktop-cat" onClick={() => setSidebarOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '13px', flexShrink: 0, whiteSpace: 'nowrap' }}
                         onMouseEnter={e => (e.currentTarget.style.background = 'var(--primary-dark)')}
                         onMouseLeave={e => (e.currentTarget.style.background = 'var(--primary)')}
                     >
                         <span>☰</span> All Categories
                     </button>
+                    */}
 
                     {/* Search — takes all remaining width on mobile */}
                     <div className="nav-search-wrap" style={{ flex: 1, display: 'flex', border: '1.5px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden', maxWidth: '520px', transition: 'border-color 0.2s' }}

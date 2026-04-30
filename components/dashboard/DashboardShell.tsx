@@ -218,12 +218,12 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                 <aside className={`ds-sidebar ${expanded ? 'expanded' : ''}`}>
                     <div style={{ height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: expanded ? '0 24px' : '0', width: '100%', flexShrink: 0 }}>
                         {expanded ? (
-                            <Link href="/dashboard" style={{ fontWeight: 800, fontSize: '22px', color: '#2563eb', textDecoration: 'none', letterSpacing: '-0.5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                JEFEDO
+                            <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', height: '40px' }}>
+                                <img src="/images/newlogo.png" alt="JEFEDO" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
                             </Link>
                         ) : (
-                            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <span style={{ color: '#2563eb', fontWeight: 800, fontSize: '22px' }}>J</span>
+                            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40px' }}>
+                                <img src="/images/newlogo.png" alt="J" style={{ height: '32px', width: '32px', objectFit: 'cover' }} />
                             </div>
                         )}
                         {!isMobile && (

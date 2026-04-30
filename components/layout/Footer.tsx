@@ -38,21 +38,21 @@ export default function Footer() {
 
                     {/* Brand & Newsletter */}
                     <div>
-                        <a href="/" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: '#fff', letterSpacing: '-0.5px', display: 'block', marginBottom: '14px' }}>
-                            JEFEDO<span style={{ color: 'var(--accent)' }}>.</span>
+                        <a href="/" style={{ display: 'flex', alignItems: 'center', height: '64px', marginBottom: '20px' }}>
+                            <img src="/images/newlogo.png" alt="JEFEDO" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
                         </a>
                         <p style={{ fontSize: '13px', lineHeight: 1.7, marginBottom: '24px', color: 'rgba(255,255,255,0.5)' }}>Your one-stop multi-vendor marketplace. Shop from thousands of verified sellers.</p>
                         <form onSubmit={handleSubscribe} style={{ position: 'relative' }}>
                             <div style={{ display: 'flex', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
-                                <input 
+                                <input
                                     type="email"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Enter your email" 
-                                    style={{ flex: 1, padding: '16px 20px', background: 'rgba(255,255,255,0.05)', border: 'none', outline: 'none', color: '#fff', fontSize: '14px', fontFamily: 'var(--font-body)' }} 
+                                    placeholder="Enter your email"
+                                    style={{ flex: 1, padding: '16px 20px', background: 'rgba(255,255,255,0.05)', border: 'none', outline: 'none', color: '#fff', fontSize: '14px', fontFamily: 'var(--font-body)' }}
                                 />
-                                <button 
+                                <button
                                     type="submit"
                                     disabled={loading}
                                     style={{ padding: '16px 24px', background: 'var(--accent)', color: '#fff', fontSize: '14px', fontWeight: 800, fontFamily: 'var(--font-body)', whiteSpace: 'nowrap', transition: 'all 0.2s', cursor: loading ? 'not-allowed' : 'pointer' }}
