@@ -75,7 +75,7 @@ export default function ServiceDetailPage() {
                     <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{service.name}</span>
                 </div>
 
-                <div className="detail-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '48px', marginBottom: '48px' }}>
+                <div className="detail-grid" style={{ display: 'grid', gridTemplateColumns: '0.5fr 1fr', gap: '48px', marginBottom: '48px' }}>
                     {/* Visual Section */}
                     <div>
                         <div style={{ position: 'relative', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', background: 'var(--surface-2)', aspectRatio: '16/10', marginBottom: '24px', border: '1px solid var(--border)' }}>

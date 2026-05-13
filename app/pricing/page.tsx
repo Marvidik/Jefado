@@ -1,9 +1,13 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import axiosInstance, { tokenStorage } from '@/services/axiosInstance';
+import { useToast } from '@/components/ui/Toast';
 
 const TIERS = [
     {
         name: 'Basic',
+        slug: 'basic',
         price: '0',
         period: '/mo',
         description: 'Perfect for individual sellers just starting their journey.',
@@ -13,15 +17,17 @@ const TIERS = [
     },
     {
         name: 'Pro',
-        price: '29',
+        slug: 'pro',
+        price: '15000',
         period: '/mo',
         description: 'Advanced features for growing businesses and power sellers.',
         features: ['Unlimited listings', 'Priority 24/7 support', 'Advanced sales analytics', 'Custom store URL', 'Promotion tools', 'Bulk import/export'],
-        buttonText: 'Try Pro Free',
+        buttonText: 'Try Pro Now',
         highlight: true,
     },
     {
         name: 'Enterprise',
+        slug: 'enterprise',
         price: 'Custom',
         period: '',
         description: 'Tailored solutions for large-scale vendors and agencies.',
@@ -33,6 +39,46 @@ const TIERS = [
 
 export default function PricingPage() {
     const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly');
+    const [loadingSlug, setLoadingSlug] = useState<string | null>(null);
+    const router = useRouter();
+    const { success, error: toastError } = useToast();
+
+    const handleBuyPlan = async (slug: string) => {
+        if (slug === 'enterprise') {
+            router.push('/contact');
+            return;
+        }
+
+        const token = tokenStorage.getAccessToken();
+        if (!token) {
+            toastError("Please sign in to your seller account to purchase a plan.");
+            setTimeout(() => router.push('/auth'), 2000);
+            return;
+        }
+
+        try {
+            setLoadingSlug(slug);
+            const response = await axiosInstance.post('/api/v1/transactions/plans/initialize/', {
+                plan_slug: slug
+            });
+
+            // Handle standard Jefedo response wrapper if present
+            const data = (response.data as any).data || response.data;
+            
+            if (data.authorization_url) {
+                success("Redirecting to secure payment...");
+                window.location.href = data.authorization_url;
+            } else {
+                toastError("Could not initialize payment. Please try again.");
+            }
+        } catch (err: any) {
+            console.error("Plan initialization error:", err);
+            const msg = err.response?.data?.message || err.message || "An error occurred during checkout.";
+            toastError(msg);
+        } finally {
+            setLoadingSlug(null);
+        }
+    };
 
     return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
@@ -66,7 +112,7 @@ export default function PricingPage() {
                         margin: '0 auto 40px',
                         lineHeight: 1.6
                     }}>
-                        Choose the perfect plan for your business. Whether you're a local artisan or a global brand, Jefado scales with you.
+                        Choose the perfect plan for your business. Whether you're a local artisan or a global brand, Jefedo scales with you.
                     </p>
 
                     {/* Billing Toggle */}
@@ -150,26 +196,34 @@ export default function PricingPage() {
 
                                 <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 800, marginBottom: '12px' }}>{tier.name}</h3>
                                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '16px' }}>
-                                    <span style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-secondary)' }}>$</span>
+                                    <span style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-secondary)' }}>₦</span>
                                     <span style={{ fontSize: '48px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-1px' }}>
-                                        {tier.price === 'Custom' ? 'Custom' : (billing === 'yearly' && tier.price !== '0' ? Math.floor(parseInt(tier.price) * 0.8) : tier.price)}
+                                        {tier.price === 'Custom' ? 'Custom' : (billing === 'yearly' && tier.price !== '0' ? Math.floor(parseInt(tier.price) * 0.8).toLocaleString() : parseInt(tier.price).toLocaleString())}
                                     </span>
                                     <span style={{ fontSize: '16px', color: 'var(--text-muted)' }}>{tier.period}</span>
                                 </div>
                                 <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>{tier.description}</p>
 
-                                <button style={{ 
-                                    width: '100%', 
-                                    padding: '16px', 
-                                    background: tier.highlight ? 'var(--primary)' : 'var(--surface-2)',
-                                    color: tier.highlight ? '#fff' : 'var(--text-primary)',
-                                    borderRadius: 'var(--radius-xl)',
-                                    fontSize: '15px',
-                                    fontWeight: 800,
-                                    marginBottom: '40px',
-                                    border: tier.highlight ? 'none' : '1.5px solid var(--border)',
-                                    transition: 'all 0.2s'
-                                }}>{tier.buttonText}</button>
+                                <button 
+                                    onClick={() => handleBuyPlan(tier.slug)}
+                                    disabled={loadingSlug === tier.slug}
+                                    style={{ 
+                                        width: '100%', 
+                                        padding: '16px', 
+                                        background: tier.highlight ? 'var(--primary)' : 'var(--surface-2)',
+                                        color: tier.highlight ? '#fff' : 'var(--text-primary)',
+                                        borderRadius: 'var(--radius-xl)',
+                                        fontSize: '15px',
+                                        fontWeight: 800,
+                                        marginBottom: '40px',
+                                        border: tier.highlight ? 'none' : '1.5px solid var(--border)',
+                                        transition: 'all 0.2s',
+                                        cursor: loadingSlug ? 'wait' : 'pointer',
+                                        opacity: loadingSlug && loadingSlug !== tier.slug ? 0.6 : 1
+                                    }}
+                                >
+                                    {loadingSlug === tier.slug ? 'Initializing...' : tier.buttonText}
+                                </button>
 
                                 <div style={{ flex: 1 }}>
                                     <p style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '20px' }}>What's Included</p>

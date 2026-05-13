@@ -18,7 +18,7 @@ export default function ProductCard({
     id, slug, name, price, original, original_price, discount, 
     rating = 4.5, review_count, reviews, 
     emoji, image, is_new, isNew, is_best_seller, isBestSeller, 
-    stock_qty, stockQuantity, seller = 'Jefado'
+    stock_qty, stockQuantity, seller = 'Jefedo'
 }: ProductCardProps) {
     const { addToCart } = useCart();
     const [wishlisted, setWishlisted] = useState(false);
@@ -83,7 +83,7 @@ export default function ProductCard({
                                 originalPrice: itemOriginal,
                                 image, emoji,
                                 qty: 1,
-                                seller: seller || 'Jefado'
+                                seller: seller || 'Jefedo'
                             });
                             setAdded(true);
                             setTimeout(() => setAdded(false), 2000);

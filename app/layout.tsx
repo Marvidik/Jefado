@@ -3,7 +3,7 @@ import "./globals.css";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
 
 export const metadata: Metadata = {
-  title: "Jefado — Multi-Vendor Marketplace",
+  title: "Jefedo — Multi-Vendor Marketplace",
   description: "Your one-stop shop for everything. Shop from thousands of vendors.",
   icons: {
     icon: "/images/fav.jpg?v=2",

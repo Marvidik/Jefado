@@ -130,7 +130,7 @@ axiosInstance.interceptors.response.use(
             }
 
             try {
-                // Use global axios to avoid interceptor loop, but handle Jefado's response wrapper
+                // Use global axios to avoid interceptor loop, but handle Jefedo's response wrapper
                 const response = await axios.post(`${BASE_URL}/api/v1/auth/token/refresh/`, {
                     refresh: refreshToken,
                 });

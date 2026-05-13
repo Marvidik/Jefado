@@ -82,7 +82,7 @@ export default function AboutPage() {
                         </h2>
                         <div style={{ fontSize: '18px', lineHeight: 1.8, color: 'var(--text-secondary)' }}>
                             <p style={{ marginBottom: '24px' }}>
-                                Jefado was founded on the principle that commerce should be borderless and frictionless. We build the tools that empower vendors to reach their full potential.
+                                Jefedo was founded on the principle that commerce should be borderless and frictionless. We build the tools that empower vendors to reach their full potential.
                             </p>
                             <p>
                                 By 2026, our goal is to become the primary layer for the global multi-vendor ecosystem, ensuring every transaction is backed by the most robust technology stack ever built.

@@ -222,7 +222,7 @@ export default function ProductsPage() {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            <PageHeader title="Product Catalog" subtitle="Manage your marketplace inventory and product listings for the Jefado network.">
+            <PageHeader title="Product Catalog" subtitle="Manage your marketplace inventory and product listings for the Jefedo network.">
                 <Btn label="Refresh" variant="secondary" onClick={fetchProducts} />
                 <Btn label="Add Product" icon={Icons.plus} onClick={handleOpenAdd} />
             </PageHeader>

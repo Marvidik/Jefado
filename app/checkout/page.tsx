@@ -125,7 +125,7 @@ function OrderSidebar({ items, coupon, setCoupon, couponCode, setCouponCode }: {
     const couponSave = (subtotal * coupon) / 100;
     const total = subtotal + shipping - couponSave;
 
-    const VALID: Record<string, number> = { SAVE10: 10, JEFADO20: 20, WELCOME15: 15 };
+    const VALID: Record<string, number> = { SAVE10: 10, JEFEDO20: 20, WELCOME15: 15 };
 
     const apply = () => {
         const k = couponCode.toUpperCase().trim();
@@ -498,7 +498,7 @@ function CheckoutContent() {
             image: item.image || undefined,
             price: parseFloat(item.price as any),
             qty: qtyParam ? parseInt(qtyParam) : 1,
-            seller: (item as any).seller?.store_name || (item as any).provider?.store_name || 'Jefado',
+            seller: (item as any).seller?.store_name || (item as any).provider?.store_name || 'Jefedo',
             date: date || undefined,
             time: time || undefined,
         }];
@@ -618,7 +618,7 @@ function CheckoutContent() {
         <div className="container" style={{ padding: '28px var(--gutter)' }}>
             {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                <a href="/" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: 'var(--primary)' }}>Jefado<span style={{ color: 'var(--accent)' }}>.</span></a>
+                <a href="/" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: 'var(--primary)' }}>Jefedo<span style={{ color: 'var(--accent)' }}>.</span></a>
                 <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Secure Checkout</p>
             </div>
 

@@ -149,7 +149,7 @@ export default function DashboardHome() {
             </Card>
 
             <div style={{ textAlign: 'center', padding: '32px 0 24px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.5px' }}>
-                JEFADO MULTIVENDOR TERMINAL © 2026. DATA SYNCHRONIZED.
+                JEFEDO MULTIVENDOR TERMINAL © 2026. DATA SYNCHRONIZED.
             </div>
         </div>
     );

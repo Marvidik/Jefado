@@ -26,7 +26,7 @@ const slides = [
         tag: 'Shop Smart, Sell Easy',
         headline: 'Top Products,\nTrusted Sellers.\nYour Marketplace Awaits.',
         subline: 'From selling your first product to finding great deals, experience everything our marketplace has to offer.',
-        cta1: { label: 'Shop Now', href: '/products?category=electronics' },
+        cta1: { label: 'Shop Now', href: '/products' },
         cta2: { label: 'Create Account', href: '/auth' },
         badge: { top: 'Save', main: '40%', sub: 'TODAY' },
         bg: '#fee2e2', /* Red 100 */
@@ -45,7 +45,7 @@ const slides = [
         tag: 'Shop Smart, Sell Easy',
         headline: 'Premium Deals,\nExciting Finds.\nStart Selling Today.',
         subline: 'Discover the latest trends in fashion. Reliable Delivery on all orders above $50.',
-        cta1: { label: 'Shop Now', href: '/products?category=womens-fashion' },
+        cta1: { label: 'Shop Now', href: '/products' },
         cta2: { label: 'Create Account', href: '/auth' },
         badge: { top: 'Flat', main: '50%', sub: 'OFF' },
         bg: '#fce7f3', /* Pink 100 */

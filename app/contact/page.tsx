@@ -83,8 +83,8 @@ export default function ContactPage() {
                             <div className="contact-info-list" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                                 {[
                                     { label: 'Customer Support', val: 'support@jefedo.com', icon: '📩' },
-                                    { label: 'Phone Support', val: '+1 (888) JEFEDO', icon: '📞' },
-                                    { label: 'Headquarters', val: 'Main Street, Silicon Valley, CA', icon: '📍' }
+                                    { label: 'Direct Line', val: '+2347064957209', icon: '📞' },
+                                    { label: 'Headquarters', val: 'no 10 JEFEDO street , amafor nkpor idemili lga anambra state nigeria', icon: '📍' }
                                 ].map((item, i) => (
                                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                                         <div className="contact-info-icon" style={{ width: '64px', height: '64px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', backdropFilter: 'blur(10px)' }}>
@@ -92,7 +92,7 @@ export default function ContactPage() {
                                         </div>
                                         <div>
                                             <p style={{ fontSize: '11px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '4px' }}>{item.label}</p>
-                                            <p style={{ fontSize: '18px', fontWeight: 600, color: '#fff' }}>{item.val}</p>
+                                            <p style={{ fontSize: '16px', fontWeight: 600, color: '#fff', maxWidth: '300px' }}>{item.val}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -192,47 +192,40 @@ export default function ContactPage() {
                 </div>
             </div>
 
-            {/* Offices Section */}
-            <div style={{ padding: '120px 0', borderTop: '1px solid rgba(255,255,255,0.05)', background: 'rgba(15, 23, 42, 0.5)' }}>
+            {/* Marketing Section */}
+            <div style={{ padding: '120px 0', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
                 <div className="container" style={{ textAlign: 'center' }}>
-                    <div style={{ display: 'inline-block', padding: '6px 16px', background: 'rgba(238,18,23,0.1)', border: '1px solid rgba(238,18,23,0.2)', borderRadius: '100px', color: 'var(--primary)', fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '24px' }}>
-                        Network Status
+                    <div style={{ display: 'inline-block', padding: '8px 24px', background: 'rgba(238,18,23,0.1)', border: '1px solid rgba(238,18,23,0.2)', borderRadius: '100px', color: 'var(--primary)', fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '24px' }}>
+                        The Jefedo Advantage
                     </div>
-                    <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 900, color: '#fff', marginBottom: '64px', letterSpacing: '-1.5px' }}>
-                        Our Global <span style={{ color: 'var(--primary)' }}>Presence</span>
+                    <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 900, color: '#0f172a', marginBottom: '64px', letterSpacing: '-1.5px' }}>
+                        Why Businesses <span style={{ color: 'var(--primary)' }}>Trust Us</span>
                     </h3>
                     
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
                         {[
-                            { name: 'North America', city: 'San Francisco, CA', latency: '12ms', color: '#3b82f6' },
-                            { name: 'Europe', city: 'London, UK', latency: '18ms', color: '#8b5cf6' },
-                            { name: 'Asia Pacific', city: 'Singapore', latency: '24ms', color: '#ec4899' },
-                            { name: 'Africa', city: 'Lagos, NG', latency: '32ms', color: '#f59e0b' }
-                        ].map(node => (
-                            <div key={node.name} className="presence-card" style={{ 
-                                background: 'rgba(255,255,255,0.02)', 
-                                border: '1px solid rgba(255,255,255,0.05)', 
-                                padding: '40px 32px', 
+                            { title: 'Secure Ecosystem', desc: 'Advanced encryption and escrow systems ensuring every transaction is 100% protected.', icon: '🛡️', color: '#EE1217', bg: '#fef2f2' },
+                            { title: 'Swift Logistics', desc: 'Strategic delivery partnerships across Nigeria for rapid, reliable order fulfillment.', icon: '⚡', color: '#3b82f6', bg: '#eff6ff' },
+                            { title: 'Verified Quality', desc: 'Stringent vendor verification process to ensure only premium products reach your door.', icon: '💎', color: '#f59e0b', bg: '#fffbeb' },
+                            { title: 'Global Scaling', desc: 'Advanced tools designed to help small businesses reach millions of potential customers.', icon: '📈', color: '#22c55e', bg: '#f0fdf4' }
+                        ].map(feature => (
+                            <div key={feature.title} className="presence-card" style={{ 
+                                background: '#fff', 
+                                border: '1px solid #e2e8f0', 
+                                padding: '48px 32px', 
                                 borderRadius: '32px', 
                                 textAlign: 'left',
-                                transition: 'all 0.3s',
+                                transition: 'all 0.3s ease',
                                 position: 'relative',
-                                overflow: 'hidden'
+                                overflow: 'hidden',
+                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                             }}>
-                                <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: node.color }}></div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                                    <div style={{ width: '48px', height: '48px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🌍</div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                        <div style={{ width: '8px', height: '8px', background: '#22c55e', borderRadius: '50%', boxShadow: '0 0 10px #22c55e' }}></div>
-                                        <span style={{ fontSize: '12px', fontWeight: 700, color: '#22c55e', textTransform: 'uppercase' }}>Active</span>
-                                    </div>
+                                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: feature.color }}></div>
+                                <div style={{ width: '72px', height: '72px', background: feature.bg, borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', marginBottom: '32px' }}>
+                                    {feature.icon}
                                 </div>
-                                <h4 style={{ fontSize: '20px', fontWeight: 800, color: '#fff', marginBottom: '4px' }}>{node.name}</h4>
-                                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)', marginBottom: '24px' }}>{node.city}</p>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '12px 16px', borderRadius: '12px' }}>
-                                    <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>System Latency:</span>
-                                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff' }}>{node.latency}</span>
-                                </div>
+                                <h4 style={{ fontSize: '22px', fontWeight: 800, color: '#1e293b', marginBottom: '16px', fontFamily: 'var(--font-display)' }}>{feature.title}</h4>
+                                <p style={{ fontSize: '15px', color: '#64748b', lineHeight: 1.7 }}>{feature.desc}</p>
                             </div>
                         ))}
                     </div>

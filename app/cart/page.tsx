@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useCart, CartItem } from '@/context/CartContext';
 
-const VALID_COUPONS: Record<string, number> = { SAVE10: 10, JEFADO20: 20, WELCOME15: 15 };
+const VALID_COUPONS: Record<string, number> = { SAVE10: 10, JEFEDO20: 20, WELCOME15: 15 };
 
 /* ── Order Summary ───────────────────────── */
 function OrderSummary({ items, onCheckout }: {
@@ -63,7 +63,7 @@ function OrderSummary({ items, onCheckout }: {
                 </div>
                 {couponError && <p style={{ fontSize: '11px', color: 'var(--danger)', marginTop: '4px' }}>{couponError}</p>}
                 {appliedCoupon && <p style={{ fontSize: '11px', color: 'var(--success)', marginTop: '4px', fontWeight: 600 }}>✓ {VALID_COUPONS[appliedCoupon]}% off applied!</p>}
-                <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '5px' }}>Try: SAVE10 · JEFADO20 · WELCOME15</p>
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '5px' }}>Try: SAVE10 · JEFEDO20 · WELCOME15</p>
             </div>
 
             <button onClick={onCheckout} style={{ width: '100%', padding: '14px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', boxShadow: '0 4px 20px rgba(26,86,219,0.3)', marginBottom: '10px' }}>

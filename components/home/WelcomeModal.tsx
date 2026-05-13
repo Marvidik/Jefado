@@ -13,7 +13,7 @@ export default function WelcomeModal() {
         // Auto-close after 15 seconds
         const autoClose = setTimeout(() => {
             handleClose();
-        }, 15100);
+        }, 3100);
 
         return () => {
             clearTimeout(timer);
@@ -102,7 +102,7 @@ export default function WelcomeModal() {
                             color: 'var(--text-primary)',
                             marginBottom: '12px',
                             letterSpacing: '-1px'
-                        }}>Welcome to Jefado</h2>
+                        }}>Welcome to Jefedo</h2>
                         <p style={{ color: 'var(--text-secondary)', fontSize: '15px' }}>
                             Your premium multi-vendor hub for global commerce.
                         </p>
@@ -184,7 +184,7 @@ export default function WelcomeModal() {
                             }}
                             onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                             onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-                        >Explore Jefado Now</button>
+                        >Explore Jefedo Now</button>
                     </div>
                 </div>
 
@@ -197,7 +197,7 @@ export default function WelcomeModal() {
                     background: 'var(--primary)',
                     width: '100%',
                     transformOrigin: 'left',
-                    animation: isClosing ? 'none' : 'timerBar 15s linear forwards'
+                    animation: isClosing ? 'none' : 'timerBar 7s linear forwards'
                 }} />
                 <style>{`
                     @keyframes timerBar {

@@ -61,6 +61,17 @@ export default function Navbar() {
         }
       `}</style>
 
+            <div style={{ background: 'var(--primary-dark)', color: '#fff', padding: '8px 0', fontSize: '13px', fontWeight: 600 }}>
+                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span>📞</span>
+                        <a href="tel:+2347064957209" style={{ color: '#fff', textDecoration: 'none' }}>+2347064957209</a>
+                    </div>
+                    <div className="nav-desktop-links" style={{ fontSize: '12px', opacity: 0.9 }}>
+                        Global Multi-Vendor Marketplace
+                    </div>
+                </div>
+            </div>
             <header style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 100, boxShadow: 'var(--shadow-sm)' }}>
                 <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '80px' }}>
 
@@ -68,16 +79,6 @@ export default function Navbar() {
                     <Link href="/" style={{ display: 'flex', alignItems: 'center', height: '64px', flexShrink: 0 }}>
                         <img src="/images/newlogo.png" alt="JEFEDO" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
                     </Link>
-
-                    {/* Category button — desktop only */}
-                    {/* 
-                    <button className="nav-desktop-cat" onClick={() => setSidebarOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '13px', flexShrink: 0, whiteSpace: 'nowrap' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--primary-dark)')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'var(--primary)')}
-                    >
-                        <span>☰</span> All Categories
-                    </button>
-                    */}
 
                     {/* Search — takes all remaining width on mobile */}
                     <div className="nav-search-wrap" style={{ flex: 1, display: 'flex', border: '1.5px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden', maxWidth: '520px', transition: 'border-color 0.2s' }}

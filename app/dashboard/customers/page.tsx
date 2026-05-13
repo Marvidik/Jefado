@@ -121,7 +121,7 @@ export default function CustomersPage() {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                                 <div>
                                     <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: '#0f172a', margin: '0 0 4px' }}>Customer Profile</h4>
-                                    <p style={{ fontSize: '13px', color: '#64748b' }}>Verified Jefado Buyer</p>
+                                    <p style={{ fontSize: '13px', color: '#64748b' }}>Verified Jefedo Buyer</p>
                                 </div>
                                 <button onClick={() => setSelectedCustomer(null)} style={{ border: 'none', background: '#f8fafc', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer' }}>✕</button>
                             </div>

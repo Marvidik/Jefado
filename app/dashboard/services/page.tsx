@@ -239,7 +239,7 @@ export default function ServicesManagementPage() {
                         <div style={{ padding: '60px', textAlign: 'center', color: '#64748b' }}>
                             <div style={{ fontSize: '40px', marginBottom: '16px' }}>🛠️</div>
                             <h3 style={{ fontWeight: 700, color: '#0f172a' }}>No Services Listed</h3>
-                            <p style={{ fontSize: '14px' }}>Begin by listing your professional services for Jefado clients.</p>
+                            <p style={{ fontSize: '14px' }}>Begin by listing your professional services for Jefedo clients.</p>
                         </div>
                     )}
                 </div>

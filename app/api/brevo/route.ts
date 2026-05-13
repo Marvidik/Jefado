@@ -52,13 +52,13 @@ export async function POST(req: Request) {
                     'content-type': 'application/json',
                 },
                 body: JSON.stringify({
-                    sender: { name: 'Jefado System', email: 'no-reply@jefedo.com' },
-                    to: [{ email: receiverEmail, name: 'Jefado Support' }],
+                    sender: { name: 'Jefedo System', email: 'no-reply@jefedo.com' },
+                    to: [{ email: receiverEmail, name: 'Jefedo Support' }],
                     replyTo: { email, name },
                     subject: `[Contact Form] ${subject || 'New Message'}`,
                     htmlContent: `
                         <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-                            <h2 style="color: #1a56db;">New Message from Jefado Contact Form</h2>
+                            <h2 style="color: #1a56db;">New Message from Jefedo Contact Form</h2>
                             <p><strong>Name:</strong> ${name}</p>
                             <p><strong>Email:</strong> ${email}</p>
                             <p><strong>Subject:</strong> ${subject}</p>

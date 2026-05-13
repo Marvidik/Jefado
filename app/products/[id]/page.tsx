@@ -83,7 +83,7 @@ export default function ProductDetailPage() {
                 </div>
 
                 {/* Main Grid */}
-                <div className="detail-grid" style={{ marginBottom: '40px', display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: '40px' }}>
+                <div className="detail-grid" style={{ marginBottom: '40px', display: 'grid', gridTemplateColumns: 'minmax(0, 0.5fr) minmax(0, 1fr)', gap: '40px' }}>
 
                     {/* ── Images ── */}
                     <div>
@@ -160,7 +160,7 @@ export default function ProductDetailPage() {
                                     image: product.image || undefined,
                                     emoji: product.emoji || undefined,
                                     qty: qty,
-                                    seller: product.seller?.store_name || 'Jefado',
+                                    seller: product.seller?.store_name || 'Jefedo',
                                     category: product.category?.toString()
                                 });
                                 setAdded(true); 

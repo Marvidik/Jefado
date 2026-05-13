@@ -3,7 +3,7 @@
 export default function PromoBanners() {
     const banners = [
         {
-            tag: 'Sell on Jefado',
+            tag: 'Sell on Jefedo',
             title: 'Master Your Business',
             desc: 'Manage your store, track real-time sales and scale with professional tools.',
             cta: 'Vendor Dashboard',

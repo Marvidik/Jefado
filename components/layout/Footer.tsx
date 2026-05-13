@@ -71,9 +71,9 @@ export default function Footer() {
                     <div>
                         <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff', marginBottom: '16px' }}>Support</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            <p style={{ fontSize: '12px', lineHeight: 1.6 }}>111 Bijoy Sarani, Dhaka, DH 1515, Bangladesh.</p>
+                            <p style={{ fontSize: '12px', lineHeight: 1.6 }}>no 10 JEFEDO street , amafor nkpor idemili lga anambra state nigeria.</p>
                             <p style={{ fontSize: '12px' }}>📧 support@jefedo.com</p>
-                            <p style={{ fontSize: '12px' }}>📞 +88015-88888-9999</p>
+                            <p style={{ fontSize: '12px' }}>📞 +2347064957209</p>
                         </div>
                     </div>
 

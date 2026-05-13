@@ -77,7 +77,7 @@ function MiniProductCard({ p }: { p: Product }) {
                             image: p.image || undefined,
                             emoji: p.emoji || undefined,
                             qty: 1,
-                            seller: p.shop || 'Jefado',
+                            seller: p.shop || 'Jefedo',
                             category: p.category?.toString()
                         });
                         setAdded(true); 

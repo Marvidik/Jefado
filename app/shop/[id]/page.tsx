@@ -173,13 +173,13 @@ export default function ShopPage({ params }: { params: Promise<{ id: string }> }
 
                         {/* Rendering Logic */}
                         {tab === 'Services' ? (
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+                            <div className="products-grid">
                                 {shopServices.filter(s => s).map(s => (
                                     <ServiceCard key={s.id} {...s} />
                                 ))}
                             </div>
                         ) : (
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+                            <div className="products-grid">
                                 {shopProducts
                                     .filter(p => {
                                         if (!p) return false;
@@ -264,7 +264,7 @@ export default function ShopPage({ params }: { params: Promise<{ id: string }> }
                             </a>
                         </div>
 
-                        <p style={{ textAlign: 'center', marginTop: '24px', fontSize: '12px', color: '#94a3b8' }}>Always stay safe by conducting transactions within the Jefado terminal.</p>
+                        <p style={{ textAlign: 'center', marginTop: '24px', fontSize: '12px', color: '#94a3b8' }}>Always stay safe by conducting transactions within the Jefedo terminal.</p>
                     </div>
                 </div>
             )}

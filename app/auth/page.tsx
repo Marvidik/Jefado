@@ -235,7 +235,7 @@ function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess
                 {(['buyer', 'seller'] as const).map(type => (
                     <button key={type} onClick={() => setForm(f => ({ ...f, accountType: type }))} style={{ padding: '24px 16px', border: `2px solid ${form.accountType === type ? 'var(--primary)' : 'var(--border)'}`, background: form.accountType === type ? 'var(--primary-light)' : 'var(--surface)', borderRadius: '20px', cursor: 'pointer' }}>
                         <span style={{ fontSize: '36px' }}>{type === 'buyer' ? '👤' : '🏢'}</span>
-                        <span style={{ fontSize: '14px', fontWeight: 800, color: form.accountType === type ? 'var(--primary)' : 'var(--text-secondary)', textTransform: 'uppercase' }}>{type === 'buyer' ? 'Customer' : 'Vendor'}</span>
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: form.accountType === type ? 'var(--primary)' : 'var(--text-secondary)', textTransform: 'uppercase' }}>{type === 'buyer' ? 'Individual' : 'Business'}</span>
                     </button>
                 ))}
             </div>

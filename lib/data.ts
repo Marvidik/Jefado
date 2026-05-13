@@ -74,7 +74,7 @@ const MOCK_REVIEWS: Review[] = [
 
 export const ALL_PRODUCTS: Product[] = [
     { 
-        id: 1, name: 'Sony WH-1000XM5 Wireless Noise Cancelling Headphones', price: 279, originalPrice: 399, discount: 30, rating: 4.9, reviews: 5621, 
+        id: 1, name: 'Sony WH-1000XM5 Wireless Noise Cancelling Headphones', price: 279000, originalPrice: 399000, discount: 30, rating: 4.9, reviews: 5621, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 12,
         image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80', 
         emoji: '🎧', isBestSeller: true, brand: 'Sony', category: 'electronics', inStock: true, seller: 'Sony Official',
@@ -82,7 +82,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Battery', '30 Hours'], ['Connection', 'Bluetooth 5.2'], ['Weight', '250g']]
     },
     { 
-        id: 2, name: 'iPhone 15 Pro Max 256GB Titanium', price: 1199, originalPrice: 1299, discount: 8, rating: 4.8, reviews: 8920, 
+        id: 2, name: 'iPhone 15 Pro Max 256GB Titanium', price: 1199000, originalPrice: 1299000, discount: 8, rating: 4.8, reviews: 8920, 
         reviewsList: MOCK_REVIEWS.slice(0, 2), stockQuantity: 5,
         image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&q=80', 
         emoji: '📱', brand: 'Apple', category: 'electronics', inStock: true, seller: 'Apple Direct',
@@ -90,7 +90,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Display', '6.7" OLED'], ['Chip', 'A17 Pro'], ['Camera', '48MP Pro']]
     },
     { 
-        id: 3, name: 'Apple AirPods Pro 2nd Gen with MagSafe Case', price: 199, originalPrice: 249, discount: 20, rating: 4.8, reviews: 12450, 
+        id: 3, name: 'Apple AirPods Pro 2nd Gen with MagSafe Case', price: 199000, originalPrice: 249000, discount: 20, rating: 4.8, reviews: 12450, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 28,
         image: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&q=80', 
         emoji: '🎵', isNew: true, brand: 'Apple', category: 'electronics', inStock: true, seller: 'Apple Direct',
@@ -98,15 +98,15 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Chip', 'H2'], ['Battery', '6 Hours (per charge)'], ['Resistance', 'IPX4']]
     },
     { 
-        id: 4, name: 'Men\'s Vintage Leather Biker Jacket', price: 180, originalPrice: 250, discount: 28, rating: 4.7, reviews: 850, 
+        id: 4, name: 'Men\'s Vintage Leather Biker Jacket', price: 180000, originalPrice: 250000, discount: 28, rating: 4.7, reviews: 850, 
         reviewsList: MOCK_REVIEWS.slice(1), stockQuantity: 8,
         image: 'https://images.unsplash.com/photo-1551028150-64b9f398f678?w=800&q=80', 
-        emoji: '🧥', brand: 'Jefado Fashion', category: 'fashion', inStock: true, seller: 'Authentic Leather Co.',
+        emoji: '🧥', brand: 'Jefedo Fashion', category: 'fashion', inStock: true, seller: 'Authentic Leather Co.',
         description: 'Premium cowhide leather with distressed finish. Classic biker silhouette with asymmetrical zip.',
         specs: [['Material', '100% Cowhide'], ['Lining', 'Viscose'], ['Style', 'Slim Fit']]
     },
     { 
-        id: 5, name: 'Nike Air Max 270 React Sneakers', price: 120, originalPrice: 160, discount: 25, rating: 4.6, reviews: 2100, 
+        id: 5, name: 'Nike Air Max 270 React Sneakers', price: 120000, originalPrice: 160000000, discount: 25, rating: 4.6, reviews: 2100, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 15,
         image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80', 
         emoji: '👟', isBestSeller: true, brand: 'Nike', category: 'fashion', inStock: true, seller: 'Nike Official',
@@ -114,7 +114,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Cushioning', 'Max Air 270'], ['Upper', 'Synthetic/Textile'], ['Closure', 'Laces']]
     },
     { 
-        id: 6, name: 'Floral Print Summer Midi Dress', price: 45, originalPrice: 75, discount: 40, rating: 4.5, reviews: 340, 
+        id: 6, name: 'Floral Print Summer Midi Dress', price: 45000000, originalPrice: 75000, discount: 40, rating: 4.5, reviews: 340, 
         reviewsList: MOCK_REVIEWS.slice(0, 1), stockQuantity: 20,
         image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80', 
         emoji: '👗', isNew: true, brand: 'Mila', category: 'fashion', inStock: true, seller: 'Mila Fashion House',
@@ -122,7 +122,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Fabric', 'Polyester'], ['Length', 'Midi'], ['Pattern', 'Floral']]
     },
     { 
-        id: 7, name: 'Rolex Submariner Date Blue Dial', price: 14500, originalPrice: 16000, discount: 9, rating: 4.9, reviews: 156, 
+        id: 7, name: 'Rolex Submariner Date Blue Dial', price: 14500000, originalPrice: 16000000000, discount: 9, rating: 4.9, reviews: 156, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 2,
         image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80', 
         emoji: '⌚', brand: 'Rolex', category: 'fashion', inStock: true, seller: 'LuxWatch',
@@ -130,7 +130,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Movement', 'automatic'], ['Waterproof', '300m'], ['Case', '41mm Oystersteel']]
     },
     { 
-        id: 8, name: 'Modern Velvet 3-Seater Sofa', price: 899, originalPrice: 1200, discount: 25, rating: 4.8, reviews: 420, 
+        id: 8, name: 'Modern Velvet 3-Seater Sofa', price: 899000, originalPrice: 1200000, discount: 25, rating: 4.8, reviews: 420, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 4,
         image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80', 
         emoji: '🛋️', isBestSeller: true, brand: 'HomeSense', category: 'home', inStock: true, seller: 'Modern Home',
@@ -138,7 +138,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Material', 'Velvet'], ['Frame', 'Kiln-dried hardwood'], ['Seats', '3 People']]
     },
     { 
-        id: 9, name: 'Minimalist Oak Wood Coffee Table', price: 250, originalPrice: 350, discount: 28, rating: 4.7, reviews: 650, 
+        id: 9, name: 'Minimalist Oak Wood Coffee Table', price: 250000, originalPrice: 350000, discount: 28, rating: 4.7, reviews: 650, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 10,
         image: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=800&q=80', 
         emoji: '☕', brand: 'OakStyle', category: 'home', inStock: true, seller: 'OakStyle Furnishings',
@@ -146,7 +146,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Material', 'Solid Oak'], ['Dimensions', '110x60x45cm'], ['Weight', '18kg']]
     },
     { 
-        id: 10, name: 'Samsung 65" QLED 4K Smart TV', price: 1200, originalPrice: 1800, discount: 33, rating: 4.9, reviews: 2450, 
+        id: 10, name: 'Samsung 65" QLED 4K Smart TV', price: 1200000, originalPrice: 1800000, discount: 33, rating: 4.9, reviews: 2450, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 6,
         image: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800&q=80', 
         emoji: '📺', isBestSeller: true, brand: 'Samsung', category: 'electronics', inStock: true, seller: 'Samsung Store',
@@ -154,7 +154,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Screen Size', '65"'], ['Resolution', '4K (3840 x 2160)'], ['HDR', 'Quantum HDR']]
     },
     { 
-        id: 11, name: 'Vitamin C Brightening Serum', price: 35, originalPrice: 55, discount: 36, rating: 4.8, reviews: 3200, 
+        id: 11, name: 'Vitamin C Brightening Serum', price: 35000, originalPrice: 55000, discount: 36, rating: 4.8, reviews: 3200, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 50,
         image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80', 
         emoji: '🧴', isBestSeller: true, brand: 'GlowUP', category: 'beauty', inStock: true, seller: 'GlowUP Beauty',
@@ -162,7 +162,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Volume', '30ml'], ['Key Ingredient', '20% Vitamin C'], ['Skin Type', 'All']]
     },
     { 
-        id: 12, name: 'Mountain Trail Bike 29"', price: 850, originalPrice: 1100, discount: 22, rating: 4.7, reviews: 180, 
+        id: 12, name: 'Mountain Trail Bike 29"', price: 850000, originalPrice: 1100000, discount: 22, rating: 4.7, reviews: 180, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 3,
         image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&q=80', 
         emoji: '🚲', brand: 'TrailMaster', category: 'sports', inStock: true, seller: 'BikeHub',
@@ -170,7 +170,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['Frame', 'Aluminum Alloy'], ['Gears', '21 Speed'], ['Brakes', 'Dual Disc']]
     },
     { 
-        id: 13, name: 'TechWizard Custom Gaming Desktop PC', price: 2499, originalPrice: 2800, discount: 10, rating: 5.0, reviews: 15, 
+        id: 13, name: 'TechWizard Custom Gaming Desktop PC', price: 2499000, originalPrice: 2800000, discount: 10, rating: 5.0, reviews: 15, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 2,
         image: 'https://images.unsplash.com/photo-1587202372470-6812865bf73c?w=800&q=80', 
         emoji: '🖥️', isNew: true, brand: 'TechWizard', category: 'electronics', inStock: true, seller: 'TechWizard',
@@ -178,7 +178,7 @@ export const ALL_PRODUCTS: Product[] = [
         specs: [['GPU', 'RTX 4080'], ['CPU', 'i9-14900K'], ['RAM', '64GB DDR5']]
     },
     { 
-        id: 14, name: 'TechWizard Pro Mechanical Keyboard', price: 159, originalPrice: 199, discount: 20, rating: 4.8, reviews: 42, 
+        id: 14, name: 'TechWizard Pro Mechanical Keyboard', price: 159000, originalPrice: 199000, discount: 20, rating: 4.8, reviews: 42, 
         reviewsList: MOCK_REVIEWS, stockQuantity: 10,
         image: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=800&q=80', 
         emoji: '⌨️', brand: 'TechWizard', category: 'electronics', inStock: true, seller: 'TechWizard',
@@ -189,35 +189,35 @@ export const ALL_PRODUCTS: Product[] = [
 
 export const ALL_SERVICES: Service[] = [
     {
-        id: 1, name: 'Professional Mobile Barbering', price: 35, rating: 4.9, reviewsCount: 128, 
+        id: 1, name: 'Professional Mobile Barbering', price: 35000, rating: 4.9, reviewsCount: 128, 
         reviewsList: MOCK_REVIEWS, emoji: '✂️', provider: 'Styles by David', category: 'personal',
         description: 'Get a premium haircut in the comfort of your own home. Expert in fades, beard trims, and classic styles.',
         isActive: true,
         image: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800&q=80'
     },
     {
-        id: 2, name: 'Full House Deep Cleaning', price: 120, rating: 4.8, reviewsCount: 85, 
+        id: 2, name: 'Full House Deep Cleaning', price: 120000, rating: 4.8, reviewsCount: 85, 
         reviewsList: MOCK_REVIEWS.slice(0, 2), emoji: '🧹', provider: 'EcoClean Pros', category: 'cleaning',
         description: 'Comprehensive house cleaning using eco-friendly products. We cover every corner, from kitchen to bedrooms.',
         isActive: true,
         image: 'https://images.unsplash.com/photo-1581578731548-c64695ce6958?w=800&q=80'
     },
     {
-        id: 3, name: 'Personal Fitness Training', price: 50, rating: 5.0, reviewsCount: 42, 
+        id: 3, name: 'Personal Fitness Training', price: 50000, rating: 5.0, reviewsCount: 42, 
         reviewsList: MOCK_REVIEWS, emoji: '🏋️', provider: 'FitLife Coaching', category: 'personal',
         description: 'One-on-one fitness coaching tailored to your goals. Includes nutritional advice and workout plans.',
         isActive: true,
         image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80'
     },
     {
-        id: 4, name: 'High-Performance PC Repair', price: 75, rating: 4.7, reviewsCount: 156, 
+        id: 4, name: 'High-Performance PC Repair', price: 75000, rating: 4.7, reviewsCount: 156, 
         reviewsList: MOCK_REVIEWS.slice(1), emoji: '💻', provider: 'TechWizard', category: 'tech',
         description: 'Expert PC diagnostic and repair. Hardware upgrades, software troubleshooting, and virus removal.',
         isActive: true,
         image: 'https://images.unsplash.com/photo-1591405351990-4726e331f141?w=800&q=80'
     },
     {
-        id: 5, name: 'Custom Brand Identity Design', price: 450, rating: 4.9, reviewsCount: 64, 
+        id: 5, name: 'Custom Brand Identity Design', price: 450000000, rating: 4.9, reviewsCount: 64, 
         reviewsList: MOCK_REVIEWS, emoji: '🎨', provider: 'Creative Pulse', category: 'design',
         description: 'Get a professional brand identity for your business. Includes logo design, color palette, and brand guidelines.',
         isActive: true,

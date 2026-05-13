@@ -110,7 +110,7 @@ export default function ServicesPage() {
                 </div>
 
                 {/* Grid */}
-                <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px', minHeight: '400px' }}>
+                <div className="products-grid" style={{ minHeight: '400px' }}>
                     {loading ? (
                         <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <div className="loader" style={{ width: '40px', height: '40px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
