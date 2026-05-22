@@ -100,8 +100,10 @@ export default function Footer() {
                         <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff', marginBottom: '16px' }}>Quick Links</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             {[
-                                { label: 'Privacy Policy', href: '#' },
-                                { label: 'Terms Of Use', href: '#' },
+                                { label: 'Privacy Policy', href: '/privacy-policy' },
+                                { label: 'Refund Policy', href: '/refund-policy' },
+                                { label: 'Payment & Delivery Policy', href: '/payment-delivery-policy' },
+                                { label: 'Terms Of Use', href: '/terms-of-use' },
                                 { label: 'FAQ', href: '#' },
                                 { label: 'Contact', href: '/contact' },
                                 { label: 'About Us', href: '/about' },

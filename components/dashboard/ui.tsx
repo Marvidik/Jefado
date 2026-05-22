@@ -177,22 +177,78 @@ export function Table({ cols, rows }: { cols: string[]; rows: React.ReactNode[][
     );
 }
 
-/* ── Drawer ── */
 export function Drawer({ open, onClose, title, children, maxWidth = '560px' }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode; maxWidth?: string }) {
     if (!open) return null;
     return (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', justifyContent: 'flex-end' }}>
+        <div className="ds-drawer-overlay" style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex' }}>
+            <style>{`
+                .ds-drawer-overlay {
+                    justify-content: flex-end;
+                    align-items: stretch;
+                }
+                .ds-drawer {
+                    position: relative;
+                    width: 100%;
+                    max-width: ${maxWidth};
+                    background: #fff;
+                    height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                    box-shadow: -20px 0 60px rgba(0,0,0,0.15);
+                    animation: dsSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                .ds-drawer-header {
+                    padding: 32px;
+                    border-bottom: 1px solid #f1f5f9;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+                .ds-drawer-content {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding: 32px;
+                    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+                }
+
+                @keyframes dsSlideIn { 
+                    from { transform: translateX(100%); } 
+                    to { transform: translateX(0); } 
+                }
+                @keyframes dsSlideUp { 
+                    from { transform: translateY(100%); } 
+                    to { transform: translateY(0); } 
+                }
+
+                @media (max-width: 768px) {
+                    .ds-drawer-overlay {
+                        justify-content: center;
+                        align-items: flex-end;
+                    }
+                    .ds-drawer {
+                        height: auto;
+                        max-height: 85vh;
+                        border-radius: 24px 24px 0 0;
+                        box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+                        animation: dsSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    .ds-drawer-header {
+                        padding: 20px 24px;
+                    }
+                    .ds-drawer-content {
+                        padding: 20px 24px;
+                    }
+                }
+            `}</style>
+            
             <div style={{ position: 'absolute', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(8px)' }} onClick={onClose} />
-            <div className="ds-drawer" style={{ position: 'relative', width: '100%', maxWidth, background: '#fff', height: '100vh', display: 'flex', flexDirection: 'column', boxShadow: '-20px 0 60px rgba(0,0,0,0.15)' }}>
-                <style>{`
-                    .ds-drawer { animation: dsSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-                    @keyframes dsSlideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-                `}</style>
-                <div style={{ padding: '32px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 800, margin: 0, color: '#0f172a' }}>{title}</h2>
+            
+            <div className="ds-drawer">
+                <div className="ds-drawer-header">
+                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '22px', fontWeight: 800, margin: 0, color: '#0f172a' }}>{title}</h2>
                     <button onClick={onClose} style={{ background: '#f8fafc', border: 'none', width: '40px', height: '40px', borderRadius: '50%', fontSize: '18px', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
                 </div>
-                <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
+                <div className="ds-drawer-content">
                     {children}
                 </div>
             </div>

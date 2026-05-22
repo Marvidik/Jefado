@@ -64,8 +64,29 @@ export default function Navbar() {
             <div style={{ background: 'var(--primary-dark)', color: '#fff', padding: '8px 0', fontSize: '13px', fontWeight: 600 }}>
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span>📞</span>
-                        <a href="tel:+2347064957209" style={{ color: '#fff', textDecoration: 'none' }}>+2347064957209</a>
+                        <span style={{ fontSize: '14px' }}>📞</span>
+                        <a href="tel:+2347064957209" style={{ color: '#fff', textDecoration: 'none', fontWeight: 800, fontSize: '14px', letterSpacing: '0.5px', transition: 'color 0.2s' }}
+                            onMouseEnter={e => e.currentTarget.style.color = 'var(--secondary)'}
+                            onMouseLeave={e => e.currentTarget.style.color = '#fff'}
+                        >
+                            +2347064957209
+                        </a>
+                        <span style={{ 
+                            marginLeft: '8px', 
+                            background: 'var(--primary)', 
+                            color: '#fff', 
+                            fontSize: '10px', 
+                            fontWeight: 800, 
+                            padding: '3px 10px', 
+                            borderRadius: '100px', 
+                            textTransform: 'uppercase', 
+                            letterSpacing: '1px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                        }}>
+                            Inquire Now
+                        </span>
                     </div>
                     <div className="nav-desktop-links" style={{ fontSize: '12px', opacity: 0.9 }}>
                         Global Multi-Vendor Marketplace
