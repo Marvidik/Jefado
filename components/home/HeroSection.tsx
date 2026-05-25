@@ -3,84 +3,84 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 const slides = [
-    {
-        tag: 'Shop Smart, Sell Easy',
-        headline: 'Sell, Shop, Succeed.\nEverything You Need in One Place',
-        subline: ' Join our marketplace today: sell your products, shop the latest deals, and enjoy a seamless experience tailored just for you',
-        cta1: { label: 'Shop Now', href: '/products' },
-        cta2: { label: 'Create Account', href: '/auth' },
-        badge: { top: 'Up To', main: '60%', sub: 'OFF' },
-        bg: '#ffe4e6', /* Rose 100 - Dimmer than before */
-        circle: 'rgba(238,18,23,0.15)',
-        photo: '/images/goods.PNG',
-        fallback: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&h=700&fit=crop&crop=top&q=80',
-        floats: [
-            { emoji: '💻', top: '6%', left: '64%', size: 54, d: 0 },
-            { emoji: '👗', top: '36%', left: '52%', size: 46, d: 0.35 },
-            { emoji: '👟', top: '66%', left: '56%', size: 42, d: 0.7 },
-            { emoji: '❄️', top: '18%', right: '5%', size: 36, d: 1.0 },
-            { emoji: '🌿', top: '62%', right: '4%', size: 34, d: 1.4 },
-        ],
-    },
-    {
-        tag: 'Shop Smart, Sell Easy',
-        headline: 'Top Products,\nTrusted Sellers.\nYour Marketplace Awaits.',
-        subline: 'From selling your first product to finding great deals, experience everything our marketplace has to offer.',
-        cta1: { label: 'Shop Now', href: '/products' },
-        cta2: { label: 'Create Account', href: '/auth' },
-        badge: { top: 'Save', main: '40%', sub: 'TODAY' },
-        bg: '#fee2e2', /* Red 100 */
-        circle: 'rgba(238,18,23,0.15)',
-        photo: '/images/goods2.png',
-        fallback: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=700&fit=crop&crop=top&q=80',
-        floats: [
-            { emoji: '📱', top: '6%', left: '64%', size: 56, d: 0 },
-            { emoji: '💻', top: '38%', left: '52%', size: 48, d: 0.35 },
-            { emoji: '🎮', top: '66%', left: '56%', size: 42, d: 0.7 },
-            { emoji: '🔊', top: '18%', right: '5%', size: 38, d: 1.0 },
-            { emoji: '⌨️', top: '62%', right: '4%', size: 34, d: 1.4 },
-        ],
-    },
-    {
-        tag: 'Shop Smart, Sell Easy',
-        headline: 'Premium Deals,\nExciting Finds.\nStart Selling Today.',
-        subline: 'Discover the latest trends in fashion. Reliable Delivery on all orders above $50.',
-        cta1: { label: 'Shop Now', href: '/products' },
-        cta2: { label: 'Create Account', href: '/auth' },
-        badge: { top: 'Flat', main: '50%', sub: 'OFF' },
-        bg: '#fce7f3', /* Pink 100 */
-        circle: 'rgba(238,18,23,0.15)',
-        photo: '/images/goods3.PNG',
-        fallback: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=700&fit=crop&crop=top&q=80',
-        floats: [
-            { emoji: '👗', top: '6%', left: '64%', size: 54, d: 0 },
-            { emoji: '👠', top: '36%', left: '52%', size: 46, d: 0.35 },
-            { emoji: '👜', top: '64%', left: '56%', size: 42, d: 0.7 },
-            { emoji: '💄', top: '18%', right: '5%', size: 36, d: 1.0 },
-            { emoji: '🧣', top: '60%', right: '4%', size: 34, d: 1.4 },
-        ],
-    },
+  {
+    tag: 'Shop Smart, Sell Easy',
+    headline: 'Sell, Shop, Succeed.\nEverything You Need in One Place',
+    subline: ' Join our marketplace today: sell your products, shop the latest deals, and enjoy a seamless experience tailored just for you',
+    cta1: { label: 'Shop / Sale Now', href: '/products' },
+    cta2: { label: 'Create Account', href: '/auth' },
+    badge: { top: 'Up To', main: '60%', sub: 'OFF' },
+    bg: '#ffe4e6', /* Rose 100 - Dimmer than before */
+    circle: 'rgba(238,18,23,0.15)',
+    photo: '/images/g2.png',
+    fallback: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&h=700&fit=crop&crop=top&q=80',
+    floats: [
+      { emoji: '💻', top: '6%', left: '64%', size: 54, d: 0 },
+      { emoji: '👗', top: '36%', left: '52%', size: 46, d: 0.35 },
+      { emoji: '👟', top: '66%', left: '56%', size: 42, d: 0.7 },
+      { emoji: '❄️', top: '18%', right: '5%', size: 36, d: 1.0 },
+      { emoji: '🌿', top: '62%', right: '4%', size: 34, d: 1.4 },
+    ],
+  },
+  {
+    tag: 'Shop Smart, Sell Easy',
+    headline: 'Top Products,\nTrusted Sellers.\nYour Marketplace Awaits.',
+    subline: 'From selling your first product to finding great deals, experience everything our marketplace has to offer.',
+    cta1: { label: 'Shop / Sale Now', href: '/products' },
+    cta2: { label: 'Create Account', href: '/auth' },
+    badge: { top: 'Save', main: '40%', sub: 'TODAY' },
+    bg: '#fee2e2', /* Red 100 */
+    circle: 'rgba(238,18,23,0.15)',
+    photo: '/images/goods2.png',
+    fallback: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=700&fit=crop&crop=top&q=80',
+    floats: [
+      { emoji: '📱', top: '6%', left: '64%', size: 56, d: 0 },
+      { emoji: '💻', top: '38%', left: '52%', size: 48, d: 0.35 },
+      { emoji: '🎮', top: '66%', left: '56%', size: 42, d: 0.7 },
+      { emoji: '🔊', top: '18%', right: '5%', size: 38, d: 1.0 },
+      { emoji: '⌨️', top: '62%', right: '4%', size: 34, d: 1.4 },
+    ],
+  },
+  {
+    tag: 'Shop Smart, Sell Easy',
+    headline: 'Premium Deals,\nExciting Finds.\nStart Selling Today.',
+    subline: 'Discover the latest trends in fashion. Reliable Delivery on all orders above $50.',
+    cta1: { label: 'Shop / Sale Now', href: '/products' },
+    cta2: { label: 'Create Account', href: '/auth' },
+    badge: { top: 'Flat', main: '50%', sub: 'OFF' },
+    bg: '#fce7f3', /* Pink 100 */
+    circle: 'rgba(238,18,23,0.15)',
+    photo: '/images/goods3.PNG',
+    fallback: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=700&fit=crop&crop=top&q=80',
+    floats: [
+      { emoji: '👗', top: '6%', left: '64%', size: 54, d: 0 },
+      { emoji: '👠', top: '36%', left: '52%', size: 46, d: 0.35 },
+      { emoji: '👜', top: '64%', left: '56%', size: 42, d: 0.7 },
+      { emoji: '💄', top: '18%', right: '5%', size: 36, d: 1.0 },
+      { emoji: '🧣', top: '60%', right: '4%', size: 34, d: 1.4 },
+    ],
+  },
 ];
 
 export default function HeroSection() {
-    const [active, setActive] = useState(0);
-    const [imgSrc, setImgSrc] = useState<Record<number, string>>({});
-    const slide = slides[active];
+  const [active, setActive] = useState(0);
+  const [imgSrc, setImgSrc] = useState<Record<number, string>>({});
+  const slide = slides[active];
 
-    useEffect(() => {
-        const t = setInterval(() => setActive(p => (p + 1) % slides.length), 6000);
-        return () => clearInterval(t);
-    }, []);
+  useEffect(() => {
+    const t = setInterval(() => setActive(p => (p + 1) % slides.length), 6000);
+    return () => clearInterval(t);
+  }, []);
 
-    const getSrc = (idx: number) => imgSrc[idx] ?? slides[idx].photo;
+  const getSrc = (idx: number) => imgSrc[idx] ?? slides[idx].photo;
 
-    const handleError = (idx: number) => {
-        setImgSrc(prev => ({ ...prev, [idx]: slides[idx].fallback }));
-    };
+  const handleError = (idx: number) => {
+    setImgSrc(prev => ({ ...prev, [idx]: slides[idx].fallback }));
+  };
 
-    return (
-        <>
-            <style>{`
+  return (
+    <>
+      <style>{`
         @keyframes heroFloat  { 0%,100%{transform:translateY(0)}        50%{transform:translateY(-12px)} }
         @keyframes heroFloatR { 0%,100%{transform:translateY(0) rotate(-4deg)} 50%{transform:translateY(-14px) rotate(4deg)} }
         @keyframes heroPop    { from{opacity:0;transform:translateY(24px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
@@ -284,88 +284,88 @@ export default function HeroSection() {
         }
       `}</style>
 
-            <section className="hero-section" style={{ background: slide.bg, transition: 'background 0.6s ease' }}>
+      <section className="hero-section" style={{ background: slide.bg, transition: 'background 0.6s ease' }}>
 
-                {/* Background circles */}
-                <div style={{
-                    position: 'absolute', width: '400px', height: '400px',
-                    borderRadius: '50%', background: slide.circle,
-                    top: '50%', right: '22%', transform: 'translateY(-50%)',
-                    zIndex: 1, transition: 'background 0.6s', pointerEvents: 'none',
-                }} />
-                <div style={{
-                    position: 'absolute', width: '280px', height: '280px',
-                    borderRadius: '50%', background: 'rgba(255,255,255,0.07)',
-                    top: '50%', right: '24%', transform: 'translateY(-50%)',
-                    zIndex: 1, pointerEvents: 'none',
-                }} />
+        {/* Background circles */}
+        <div style={{
+          position: 'absolute', width: '400px', height: '400px',
+          borderRadius: '50%', background: slide.circle,
+          top: '50%', right: '22%', transform: 'translateY(-50%)',
+          zIndex: 1, transition: 'background 0.6s', pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', width: '280px', height: '280px',
+          borderRadius: '50%', background: 'rgba(255,255,255,0.07)',
+          top: '50%', right: '24%', transform: 'translateY(-50%)',
+          zIndex: 1, pointerEvents: 'none',
+        }} />
 
-                <div className="hero-row">
+        <div className="hero-row">
 
-                    {/* Left: text */}
-                    <div className="hero-text">
-                        <span className="hero-tag">🚀 {slide.tag}</span>
-                        <h1 className="hero-h1">{slide.headline}</h1>
-                        <p className="hero-sub">
-                            <span style={{ fontSize: '18px', marginTop: '2px', flexShrink: 0 }}>🚚</span>
-                            {slide.subline}
-                        </p>
-                        <div className="hero-ctas">
-                            <Link href={slide.cta1.href} className="hero-cta-solid">{slide.cta1.label}</Link>
-                            <Link href={slide.cta2.href} className="hero-cta-outline">{slide.cta2.label}</Link>
-                        </div>
-                    </div>
+          {/* Left: text */}
+          <div className="hero-text">
+            <span className="hero-tag">🚀 {slide.tag}</span>
+            <h1 className="hero-h1">{slide.headline}</h1>
+            <p className="hero-sub">
+              <span style={{ fontSize: '18px', marginTop: '2px', flexShrink: 0 }}>🚚</span>
+              {slide.subline}
+            </p>
+            <div className="hero-ctas">
+              <Link href={slide.cta1.href} className="hero-cta-solid">{slide.cta1.label}</Link>
+              <Link href={slide.cta2.href} className="hero-cta-outline">{slide.cta2.label}</Link>
+            </div>
+          </div>
 
-                    {/* Right: photo + floats */}
-                    <div className="hero-photo-col">
+          {/* Right: photo + floats */}
+          <div className="hero-photo-col">
 
-                        {/* Floating emojis — hidden on mobile via CSS */}
-                        <div className="hero-float-items" style={{ position: 'absolute', inset: 0, zIndex: 4, pointerEvents: 'none' }}>
-                            {slide.floats.map((f, i) => (
-                                <div key={`${active}-${i}`} style={{
-                                    position: 'absolute',
-                                    top: f.top,
-                                    ...(f.left ? { left: f.left } : {}),
-                                    ...(f.right ? { right: f.right } : {}),
-                                    fontSize: `${f.size}px`,
-                                    filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.25))',
-                                    animation: `${i % 2 === 0 ? 'heroFloat' : 'heroFloatR'} ${2.8 + i * 0.3}s ease-in-out infinite`,
-                                    animationDelay: `${f.d}s`,
-                                    zIndex: 5,
-                                }}>{f.emoji}</div>
-                            ))}
-                        </div>
+            {/* Floating emojis — hidden on mobile via CSS */}
+            <div className="hero-float-items" style={{ position: 'absolute', inset: 0, zIndex: 4, pointerEvents: 'none' }}>
+              {slide.floats.map((f, i) => (
+                <div key={`${active}-${i}`} style={{
+                  position: 'absolute',
+                  top: f.top,
+                  ...(f.left ? { left: f.left } : {}),
+                  ...(f.right ? { right: f.right } : {}),
+                  fontSize: `${f.size}px`,
+                  filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.25))',
+                  animation: `${i % 2 === 0 ? 'heroFloat' : 'heroFloatR'} ${2.8 + i * 0.3}s ease-in-out infinite`,
+                  animationDelay: `${f.d}s`,
+                  zIndex: 5,
+                }}>{f.emoji}</div>
+              ))}
+            </div>
 
-                        {/* Hero photo — tries local first, falls back to Unsplash */}
-                        <img
-                            key={active}
-                            src={getSrc(active)}
-                            alt="Hero model"
-                            className="hero-img"
-                            onError={() => handleError(active)}
-                        />
-                    </div>
-                </div>
+            {/* Hero photo — tries local first, falls back to Unsplash */}
+            <img
+              key={active}
+              src={getSrc(active)}
+              alt="Hero model"
+              className="hero-img"
+              onError={() => handleError(active)}
+            />
+          </div>
+        </div>
 
-                {/* Badge */}
-                <div className="hero-badge">
-                    <span className="hero-badge-top">{slide.badge.top}</span>
-                    <span className="hero-badge-num">{slide.badge.main}</span>
-                    <span className="hero-badge-sub">{slide.badge.sub}</span>
-                </div>
+        {/* Badge */}
+        <div className="hero-badge">
+          <span className="hero-badge-top">{slide.badge.top}</span>
+          <span className="hero-badge-num">{slide.badge.main}</span>
+          <span className="hero-badge-sub">{slide.badge.sub}</span>
+        </div>
 
-                {/* Dots */}
-                <div className="hero-dots">
-                    {slides.map((_, i) => (
-                        <button key={i} onClick={() => setActive(i)} style={{
-                            width: i === active ? '28px' : '8px', height: '8px',
-                            borderRadius: '4px',
-                            background: i === active ? 'var(--primary)' : '#e2e8f0',
-                            transition: 'all 0.3s', border: 'none', cursor: 'pointer', padding: 0,
-                        }} />
-                    ))}
-                </div>
-            </section>
-        </>
-    );
+        {/* Dots */}
+        <div className="hero-dots">
+          {slides.map((_, i) => (
+            <button key={i} onClick={() => setActive(i)} style={{
+              width: i === active ? '28px' : '8px', height: '8px',
+              borderRadius: '4px',
+              background: i === active ? 'var(--primary)' : '#e2e8f0',
+              transition: 'all 0.3s', border: 'none', cursor: 'pointer', padding: 0,
+            }} />
+          ))}
+        </div>
+      </section>
+    </>
+  );
 }
