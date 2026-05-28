@@ -7,8 +7,8 @@ const slides = [
     tag: 'Shop Smart, Sell Easy',
     headline: 'Sell, Shop, Succeed.\nEverything You Need in One Place',
     subline: ' Join our marketplace today: sell your products, shop the latest deals, and enjoy a seamless experience tailored just for you',
-    cta1: { label: 'Shop / Sale Now', href: '/products' },
-    cta2: { label: 'Create Account', href: '/auth' },
+    cta1: { label: 'Shop Now', href: '/products' },
+    cta2: { label: 'Sell Now', href: '/auth?type=seller' },
     badge: { top: 'Up To', main: '60%', sub: 'OFF' },
     bg: '#ffe4e6', /* Rose 100 - Dimmer than before */
     circle: 'rgba(238,18,23,0.15)',
@@ -26,8 +26,8 @@ const slides = [
     tag: 'Shop Smart, Sell Easy',
     headline: 'Top Products,\nTrusted Sellers.\nYour Marketplace Awaits.',
     subline: 'From selling your first product to finding great deals, experience everything our marketplace has to offer.',
-    cta1: { label: 'Shop / Sale Now', href: '/products' },
-    cta2: { label: 'Create Account', href: '/auth' },
+    cta1: { label: 'Shop Now', href: '/products' },
+    cta2: { label: 'Sell Now', href: '/auth?type=seller' },
     badge: { top: 'Save', main: '40%', sub: 'TODAY' },
     bg: '#fee2e2', /* Red 100 */
     circle: 'rgba(238,18,23,0.15)',
@@ -45,8 +45,8 @@ const slides = [
     tag: 'Shop Smart, Sell Easy',
     headline: 'Premium Deals,\nExciting Finds.\nStart Selling Today.',
     subline: 'Discover the latest trends in fashion. Reliable Delivery on all orders above $50.',
-    cta1: { label: 'Shop / Sale Now', href: '/products' },
-    cta2: { label: 'Create Account', href: '/auth' },
+    cta1: { label: 'Shop Now', href: '/products' },
+    cta2: { label: 'Sell Now', href: '/auth?type=seller' },
     badge: { top: 'Flat', main: '50%', sub: 'OFF' },
     bg: '#fce7f3', /* Pink 100 */
     circle: 'rgba(238,18,23,0.15)',
@@ -166,25 +166,29 @@ export default function HeroSection() {
           gap: 9px;
         }
         .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
-        .hero-cta-solid {
+        .hero-cta-shop {
           display: inline-flex; align-items: center;
-          background: var(--primary); color: #fff;
-          padding: 13px 34px; border-radius: 50px;
+          background: linear-gradient(135deg, var(--primary) 0%, #ff4b50 100%); color: #fff;
+          padding: 14px 34px; border-radius: 50px;
           font-family: var(--font-body); font-weight: 800; font-size: 15px;
           box-shadow: 0 4px 20px rgba(238,18,23,0.25);
           border: none;
-          transition: all 0.2s; text-decoration: none;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none;
         }
-        .hero-cta-solid:hover  { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(238,18,23,0.35); filter: brightness(1.1); }
-        .hero-cta-outline {
+        .hero-cta-shop:hover  { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(238,18,23,0.4); }
+        .hero-cta-shop:hover .cta-icon { transform: translateX(4px); }
+        
+        .hero-cta-sell {
           display: inline-flex; align-items: center;
-          background: var(--primary-dark); color: #fff;
-          padding: 13px 34px; border-radius: 50px;
-          font-family: var(--font-body); font-weight: 700; font-size: 15px;
+          background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #fff;
+          padding: 14px 34px; border-radius: 50px;
+          font-family: var(--font-body); font-weight: 800; font-size: 15px;
+          box-shadow: 0 4px 20px rgba(15,23,42,0.15);
           border: none;
-          transition: all 0.2s; text-decoration: none;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none;
         }
-        .hero-cta-outline:hover { transform: translateY(-2px); filter: brightness(1.2); box-shadow: 0 8px 20px rgba(125,20,25,0.25); }
+        .hero-cta-sell:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(15,23,42,0.3); }
+        .hero-cta-sell:hover .cta-icon { transform: rotate(90deg); }
         .hero-badge {
           position: absolute;
           top: 22px; right: 22px; z-index: 10;
@@ -225,8 +229,8 @@ export default function HeroSection() {
           .hero-h1       { font-size: 24px; letter-spacing: -0.5px; margin-bottom: 10px; white-space: normal; }
           .hero-tag      { font-size: 9px; padding: 4px 10px; margin-bottom: 10px; letter-spacing: 1px; }
           .hero-sub      { display: none !important; }
-          .hero-cta-solid,
-          .hero-cta-outline { padding: 9px 18px; font-size: 13px; border-radius: 50px; }
+          .hero-cta-shop,
+          .hero-cta-sell { padding: 9px 18px; font-size: 13px; border-radius: 50px; }
           .hero-ctas     { gap: 8px; }
 
           /* badge: smaller */
@@ -255,8 +259,8 @@ export default function HeroSection() {
           .hero-h1       { font-size: 19px; margin-bottom: 8px; }
           .hero-tag      { display: none; }
           .hero-sub      { display: none; }
-          .hero-cta-solid,
-          .hero-cta-outline { padding: 8px 14px; font-size: 12px; }
+          .hero-cta-shop,
+          .hero-cta-sell { padding: 8px 14px; font-size: 12px; }
           .hero-ctas     { gap: 6px; flex-direction: column; align-items: flex-start; }
 
           /* photo stays visible */
@@ -279,8 +283,8 @@ export default function HeroSection() {
           .hero-h1       { font-size: 17px; }
           .hero-img      { max-height: 220px; }
           .hero-ctas     { gap: 5px; }
-          .hero-cta-solid,
-          .hero-cta-outline { padding: 7px 12px; font-size: 11px; }
+          .hero-cta-shop,
+          .hero-cta-sell { padding: 7px 12px; font-size: 11px; }
         }
       `}</style>
 
@@ -311,8 +315,21 @@ export default function HeroSection() {
               {slide.subline}
             </p>
             <div className="hero-ctas">
-              <Link href={slide.cta1.href} className="hero-cta-solid">{slide.cta1.label}</Link>
-              <Link href={slide.cta2.href} className="hero-cta-outline">{slide.cta2.label}</Link>
+              <Link href={slide.cta1.href} className="hero-cta-shop">
+                {slide.cta1.label}
+                <svg style={{ marginLeft: '8px', transition: 'transform 0.2s' }} className="cta-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+              </Link>
+              <Link href={slide.cta2.href} className="hero-cta-sell">
+                {slide.cta2.label}
+                <svg style={{ marginLeft: '8px', transition: 'transform 0.2s' }} className="cta-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </Link>
             </div>
           </div>
 
