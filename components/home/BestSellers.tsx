@@ -17,7 +17,7 @@ export default function BestSellers() {
                     getProducts({ ordering: '-id', page_size: 4 }),
                     getProducts({ min_discount: 25, page_size: 4 })
                 ]);
-                
+
                 setSections([
                     { title: 'Flash Sale Today', badge: '🔥', products: discounted?.results || [] },
                     { title: 'Best Sellers', badge: '⭐', products: best?.results || [] },

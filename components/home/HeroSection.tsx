@@ -189,6 +189,17 @@ export default function HeroSection() {
         }
         .hero-cta-sell:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(15,23,42,0.3); }
         .hero-cta-sell:hover .cta-icon { transform: rotate(90deg); }
+        .hero-cta-create {
+          display: inline-flex; align-items: center;
+          background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #fff;
+          padding: 14px 34px; border-radius: 50px;
+          font-family: var(--font-body); font-weight: 800; font-size: 15px;
+          box-shadow: 0 4px 20px rgba(37,99,235,0.15);
+          border: none;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none;
+        }
+        .hero-cta-create:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(37,99,235,0.3); }
+        .hero-cta-create:hover .cta-icon { transform: scale(1.1); }
         .hero-badge {
           position: absolute;
           top: 22px; right: 22px; z-index: 10;
@@ -230,7 +241,8 @@ export default function HeroSection() {
           .hero-tag      { font-size: 9px; padding: 4px 10px; margin-bottom: 10px; letter-spacing: 1px; }
           .hero-sub      { display: none !important; }
           .hero-cta-shop,
-          .hero-cta-sell { padding: 9px 18px; font-size: 13px; border-radius: 50px; }
+          .hero-cta-sell,
+          .hero-cta-create { padding: 9px 18px; font-size: 13px; border-radius: 50px; }
           .hero-ctas     { gap: 8px; }
 
           /* badge: smaller */
@@ -260,8 +272,12 @@ export default function HeroSection() {
           .hero-tag      { display: none; }
           .hero-sub      { display: none; }
           .hero-cta-shop,
-          .hero-cta-sell { padding: 8px 14px; font-size: 12px; }
+          .hero-cta-sell,
+          .hero-cta-create { padding: 8px 14px; font-size: 12px; }
           .hero-ctas     { gap: 6px; flex-direction: column; align-items: flex-start; }
+          .hero-cta-row  { flex-direction: column; width: 100%; gap: 6px !important; }
+          .hero-cta-bottom { width: 100%; }
+          .hero-cta-shop, .hero-cta-sell, .hero-cta-create { width: 100%; text-align: center; justify-content: center; }
 
           /* photo stays visible */
           .hero-photo-col { flex: 0 0 64%; }
@@ -284,7 +300,8 @@ export default function HeroSection() {
           .hero-img      { max-height: 220px; }
           .hero-ctas     { gap: 5px; }
           .hero-cta-shop,
-          .hero-cta-sell { padding: 7px 12px; font-size: 11px; }
+          .hero-cta-sell,
+          .hero-cta-create { padding: 7px 12px; font-size: 11px; }
         }
       `}</style>
 
@@ -314,22 +331,35 @@ export default function HeroSection() {
               <span style={{ fontSize: '18px', marginTop: '2px', flexShrink: 0 }}>🚚</span>
               {slide.subline}
             </p>
-            <div className="hero-ctas">
-              <Link href={slide.cta1.href} className="hero-cta-shop">
-                {slide.cta1.label}
-                <svg style={{ marginLeft: '8px', transition: 'transform 0.2s' }} className="cta-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
-              </Link>
-              <Link href={slide.cta2.href} className="hero-cta-sell">
-                {slide.cta2.label}
-                <svg style={{ marginLeft: '8px', transition: 'transform 0.2s' }} className="cta-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </Link>
+            <div className="hero-ctas" style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: 'fit-content' }}>
+              <div className="hero-cta-row" style={{ display: 'flex', gap: '14px' }}>
+                <Link href="/auth?mode=register&type=seller" className="hero-cta-sell">
+                  Sale Now
+                  <svg style={{ marginLeft: '8px', transition: 'transform 0.2s' }} className="cta-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </Link>
+                <Link href="/products" className="hero-cta-shop">
+                  Buy Now
+                  <svg style={{ marginLeft: '8px', transition: 'transform 0.2s' }} className="cta-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                  </svg>
+                </Link>
+              </div>
+              <div className="hero-cta-bottom" style={{ display: 'flex', justifyContent: 'center' }}>
+                <Link href="/auth?mode=register&type=buyer" className="hero-cta-create" style={{ width: '100%', justifyContent: 'center' }}>
+                  Create Account
+                  <svg style={{ marginLeft: '8px', transition: 'transform 0.2s' }} className="cta-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                  </svg>
+                </Link>
+              </div>
             </div>
           </div>
 

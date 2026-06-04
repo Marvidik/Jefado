@@ -54,24 +54,31 @@ export default function Navbar() {
           .nav-desktop-links { display: none !important; }
           .nav-desktop-cat   { display: none !important; }
           .nav-mobile-menu-btn { display: flex !important; }
-          .nav-search-wrap { max-width: 100% !important; }
+          .nav-search-wrap { max-width: 100% !important; flex: 1 !important; }
+          .nav-inquire-badge { display: none !important; }
+          .nav-logo { height: 48px !important; }
         }
         @media (min-width: 769px) {
           .nav-mobile-menu-btn { display: none !important; }
+        }
+        @media (max-width: 480px) {
+          .nav-top-phone { font-size: 12px !important; }
+          .nav-logo { height: 40px !important; }
+          .nav-inner { height: 60px !important; }
         }
       `}</style>
 
             <div style={{ background: 'var(--primary-dark)', color: '#fff', padding: '8px 0', fontSize: '13px', fontWeight: 600 }}>
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontSize: '14px' }}>📞</span>
-                        <a href="tel:+2347064957209" style={{ color: '#fff', textDecoration: 'none', fontWeight: 800, fontSize: '14px', letterSpacing: '0.5px', transition: 'color 0.2s' }}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, overflow: 'hidden' }}>
+                        <span style={{ fontSize: '14px', flexShrink: 0 }}>📞</span>
+                        <a href="https://wa.me/2347064957209" target="_blank" rel="noopener noreferrer" className="nav-top-phone" style={{ color: '#fff', textDecoration: 'none', fontWeight: 800, fontSize: '14px', letterSpacing: '0.5px', transition: 'color 0.2s', whiteSpace: 'nowrap' }}
                             onMouseEnter={e => e.currentTarget.style.color = 'var(--secondary)'}
                             onMouseLeave={e => e.currentTarget.style.color = '#fff'}
                         >
                             +2347064957209
                         </a>
-                        <span style={{ 
+                        <span className="nav-inquire-badge" style={{ 
                             marginLeft: '8px', 
                             background: 'var(--primary)', 
                             color: '#fff', 
@@ -83,22 +90,23 @@ export default function Navbar() {
                             letterSpacing: '1px',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                            flexShrink: 0,
                         }}>
                             Inquire Now
                         </span>
                     </div>
-                    <div className="nav-desktop-links" style={{ fontSize: '12px', opacity: 0.9 }}>
+                    <div className="nav-desktop-links" style={{ fontSize: '12px', opacity: 0.9, flexShrink: 0 }}>
                         Global Multi-Vendor Marketplace
                     </div>
                 </div>
             </div>
             <header style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 100, boxShadow: 'var(--shadow-sm)' }}>
-                <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '80px' }}>
+                <div className="container nav-inner" style={{ display: 'flex', alignItems: 'center', gap: '12px', height: '80px' }}>
 
                     {/* Logo */}
                     <Link href="/" style={{ display: 'flex', alignItems: 'center', height: '64px', flexShrink: 0 }}>
-                        <img src="/images/newlogo.png" alt="JEFEDO" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
+                        <img src="/images/newlogo.png" alt="JEFEDO" className="nav-logo" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
                     </Link>
 
                     {/* Search — takes all remaining width on mobile */}

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { login, register, verifyEmail, requestPasswordReset, completePasswordReset } from '@/services/authService';
+import { useToast } from '@/components/ui/Toast';
 
 type Mode = 'login' | 'register' | 'forgot' | 'otp';
 
@@ -52,20 +53,20 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
 function AuthPanel({ mode }: { mode: Mode }) {
     const content = {
         login: {
-            title: 'Experience\nthe Future.',
-            desc: 'Sign in to access your premium dashboard, track orders, and experience the next generation of global commerce.',
+            title: 'Welcome\nBack.',
+            desc: 'Sign in to manage your account, track orders, and access your dashboard.',
         },
         register: {
-            title: 'Join the\nElite.',
-            desc: 'Create your account and connect with thousands of verified vendors in a secure, high-performance ecosystem.',
+            title: 'Create\nAccount.',
+            desc: 'Join us to buy or sell products in our secure global marketplace.',
         },
         forgot: {
-            title: 'Secure\nRecovery.',
-            desc: 'Quickly regain access to your account through our encrypted recovery protocol.',
+            title: 'Reset\nPassword.',
+            desc: 'Recover your account using a secure verification code sent to your email.',
         },
         otp: {
-            title: 'Finalize\nAccess.',
-            desc: 'A verification token has been dispatched to your digital mail. Enter it below to unlock your terminal.',
+            title: 'Verify\nOTP.',
+            desc: 'Enter the verification code sent to your email to complete your registration.',
         },
     };
     const c = content[mode];
@@ -136,23 +137,17 @@ function AuthPanel({ mode }: { mode: Mode }) {
 
 /* ── Login Form ─────────────────────────── */
 function LoginForm({ onSwitch, onForgot, onSuccess }: { onSwitch: () => void; onForgot: () => void; onSuccess: (type: string) => void }) {
+    const toast = useToast();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [remember, setRemember] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     const valid = email && password;
     return (
         <div style={{ width: '100%' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-1.5px' }}>Welcome Back</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '40px' }}>Log in to your account to continue.</p>
-
-            {error && (
-                <div style={{ background: 'var(--danger-light)', color: 'var(--danger-dark)', padding: '12px 16px', borderRadius: '10px', fontSize: '14px', marginBottom: '24px', fontWeight: 600, border: '1px solid var(--danger)' }}>
-                    ⚠ {typeof error === 'string' ? error : JSON.stringify(error)}
-                </div>
-            )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
                 <Field label="Email Address" type="email" value={email} onChange={setEmail} placeholder="Enter your email" required />
@@ -175,13 +170,13 @@ function LoginForm({ onSwitch, onForgot, onSuccess }: { onSwitch: () => void; on
             <button onClick={async () => { 
                 if (!valid) return; 
                 setLoading(true); 
-                setError(null);
                 try {
                     const result = await login({ username: email, email: email, password });
                     const uType = result.user?.user_type || 'CUSTOMER';
+                    toast.success('Successfully logged in!');
                     onSuccess(uType.toLowerCase());
                 } catch (err: any) {
-                    setError(err.non_field_errors?.[0] || err.detail || 'Login failed.');
+                    toast.error(err.non_field_errors?.[0] || err.detail || 'Login failed.');
                 } finally {
                     setLoading(false);
                 }
@@ -192,35 +187,68 @@ function LoginForm({ onSwitch, onForgot, onSuccess }: { onSwitch: () => void; on
                     color: valid ? '#fff' : 'var(--text-muted)', borderRadius: '14px', fontFamily: 'var(--font-display)', 
                     fontWeight: 800, fontSize: '16px', cursor: valid ? 'pointer' : 'not-allowed', letterSpacing: '0.5px'
                 }}
-            >{loading ? '⏳ Logging in…' : 'Login Now →'}</button>
+            >{loading ? 'Logging in...' : 'Log In'}</button>
 
-            <p style={{ textAlign: 'center', fontSize: '15px', color: 'var(--text-secondary)', marginTop: '24px' }}>
-                Don't have an account?{' '}
-                <button onClick={onSwitch} style={{ color: 'var(--primary)', fontWeight: 800, background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '15px' }}>Register</button>
-            </p>
+            <div style={{ textAlign: 'center', marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border-light)' }}>
+                <p style={{ fontSize: '15px', color: 'var(--text-secondary)', margin: 0 }}>
+                    Don't have an account?{' '}
+                    <button 
+                        onClick={onSwitch} 
+                        style={{ 
+                            color: 'var(--primary)', 
+                            fontWeight: 800, 
+                            background: 'transparent', 
+                            border: 'none', 
+                            cursor: 'pointer', 
+                            fontSize: '16px', 
+                            marginLeft: '4px',
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            textDecoration: 'underline',
+                            transition: 'all 0.2s ease',
+                            display: 'inline-block'
+                        }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.color = 'var(--primary-dark)';
+                            e.currentTarget.style.background = 'var(--primary-light)';
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.color = 'var(--primary)';
+                            e.currentTarget.style.background = 'transparent';
+                        }}
+                    >
+                        Sign Up
+                    </button>
+                </p>
+            </div>
         </div>
     );
 }
 
 /* ── Register Form ───────────────────────── */
-function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess: (type: string) => void }) {
+function RegisterForm({ onSwitch, onSuccess, onVerifyOtp, defaultAccountType = 'buyer' }: { onSwitch: () => void; onSuccess: (type: string) => void; onVerifyOtp: () => void; defaultAccountType?: string }) {
+    const toast = useToast();
     const [form, setForm] = useState({ 
-        firstName: '', lastName: '', email: '', phone: '', password: '', confirm: '', accountType: 'buyer' as 'buyer' | 'seller', storeName: '', rcNumber: ''
+        firstName: '', lastName: '', email: '', phone: '', password: '', confirm: '', accountType: (defaultAccountType === 'seller' ? 'seller' : 'buyer') as 'buyer' | 'seller', storeName: '', rcNumber: ''
     });
+
+    useEffect(() => {
+        setForm(f => ({ ...f, accountType: (defaultAccountType === 'seller' ? 'seller' : 'buyer') }));
+    }, [defaultAccountType]);
+
     const [agreed, setAgreed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [error, setError] = useState<any>(null);
     const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }));
 
-    const valid = form.firstName && form.lastName && form.email && form.password.length >= 6 && form.password === form.confirm && agreed && (form.accountType === 'buyer' || (form.storeName && form.rcNumber));
+    const canSubmit = form.firstName && form.lastName && form.email && form.password && form.confirm && agreed && (form.accountType === 'buyer' || (form.storeName && form.rcNumber));
 
     if (success) return (
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
             <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '34px', boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}>✓</div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', marginBottom: '10px' }}>Account created!</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '14px' }}>Welcome to the platform, {form.firstName}!</p>
-            <button onClick={onSwitch} style={{ display: 'inline-block', padding: '12px 32px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, border: 'none', cursor: 'pointer' }}>Verify OTP →</button>
+            <button onClick={onVerifyOtp} style={{ display: 'inline-block', padding: '12px 32px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, border: 'none', cursor: 'pointer' }}>Verify OTP</button>
         </div>
     );
 
@@ -229,15 +257,76 @@ function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', color: 'var(--text-primary)', marginBottom: '8px' }}>Create Account</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '32px' }}>Join our community today.</p>
 
-            {error && <div style={{ background: 'var(--danger-light)', color: 'var(--danger-dark)', padding: '12px 16px', borderRadius: '10px', fontSize: '14px', marginBottom: '24px' }}>⚠ {typeof error === 'string' ? error : Object.values(error).flat()[0] as string || 'Error'}</div>}
-
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
-                {(['buyer', 'seller'] as const).map(type => (
-                    <button key={type} onClick={() => setForm(f => ({ ...f, accountType: type }))} style={{ padding: '24px 16px', border: `2px solid ${form.accountType === type ? 'var(--primary)' : 'var(--border)'}`, background: form.accountType === type ? 'var(--primary-light)' : 'var(--surface)', borderRadius: '20px', cursor: 'pointer' }}>
-                        <span style={{ fontSize: '36px' }}>{type === 'buyer' ? '👤' : '🏢'}</span>
-                        <span style={{ fontSize: '14px', fontWeight: 800, color: form.accountType === type ? 'var(--primary)' : 'var(--text-secondary)', textTransform: 'uppercase' }}>{type === 'buyer' ? 'Individual' : 'Business'}</span>
-                    </button>
-                ))}
+                {(['buyer', 'seller'] as const).map(type => {
+                    const isSelected = form.accountType === type;
+                    return (
+                        <button 
+                            key={type} 
+                            type="button"
+                            onClick={() => setForm(f => ({ ...f, accountType: type }))} 
+                            style={{ 
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '12px',
+                                padding: '24px 16px', 
+                                border: `2.5px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}`, 
+                                background: isSelected ? 'rgba(26,86,219,0.04)' : 'var(--surface)', 
+                                borderRadius: '16px', 
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                boxShadow: isSelected ? '0 8px 20px rgba(26,86,219,0.06)' : 'none',
+                                outline: 'none'
+                            }}
+                            onMouseEnter={e => {
+                                if (!isSelected) {
+                                    e.currentTarget.style.borderColor = 'var(--text-muted)';
+                                    e.currentTarget.style.background = 'var(--surface-2)';
+                                }
+                            }}
+                            onMouseLeave={e => {
+                                if (!isSelected) {
+                                    e.currentTarget.style.borderColor = 'var(--border)';
+                                    e.currentTarget.style.background = 'var(--surface)';
+                                }
+                            }}
+                        >
+                            <div style={{ 
+                                width: '56px', 
+                                height: '56px', 
+                                borderRadius: '12px', 
+                                background: isSelected ? 'var(--primary)' : 'var(--surface-2)', 
+                                color: isSelected ? '#ffffff' : 'var(--text-secondary)',
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center',
+                                transition: 'all 0.2s ease'
+                            }}>
+                                {type === 'buyer' ? (
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                ) : (
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                                    </svg>
+                                )}
+                            </div>
+                            <span style={{ 
+                                fontSize: '13px', 
+                                fontWeight: 800, 
+                                color: isSelected ? 'var(--primary)' : 'var(--text-primary)', 
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px'
+                            }}>
+                                {type === 'buyer' ? 'Individual' : 'Business'}
+                            </span>
+                        </button>
+                    );
+                })}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '32px' }}>
@@ -252,7 +341,14 @@ function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess
                         <Field label="RC Number" value={form.rcNumber} onChange={set('rcNumber')} placeholder="RC-123" required />
                     </div>
                 )}
-                <Field label="Password" type="password" value={form.password} onChange={set('password')} placeholder="••••••••" required />
+                <div>
+                    <Field label="Password" type="password" value={form.password} onChange={set('password')} placeholder="••••••••" required />
+                    {form.password && form.password.length < 8 && (
+                        <span style={{ color: 'var(--danger)', fontSize: '12px', marginTop: '6px', display: 'block', fontWeight: 600 }}>
+                            Password must be at least 8 characters long.
+                        </span>
+                    )}
+                </div>
                 <Field label="Confirm Password" type="password" value={form.confirm} onChange={set('confirm')} placeholder="••••••••" required />
             </div>
 
@@ -262,23 +358,71 @@ function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess
             </label>
 
             <button onClick={async () => { 
-                if (!valid) return; 
+                if (!canSubmit) return; 
+                if (form.password.length < 8) {
+                    toast.error("Password must be at least 8 characters long.");
+                    return;
+                }
+                if (form.password !== form.confirm) {
+                    toast.error("Passwords do not match.");
+                    return;
+                }
                 setLoading(true); 
                 try {
                     await register({ username: form.email, email: form.email, password1: form.password, password2: form.password, first_name: form.firstName, last_name: form.lastName, user_type: form.accountType === 'buyer' ? 'CUSTOMER' : 'SELLER', store_name: form.storeName, rc_number: form.rcNumber });
+                    toast.success('Registration successful!');
                     onSuccess(form.accountType);
                     setSuccess(true);
-                } catch (err) { setError(err); } finally { setLoading(false); }
+                } catch (err: any) { 
+                    const errMsg = err.non_field_errors?.[0] || err.detail || err.message || Object.values(err).flat()[0] as string || 'Registration failed.';
+                    toast.error(errMsg); 
+                } finally { 
+                    setLoading(false); 
+                }
             }}
-                disabled={!valid || loading}
-                style={{ width: '100%', padding: '18px', background: valid ? 'var(--primary)' : 'var(--border)', color: '#fff', borderRadius: '14px', fontWeight: 800, textTransform: 'uppercase' }}
-            >{loading ? '⏳ Encrypting…' : 'Finalize Registration'}</button>
+                disabled={!canSubmit || loading}
+                style={{ width: '100%', padding: '18px', background: canSubmit ? 'var(--primary)' : 'var(--border)', color: '#fff', borderRadius: '14px', fontWeight: 800, textTransform: 'none' }}
+            >{loading ? 'Registering...' : 'Register'}</button>
+
+            <div style={{ textAlign: 'center', marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border-light)' }}>
+                <p style={{ fontSize: '15px', color: 'var(--text-secondary)', margin: 0 }}>
+                    Already have an account?{' '}
+                    <button 
+                        onClick={onSwitch} 
+                        style={{ 
+                            color: 'var(--primary)', 
+                            fontWeight: 800, 
+                            background: 'transparent', 
+                            border: 'none', 
+                            cursor: 'pointer', 
+                            fontSize: '16px', 
+                            marginLeft: '4px',
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            textDecoration: 'underline',
+                            transition: 'all 0.2s ease',
+                            display: 'inline-block'
+                        }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.color = 'var(--primary-dark)';
+                            e.currentTarget.style.background = 'var(--primary-light)';
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.color = 'var(--primary)';
+                            e.currentTarget.style.background = 'transparent';
+                        }}
+                    >
+                        Log In
+                    </button>
+                </p>
+            </div>
         </div>
     );
 }
 
 /* ── OTP Form ─────────────────────────────── */
 function OTPForm({ onBack, userType }: { onBack: () => void; userType: string }) {
+    const toast = useToast();
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -294,10 +438,10 @@ function OTPForm({ onBack, userType }: { onBack: () => void; userType: string })
     if (success) return (
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
             <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '34px' }}>✓</div>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', marginBottom: '10px' }}>Identity Verified</h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '28px' }}>Access fully granted.</p>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', marginBottom: '10px' }}>Email Verified</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '28px' }}>Your email has been successfully verified.</p>
             <a href={userType === 'seller' ? "/dashboard" : "/"} style={{ display: 'inline-block', padding: '12px 32px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700 }}>
-                {userType === 'seller' ? 'Enter Merchant Terminal →' : 'Enter Terminal →'}
+                {userType === 'seller' ? 'Go to Dashboard' : 'Go to Home'}
             </a>
         </div>
     );
@@ -306,26 +450,26 @@ function OTPForm({ onBack, userType }: { onBack: () => void; userType: string })
     return (
         <div style={{ width: '100%' }}>
             <button onClick={onBack} style={{ color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer', marginBottom: '24px' }}>← Back</button>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px' }}>Verify Code</h2>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', marginBottom: '8px' }}>Verify OTP</h2>
             <div style={{ display: 'flex', gap: '12px', marginBottom: '40px' }}>
                 {otp.map((v, i) => <input key={i} id={`otp-${i}`} type="text" value={v} onChange={e => handleChange(e.target.value, i)} style={{ width: '100%', height: '60px', textAlign: 'center', fontSize: '24px', fontWeight: 800, border: '2px solid var(--border)', borderRadius: '12px', background: 'var(--surface-2)' }} />)}
             </div>
-            <button onClick={() => { if (!valid) return; setLoading(true); setTimeout(() => { setLoading(false); setSuccess(true); }, 1800); }}
+            <button onClick={() => { if (!valid) return; setLoading(true); setTimeout(() => { setLoading(false); setSuccess(true); toast.success('Identity verified successfully!'); }, 1800); }}
                 disabled={!valid || loading}
-                style={{ width: '100%', padding: '18px', background: valid ? 'var(--primary)' : 'var(--border)', color: '#fff', borderRadius: '14px', fontWeight: 800, textTransform: 'uppercase' }}
-            >{loading ? '⏳ Verifying…' : 'Verify Identity'}</button>
+                style={{ width: '100%', padding: '18px', background: valid ? 'var(--primary)' : 'var(--border)', color: '#fff', borderRadius: '14px', fontWeight: 800, textTransform: 'none' }}
+            >{loading ? 'Verifying...' : 'Verify OTP'}</button>
         </div>
     );
 }
 
 /* ── Forgot Password Form ─────────────────── */
 function ForgotForm({ onBack }: { onBack: () => void }) {
+    const toast = useToast();
     const [step, setStep] = useState(1); // 1: Request, 2: Complete
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const [timer, setTimer] = useState(0);
 
@@ -342,13 +486,13 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
     const handleRequest = async () => {
         if (!email) return;
         setLoading(true);
-        setError(null);
         try {
             await requestPasswordReset({ email });
+            toast.success('Verification code sent to your email.');
             setStep(2);
             setTimer(60); // 1 minute cooldown
         } catch (err: any) {
-            setError(err.detail || 'Failed to request reset.');
+            toast.error(err.detail || 'Failed to request reset.');
         } finally {
             setLoading(false);
         }
@@ -356,13 +500,17 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
 
     const handleComplete = async () => {
         if (!otp || !newPassword) return;
+        if (newPassword.length < 8) {
+            toast.error("Password must be at least 8 characters long.");
+            return;
+        }
         setLoading(true);
-        setError(null);
         try {
             await completePasswordReset({ email, otp, new_password: newPassword });
+            toast.success('Password updated successfully!');
             setSuccess(true);
         } catch (err: any) {
-            setError(err.detail || 'Failed to complete reset. Check your OTP.');
+            toast.error(err.detail || 'Failed to complete reset. Check your OTP.');
         } finally {
             setLoading(false);
         }
@@ -384,17 +532,13 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
             <button onClick={onBack} style={{ color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer', marginBottom: '24px', fontSize: '14px', fontWeight: 600 }}>← Back to Login</button>
             
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-1.5px' }}>
-                {step === 1 ? 'Reset Password' : 'Verify Identity'}
+                {step === 1 ? 'Reset Password' : 'Verify OTP'}
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '32px' }}>
                 {step === 1 ? 'Enter your email to receive a verification code.' : 'Enter the code sent to your email and your new password.'}
             </p>
 
-            {error && (
-                <div style={{ background: 'var(--danger-light)', color: 'var(--danger-dark)', padding: '12px 16px', borderRadius: '10px', fontSize: '14px', marginBottom: '24px', border: '1px solid var(--danger)' }}>
-                    ⚠ {error}
-                </div>
-            )}
+
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <Field label="Email Address" type="email" value={email} onChange={setEmail} placeholder="you@example.com" required />
@@ -402,7 +546,14 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
                 {step === 2 && (
                     <>
                         <Field label="Verification Code (OTP)" type="text" value={otp} onChange={setOtp} placeholder="Enter OTP" required />
-                        <Field label="New Password" type="password" value={newPassword} onChange={setNewPassword} placeholder="••••••••" required />
+                        <div>
+                            <Field label="New Password" type="password" value={newPassword} onChange={setNewPassword} placeholder="••••••••" required />
+                            {newPassword && newPassword.length < 8 && (
+                                <span style={{ color: 'var(--danger)', fontSize: '12px', marginTop: '6px', display: 'block', fontWeight: 600 }}>
+                                    Password must be at least 8 characters long.
+                                </span>
+                            )}
+                        </div>
                     </>
                 )}
             </div>
@@ -416,7 +567,7 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
                     color: '#fff', borderRadius: '14px', fontWeight: 800, fontSize: '16px', cursor: (step === 1 ? email : (otp && newPassword)) ? 'pointer' : 'not-allowed'
                 }}
             >
-                {loading ? '⏳ Processing…' : (step === 1 ? 'Request Reset →' : 'Update Password →')}
+                {loading ? 'Processing...' : (step === 1 ? 'Send Reset Link' : 'Reset Password')}
             </button>
             
             {step === 2 && (
@@ -438,6 +589,20 @@ export default function AuthPage() {
     const [mode, setMode] = useState<Mode>('login');
     const [userType, setUserType] = useState('buyer');
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            const m = params.get('mode');
+            const t = params.get('type');
+            if (m === 'register' || m === 'login' || m === 'forgot' || m === 'otp') {
+                setMode(m as Mode);
+            }
+            if (t === 'seller' || t === 'buyer') {
+                setUserType(t);
+            }
+        }
+    }, []);
+
     const handleSuccess = (type: string) => {
         setUserType(type);
         if (mode === 'login') {
@@ -450,18 +615,28 @@ export default function AuthPage() {
     return (
         <>
             <style>{`
-        .auth-page { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+        .auth-page { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; background: #ffffff; }
         .auth-panel { display: flex; width: 100%; min-height: 100vh; }
-        .auth-form-col { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 48px 60px; background: var(--surface); overflow-y: auto; }
-        .auth-form-inner { width: 100%; max-width: 480px; }
-        @media (max-width: 900px) { .auth-page { grid-template-columns: 1fr !important; } .auth-panel { display: none !important; } }
+        .auth-form-col { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px 80px; background: #ffffff; overflow-y: auto; }
+        .auth-form-inner { 
+            width: 100%; 
+            max-width: 540px; 
+            background: transparent; 
+            padding: 0; 
+        }
+        @media (max-width: 1000px) { 
+            .auth-page { grid-template-columns: 1fr !important; } 
+            .auth-panel { display: none !important; } 
+            .auth-form-col { padding: 40px 24px; min-height: 100vh; }
+            .auth-form-inner { padding: 0; }
+        }
       `}</style>
             <div className="auth-page">
                 <div className="auth-panel"><AuthPanel mode={mode} /></div>
                 <div className="auth-form-col">
                     <div className="auth-form-inner">
                         {mode === 'login' && <LoginForm onSwitch={() => setMode('register')} onForgot={() => setMode('forgot')} onSuccess={handleSuccess} />}
-                        {mode === 'register' && <RegisterForm onSwitch={() => setMode('otp')} onSuccess={handleSuccess} />}
+                        {mode === 'register' && <RegisterForm onSwitch={() => setMode('login')} onVerifyOtp={() => setMode('otp')} onSuccess={handleSuccess} defaultAccountType={userType} />}
                         {mode === 'forgot' && <ForgotForm onBack={() => setMode('login')} />}
                         {mode === 'otp' && <OTPForm onBack={() => setMode('login')} userType={userType} />}
                     </div>

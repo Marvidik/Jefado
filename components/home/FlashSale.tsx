@@ -38,10 +38,10 @@ export default function FlashSale() {
                 </div>
                 <a href="/products?min_discount=20" style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '13px', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '4px', border: '1.5px solid var(--primary)', padding: '7px 16px', borderRadius: 'var(--radius)', whiteSpace: 'nowrap', textDecoration: 'none' }}>View All →</a>
             </div>
-            
-            <div className="flash-grid" style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(6, 1fr)', 
+
+            <div className="flash-grid" style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(6, 1fr)',
                 gap: '12px',
                 minHeight: '200px'
             }}>
@@ -60,7 +60,7 @@ export default function FlashSale() {
                     </div>
                 )}
             </div>
-            
+
             <style jsx>{`
                 @media (max-width: 1200px) {
                     .flash-grid { grid-template-columns: repeat(4, 1fr) !important; }

@@ -32,9 +32,42 @@ export default function Footer() {
     };
 
     return (
-        <footer style={{ background: '#070b13', borderTop: '4px solid var(--primary)', color: '#cbd5e1', paddingTop: '56px', marginTop: '12px' }}>
+        <footer style={{ background: '#070b13', borderTop: '4px solid var(--primary)', color: '#cbd5e1', paddingTop: '56px', marginTop: '12px', overflow: 'hidden' }}>
+            <style>{`
+                .footer-grid {
+                    display: grid;
+                    grid-template-columns: 1.4fr 1.2fr 1fr 1fr 1.2fr;
+                    gap: 32px;
+                    padding-bottom: 40px;
+                    border-bottom: 1px solid rgba(255,255,255,0.08);
+                }
+                @media (max-width: 1100px) {
+                    .footer-grid {
+                        grid-template-columns: 1fr 1fr 1fr;
+                        gap: 24px;
+                    }
+                }
+                @media (max-width: 768px) {
+                    .footer-grid {
+                        grid-template-columns: 1fr 1fr;
+                        gap: 28px;
+                    }
+                }
+                @media (max-width: 500px) {
+                    .footer-grid {
+                        grid-template-columns: 1fr;
+                        gap: 28px;
+                    }
+                }
+                .footer-become-seller {
+                    display: block;
+                    text-align: center;
+                    width: 100%;
+                    box-sizing: border-box;
+                }
+            `}</style>
             <div className="container" style={{ padding: '0 var(--gutter)' }}>
-                <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1.2fr 1fr 1fr 1.2fr', gap: '32px', paddingBottom: '40px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="footer-grid">
 
                     {/* Brand & Newsletter */}
                     <div>
@@ -133,10 +166,8 @@ export default function Footer() {
                                     onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#cbd5e1'; (e.currentTarget as HTMLAnchorElement).style.paddingLeft = '0'; }}
                                 >{item.label}</a>
                             ))}
-                            <a href="/auth?type=seller" style={{
+                            <a href="/auth?type=seller" className="footer-become-seller" style={{
                                 marginTop: '10px',
-                                display: 'inline-block',
-                                textAlign: 'center',
                                 padding: '11px 24px',
                                 background: 'linear-gradient(135deg, var(--primary) 0%, #ff4b50 100%)',
                                 border: 'none',

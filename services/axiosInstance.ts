@@ -37,6 +37,95 @@ const tokenStorage = {
         }
     }
 };
+const formatAPIError = (errorData: any) => {
+    if (!errorData) {
+        return { detail: "An unexpected error occurred." };
+    }
+
+    if (typeof errorData === 'object') {
+        const dataField = errorData.data;
+        if (dataField && typeof dataField === 'object' && !Array.isArray(dataField)) {
+            const keys = Object.keys(dataField);
+            if (keys.length > 0) {
+                const firstKey = keys[0];
+                const messages = dataField[firstKey];
+                let rawMessage = '';
+                if (Array.isArray(messages) && messages.length > 0) {
+                    rawMessage = messages[0];
+                } else if (typeof messages === 'string') {
+                    rawMessage = messages;
+                }
+
+                if (rawMessage) {
+                    if (firstKey === 'non_field_errors' || firstKey === 'nonFieldErrors') {
+                        return {
+                            ...errorData,
+                            detail: rawMessage,
+                            message: rawMessage,
+                            non_field_errors: [rawMessage]
+                        };
+                    }
+
+                    const formattedKey = firstKey
+                        .replace(/([A-Z])/g, ' $1')
+                        .replace(/([0-9]+)/g, ' $1')
+                        .replace(/_/g, ' ')
+                        .trim()
+                        .replace(/\b\w/g, (c) => c.toUpperCase());
+                    
+                    const finalMsg = `${formattedKey}: ${rawMessage}`;
+                    return {
+                        ...errorData,
+                        detail: finalMsg,
+                        message: finalMsg,
+                        non_field_errors: [finalMsg]
+                    };
+                }
+            }
+        }
+
+        // Direct key-value validation errors fallback (e.g., { email: ["Enter a valid email address."] })
+        const keys = Object.keys(errorData);
+        for (const key of keys) {
+            if (key !== 'status' && key !== 'message' && key !== 'detail' && Array.isArray(errorData[key]) && errorData[key].length > 0 && typeof errorData[key][0] === 'string') {
+                if (key === 'non_field_errors' || key === 'nonFieldErrors') {
+                    const finalMsg = errorData[key][0];
+                    return {
+                        ...errorData,
+                        detail: finalMsg,
+                        message: finalMsg,
+                        non_field_errors: [finalMsg]
+                    };
+                }
+
+                const formattedKey = key
+                    .replace(/([A-Z])/g, ' $1')
+                    .replace(/([0-9]+)/g, ' $1')
+                    .replace(/_/g, ' ')
+                    .trim()
+                    .replace(/\b\w/g, (c) => c.toUpperCase());
+                
+                const finalMsg = `${formattedKey}: ${errorData[key][0]}`;
+                return {
+                    ...errorData,
+                    detail: finalMsg,
+                    message: finalMsg,
+                    non_field_errors: [finalMsg]
+                };
+            }
+        }
+
+        if (errorData.detail) return errorData;
+        if (errorData.message) {
+            return {
+                ...errorData,
+                detail: errorData.message
+            };
+        }
+    }
+
+    return errorData;
+};
 
 // Request Interceptor
 axiosInstance.interceptors.request.use(
@@ -84,7 +173,7 @@ axiosInstance.interceptors.response.use(
                 return Promise.reject({
                     response: {
                         status: internalStatus,
-                        data: response.data
+                        data: formatAPIError(response.data)
                     },
                     message: response.data.message || "API Internal Error"
                 });
@@ -172,7 +261,7 @@ axiosInstance.interceptors.response.use(
             }
         }
 
-        return Promise.reject(error.response?.data || { detail: "An unexpected error occurred." });
+        return Promise.reject(formatAPIError(error.response?.data));
     }
 );
 
