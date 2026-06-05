@@ -181,19 +181,35 @@ export default function AccountPage() {
         <div style={{ background: '#f5f7f9', minHeight: '100vh', padding: '20px 0 100px', fontFamily: 'var(--font-body)' }}>
             <style>{`
                 .account-container { max-width: 1200px; margin: 0 auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
-                .card { background: #fff; border-radius: 12px; border: 1px solid #eef1f4; box-shadow: 0 2px 8px rgba(0,0,0,0.03); overflow: hidden; }
+                .card { background: #fff; border-radius: 12px; border: 1px solid #eef1f4; box-shadow: 0 2px 8px rgba(0,0,0,0.03); overflow: hidden; --card-pad: 24px; }
                 .nav-btn { width: 100%; display: flex; alignItems: center; gap: 12px; padding: 12px 16px; border: none; background: transparent; cursor: pointer; text-align: left; transition: 0.2s; border-radius: 8px; font-size: 14px; fontWeight: 500; color: #475569; position: relative; }
                 .nav-btn:hover { background: #f8fafc; }
                 .nav-btn.active { background: #fef2f2; color: var(--primary); fontWeight: 700; }
                 .nav-btn.active::after { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; background: var(--primary); border-radius: 0 4px 4px 0; }
                 .mobile-nav { display: none; overflow-x: auto; white-space: nowrap; padding: 10px 16px; background: #fff; border-bottom: 1px solid #eef1f4; margin-bottom: 20px; -webkit-overflow-scrolling: touch; }
                 .mobile-nav::-webkit-scrollbar { display: none; }
-                .m-nav-btn { display: inline-flex; flex-direction: column; align-items: center; padding: 8px 16px; color: #475569; font-size: 11px; font-weight: 700; gap: 4px; border: none; background: transparent; }
-                .m-nav-btn.active { color: var(--primary); }
+                .m-nav-btn { display: inline-flex; flex-direction: row; align-items: center; padding: 8px 16px; color: #475569; font-size: 13px; font-weight: 600; gap: 6px; border: none; background: transparent; border-radius: 20px; margin-right: 8px; transition: all 0.2s ease; }
+                .m-nav-btn.active { color: var(--primary); background: #fef2f2; font-weight: 700; }
+                
+                .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+                .form-row-sm { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+                .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+                .header-card { padding: 16px 20px; display: flex; justify-content: space-between; alignItems: center; }
+
                 @media (max-width: 900px) { 
                     .account-container { grid-template-columns: 1fr; padding-top: 10px; } 
                     .desktop-sb { display: none; } 
-                    .mobile-nav { display: flex; position: sticky; top: 0; z-index: 10; margin: -20px 0 20px; }
+                    .mobile-nav { display: flex; position: sticky; top: 80px; z-index: 10; margin: -20px -16px 20px -16px; padding: 10px 16px; }
+                }
+                @media (max-width: 600px) {
+                    .form-row { grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
+                    .form-row-sm { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+                }
+                @media (max-width: 480px) {
+                    .card { --card-pad: 16px; }
+                    .mobile-nav { top: 60px; }
+                    .overview-grid { grid-template-columns: 1fr; gap: 12px; }
+                    .header-card { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
                 }
                 .fade-in { animation: fadeIn 0.3s ease both; }
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -249,7 +265,7 @@ export default function AccountPage() {
                     </nav>
 
                     {/* Section Header */}
-                    <div className="card" style={{ padding: '16px 20px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="card header-card" style={{ marginBottom: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             {(tab !== 'Overview' || viewingOrder) && <button onClick={() => viewingOrder ? setViewingOrder(null) : handleNavigate('Overview')} style={{ background: '#f8fafc', border: '1px solid #eef1f4', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer' }}>←</button>}
                             <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>{viewingOrder ? `Order ${viewingOrder.id}` : tab}</h2>
@@ -274,14 +290,14 @@ export default function AccountPage() {
                                     </div>
                                 ))}
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                            <div className="overview-grid">
                                 {[
                                     { l: 'Orders', i: '📦', sub: 'History' },
                                     { l: 'Addresses', i: '📍', sub: 'Shipping' },
                                     { l: 'Profile', i: '⚙️', sub: 'Account' },
                                     { l: 'Security', i: '🔒', sub: 'Privacy' }
                                 ].map(m => (
-                                    <div key={m.l} className="card" style={{ padding: '20px', cursor: 'pointer' }} onClick={() => handleNavigate(m.l)}>
+                                    <div key={m.l} className="card" style={{ padding: 'var(--card-pad)', cursor: 'pointer' }} onClick={() => handleNavigate(m.l)}>
                                         <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', marginBottom: '12px' }}>{m.i}</div>
                                         <p style={{ fontSize: '14px', fontWeight: 800, margin: 0 }}>{m.l}</p>
                                         <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>Manage {m.sub}</p>
@@ -296,7 +312,7 @@ export default function AccountPage() {
                         <div className="fade-in">
                             {orders.length === 0 && <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>No orders found.</p>}
                             {orders.map(o => (
-                                <div key={o.id} className="card" style={{ padding: '20px', marginBottom: '12px' }}>
+                                <div key={o.id} className="card" style={{ padding: 'var(--card-pad)', marginBottom: '12px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                                         <p style={{ fontWeight: 800, color: 'var(--primary)' }}>ORD-{o.id}</p>
                                         <span style={{ fontSize: '10px', fontWeight: 800, background: '#f0fdf4', color: '#10b981', padding: '3px 10px', borderRadius: '20px' }}>{o.status_display}</span>
@@ -315,7 +331,7 @@ export default function AccountPage() {
                     {/* ORDER DETAILS VIEW */}
                     {viewingOrder && (
                         <div className="fade-in">
-                            <div className="card" style={{ padding: '24px' }}>
+                            <div className="card" style={{ padding: 'var(--card-pad)' }}>
                                 <div style={{ borderBottom: '1px solid #eef1f4', paddingBottom: '16px', marginBottom: '16px' }}>
                                     <p style={{ fontSize: '11px', fontWeight: 800, color: '#94a3b8', marginBottom: '4px' }}>ORDER STATUS</p>
                                     <h3 style={{ margin: 0, color: '#10b981' }}>{viewingOrder.status_display}</h3>
@@ -331,12 +347,12 @@ export default function AccountPage() {
                                 <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '10px' }}>
                                     {viewingOrder.items?.map((item: any, idx: number) => (
                                         <div key={idx} style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: idx < viewingOrder.items.length - 1 ? '12px' : 0 }}>
-                                            <div style={{ width: '40px', height: '40px', background: '#fff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>📦</div>
-                                            <div>
-                                                <p style={{ fontSize: '14px', fontWeight: 700, margin: 0 }}>{item.name}</p>
+                                            <div style={{ width: '40px', height: '40px', background: '#fff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>📦</div>
+                                            <div style={{ minWidth: 0, flex: 1 }}>
+                                                <p style={{ fontSize: '14px', fontWeight: 700, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</p>
                                                 <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Qty: {item.quantity} × ₦{parseFloat(item.price).toLocaleString()}</p>
                                             </div>
-                                            <p style={{ marginLeft: 'auto', fontWeight: 800 }}>₦{(parseFloat(item.price) * item.quantity).toLocaleString()}</p>
+                                            <p style={{ marginLeft: 'auto', fontWeight: 800, flexShrink: 0 }}>₦{(parseFloat(item.price) * item.quantity).toLocaleString()}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -353,7 +369,7 @@ export default function AccountPage() {
                     {is('Addresses') && (
                         <div className="fade-in">
                             {showAddressForm ? (
-                                <div className="card" style={{ padding: '24px' }}>
+                                <div className="card" style={{ padding: 'var(--card-pad)' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                                         <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800 }}>Add New Address</h3>
                                         <button onClick={() => setShowAddressForm(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>✕</button>
@@ -374,7 +390,7 @@ export default function AccountPage() {
                                         <label className="form-label">Phone Number</label>
                                         <input className="form-input" value={addressForm.phone} onChange={e => setAddressForm({ ...addressForm, phone: e.target.value })} />
                                     </div>
-                                    <div className="form-group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <div className="form-row-sm">
                                         <div><label className="form-label">City</label><input className="form-input" value={addressForm.city} onChange={e => setAddressForm({ ...addressForm, city: e.target.value })} /></div>
                                         <div>
                                             <label className="form-label">State</label>
@@ -389,7 +405,7 @@ export default function AccountPage() {
                                             </select>
                                         </div>
                                     </div>
-                                    <div className="form-group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <div className="form-row-sm">
                                         <div><label className="form-label">Country</label><input className="form-input" value={addressForm.country} onChange={e => setAddressForm({ ...addressForm, country: e.target.value })} /></div>
                                         <div><label className="form-label">Postal Code</label><input className="form-input" value={addressForm.postal_code} onChange={e => setAddressForm({ ...addressForm, postal_code: e.target.value })} /></div>
                                     </div>
@@ -409,7 +425,7 @@ export default function AccountPage() {
                                 <>
                                     {addresses.length === 0 && <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>No addresses saved yet.</p>}
                                     {addresses.map(a => (
-                                        <div key={a.id} className="card" style={{ padding: '20px', border: a.is_default ? '2px solid var(--primary)' : '1px solid #eef1f4', marginBottom: '12px' }}>
+                                        <div key={a.id} className="card" style={{ padding: 'var(--card-pad)', border: a.is_default ? '2px solid var(--primary)' : '1px solid #eef1f4', marginBottom: '12px' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                                                 <h3 style={{ fontSize: '15px', fontWeight: 800, margin: 0 }}>📍 {a.label}</h3>
                                                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -443,7 +459,7 @@ export default function AccountPage() {
 
                     {/* SECURITY TAB */}
                     {is('Security') && (
-                        <div className="fade-in card" style={{ padding: '24px', maxWidth: '500px' }}>
+                        <div className="fade-in card" style={{ padding: 'var(--card-pad)', maxWidth: '500px' }}>
                             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
                                 <button 
                                     onClick={() => setShowPasswords(!showPasswords)} 
@@ -495,17 +511,17 @@ export default function AccountPage() {
                     {/* PROFILE TAB */}
                     {is('Profile') && (
                         <div className="fade-in">
-                            <div className="card" style={{ padding: '24px', marginBottom: '20px' }}>
+                            <div className="card" style={{ padding: 'var(--card-pad)', marginBottom: '20px' }}>
                                 <p style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '20px' }}>Personal Information</p>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                                <div className="form-row">
                                     <div><label className="form-label">FIRST NAME</label><input className="form-input" value={profileForm.first_name || ''} onChange={e => setProfileForm({ ...profileForm, first_name: e.target.value })} /></div>
                                     <div><label className="form-label">LAST NAME</label><input className="form-input" value={profileForm.last_name || ''} onChange={e => setProfileForm({ ...profileForm, last_name: e.target.value })} /></div>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                                <div className="form-row">
                                     <div><label className="form-label">EMAIL (READ-ONLY)</label><input className="form-input" value={profileForm.email || ''} readOnly style={{ background: '#f8fafc' }} /></div>
                                     <div><label className="form-label">PHONE</label><input className="form-input" value={profileForm.phone || ''} onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })} /></div>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                                <div className="form-row">
                                     <div>
                                         <label className="form-label">GENDER</label>
                                         <select className="form-input" value={profileForm.gender || ''} onChange={e => setProfileForm({ ...profileForm, gender: e.target.value as any })}>

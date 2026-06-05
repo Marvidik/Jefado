@@ -226,7 +226,7 @@ function LoginForm({ onSwitch, onForgot, onSuccess }: { onSwitch: () => void; on
 }
 
 /* ── Register Form ───────────────────────── */
-function RegisterForm({ onSwitch, onSuccess, onVerifyOtp, defaultAccountType = 'buyer' }: { onSwitch: () => void; onSuccess: (type: string) => void; onVerifyOtp: () => void; defaultAccountType?: string }) {
+function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { onSwitch: () => void; onSuccess: (type: string) => void; defaultAccountType?: string }) {
     const toast = useToast();
     const [form, setForm] = useState({ 
         firstName: '', lastName: '', email: '', phone: '', password: '', confirm: '', accountType: (defaultAccountType === 'seller' ? 'seller' : 'buyer') as 'buyer' | 'seller', storeName: '', rcNumber: ''
@@ -248,7 +248,14 @@ function RegisterForm({ onSwitch, onSuccess, onVerifyOtp, defaultAccountType = '
             <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '34px', boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}>✓</div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', marginBottom: '10px' }}>Account created!</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '14px' }}>Welcome to the platform, {form.firstName}!</p>
-            <button onClick={onVerifyOtp} style={{ display: 'inline-block', padding: '12px 32px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, border: 'none', cursor: 'pointer' }}>Verify OTP</button>
+            <button 
+                onClick={() => {
+                    window.location.href = form.accountType === 'seller' ? '/dashboard' : '/';
+                }} 
+                style={{ display: 'inline-block', padding: '12px 32px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, border: 'none', cursor: 'pointer' }}
+            >
+                {form.accountType === 'seller' ? 'Go to Dashboard' : 'Start Shopping'}
+            </button>
         </div>
     );
 
@@ -608,7 +615,7 @@ export default function AuthPage() {
         if (mode === 'login') {
             window.location.href = type === 'seller' ? '/dashboard' : '/';
         } else {
-            setMode('otp');
+            // Registration success is handled locally in RegisterForm success state
         }
     };
 
@@ -636,7 +643,7 @@ export default function AuthPage() {
                 <div className="auth-form-col">
                     <div className="auth-form-inner">
                         {mode === 'login' && <LoginForm onSwitch={() => setMode('register')} onForgot={() => setMode('forgot')} onSuccess={handleSuccess} />}
-                        {mode === 'register' && <RegisterForm onSwitch={() => setMode('login')} onVerifyOtp={() => setMode('otp')} onSuccess={handleSuccess} defaultAccountType={userType} />}
+                        {mode === 'register' && <RegisterForm onSwitch={() => setMode('login')} onSuccess={handleSuccess} defaultAccountType={userType} />}
                         {mode === 'forgot' && <ForgotForm onBack={() => setMode('login')} />}
                         {mode === 'otp' && <OTPForm onBack={() => setMode('login')} userType={userType} />}
                     </div>
