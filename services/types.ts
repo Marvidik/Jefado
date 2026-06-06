@@ -98,6 +98,7 @@ export interface Product {
     is_best_seller?: boolean;
     discount?: number;
     emoji?: string;
+    specifications?: Record<string, string> | null;
 }
 
 export interface ProductDetail extends Product {

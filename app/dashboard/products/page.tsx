@@ -39,6 +39,20 @@ export default function ProductsPage() {
         image: ''
     });
 
+    const [specifications, setSpecifications] = useState<{ key: string; value: string }[]>([]);
+
+    const addSpecification = () => {
+        setSpecifications(prev => [...prev, { key: '', value: '' }]);
+    };
+
+    const removeSpecification = (index: number) => {
+        setSpecifications(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const handleSpecChange = (index: number, field: 'key' | 'value', val: string) => {
+        setSpecifications(prev => prev.map((spec, i) => i === index ? { ...spec, [field]: val } : spec));
+    };
+
     const fetchCategories = async () => {
         try {
             const data = await getPublicCategories();
@@ -76,40 +90,41 @@ export default function ProductsPage() {
         fetchProducts();
     }, [page, search, statusFilter]);
 
-    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string>('');
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+        setSelectedFile(file);
+        if (imagePreview) {
+            URL.revokeObjectURL(imagePreview);
+        }
+        setImagePreview(URL.createObjectURL(file));
+    };
 
-        setUploading(true);
-        try {
-            const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-            const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-            
-            if (!cloudName || !preset) {
-                throw new Error('Cloudinary configuration missing in environment variables.');
-            }
+    const uploadFileToCloudinary = async (file: File): Promise<string> => {
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+        
+        if (!cloudName || !preset) {
+            throw new Error('Cloudinary configuration missing in environment variables.');
+        }
 
-            const data = new FormData();
-            data.append('file', file);
-            data.append('upload_preset', preset);
+        const data = new FormData();
+        data.append('file', file);
+        data.append('upload_preset', preset);
 
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                method: 'POST',
-                body: data
-            });
-            
-            const result = await res.json();
-            if (result.secure_url) {
-                setFormData(prev => ({ ...prev, image: result.secure_url }));
-                success('Image uploaded to Cloudinary successfully.');
-            } else {
-                throw new Error(result.error?.message || 'Upload failed');
-            }
-        } catch (err: any) {
-            console.error('Cloudinary upload error:', err);
-            toastError(err.message || 'Failed to upload image');
-        } finally {
-            setUploading(false);
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: 'POST',
+            body: data
+        });
+        
+        const result = await res.json();
+        if (result.secure_url) {
+            return result.secure_url;
+        } else {
+            throw new Error(result.error?.message || 'Upload failed');
         }
     };
 
@@ -125,6 +140,18 @@ export default function ProductsPage() {
             category: product.category?.toString() || '',
             image: product.image || ''
         });
+        if (imagePreview) {
+            URL.revokeObjectURL(imagePreview);
+        }
+        setImagePreview('');
+        setSelectedFile(null);
+        if (product.specifications && typeof product.specifications === 'object') {
+            setSpecifications(
+                Object.entries(product.specifications).map(([key, value]) => ({ key, value: String(value) }))
+            );
+        } else {
+            setSpecifications([]);
+        }
         setDrawerOpen(true);
     };
 
@@ -140,6 +167,12 @@ export default function ProductsPage() {
             category: '',
             image: ''
         });
+        if (imagePreview) {
+            URL.revokeObjectURL(imagePreview);
+        }
+        setImagePreview('');
+        setSelectedFile(null);
+        setSpecifications([]);
         setDrawerOpen(true);
     };
 
@@ -156,8 +189,10 @@ export default function ProductsPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.image) {
-            toastError('Please upload a product image first.');
+        
+        const previewUrl = imagePreview || formData.image;
+        if (!previewUrl) {
+            toastError('Please select a product image first.');
             return;
         }
         if (!formData.category) {
@@ -166,12 +201,31 @@ export default function ProductsPage() {
         }
         setSubmitting(true);
         try {
+            let imageUrl = formData.image;
+            if (selectedFile) {
+                setUploading(true);
+                try {
+                    imageUrl = await uploadFileToCloudinary(selectedFile);
+                } finally {
+                    setUploading(false);
+                }
+            }
+
+            const specsObj: Record<string, string> = {};
+            specifications.forEach(spec => {
+                if (spec.key.trim() && spec.value.trim()) {
+                    specsObj[spec.key.trim()] = spec.value.trim();
+                }
+            });
+
             const payload = {
                 ...formData,
+                image: imageUrl,
                 price: formData.price,
                 original: formData.original || formData.price,
                 stock_qty: parseInt(formData.stock_qty) || 0,
-                category: parseInt(formData.category)
+                category: parseInt(formData.category),
+                specifications: Object.keys(specsObj).length > 0 ? specsObj : null
             };
 
             if (editingProduct) {
@@ -180,12 +234,19 @@ export default function ProductsPage() {
             } else {
                 await createSellerProduct(payload);
             }
+
+            if (imagePreview) {
+                URL.revokeObjectURL(imagePreview);
+                setImagePreview('');
+            }
+            setSelectedFile(null);
+
             setDrawerOpen(false);
             fetchProducts();
             success(`Product ${editingProduct ? 'updated' : 'published'} successfully.`);
-        } catch (err) {
+        } catch (err: any) {
             console.error('Save error:', err);
-            toastError('Failed to save product');
+            toastError(err.message || 'Failed to save product');
         } finally {
             setSubmitting(false);
         }
@@ -257,7 +318,14 @@ export default function ProductsPage() {
                 <Pagination total={totalCount} page={page} perPage={PER} onPage={setPage} />
             </Card>
 
-            <Drawer open={isDrawerOpen} onClose={() => setDrawerOpen(false)} title={editingProduct ? "Update Product" : "Publish New Product"} maxWidth="860px">
+            <Drawer open={isDrawerOpen} onClose={() => {
+                if (imagePreview) {
+                    URL.revokeObjectURL(imagePreview);
+                    setImagePreview('');
+                }
+                setSelectedFile(null);
+                setDrawerOpen(false);
+            }} title={editingProduct ? "Update Product" : "Publish New Product"} maxWidth="860px">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', paddingBottom: '40px' }}>
                     <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '300px' }}>
                         <Card style={{ padding: '24px' }}>
@@ -278,6 +346,80 @@ export default function ProductsPage() {
                                 <Input type="number" label="Stock Quantity" required value={formData.stock_qty} onChange={v => setFormData({ ...formData, stock_qty: v })} placeholder="0" />
                             </div>
                         </Card>
+
+                        <Card style={{ padding: '24px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>Product Specifications</h3>
+                                <button
+                                    type="button"
+                                    onClick={addSpecification}
+                                    style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: 'var(--secondary)',
+                                        fontWeight: 700,
+                                        fontSize: '13px',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px'
+                                    }}
+                                >
+                                    + Add Item
+                                </button>
+                            </div>
+                            
+                            {specifications.length === 0 ? (
+                                <div style={{ textAlign: 'center', padding: '24px', background: '#f8fafc', borderRadius: '16px', border: '1px dashed #cbd5e1', color: '#64748b' }}>
+                                    <p style={{ margin: 0, fontSize: '13px', fontWeight: 500 }}>No specifications added yet.</p>
+                                    <p style={{ margin: '4px 0 0 0', fontSize: '11px' }}>Add key-value details like Color, Size, Material, etc.</p>
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    {specifications.map((spec, idx) => (
+                                        <div key={idx} style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                            <div style={{ flex: 1 }}>
+                                                <Input
+                                                    placeholder="Property (e.g. Color)"
+                                                    value={spec.key}
+                                                    onChange={v => handleSpecChange(idx, 'key', v)}
+                                                />
+                                            </div>
+                                            <div style={{ flex: 1 }}>
+                                                <Input
+                                                    placeholder="Value (e.g. Matte Black)"
+                                                    value={spec.value}
+                                                    onChange={v => handleSpecChange(idx, 'value', v)}
+                                                />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeSpecification(idx)}
+                                                style={{
+                                                    background: '#fee2e2',
+                                                    color: '#ef4444',
+                                                    border: 'none',
+                                                    borderRadius: '12px',
+                                                    width: '44px',
+                                                    height: '44px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    cursor: 'pointer',
+                                                    fontSize: '16px',
+                                                    flexShrink: 0,
+                                                    transition: 'background 0.2s'
+                                                }}
+                                                onMouseEnter={e => e.currentTarget.style.background = '#fca5a5'}
+                                                onMouseLeave={e => e.currentTarget.style.background = '#fee2e2'}
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </Card>
                     </div>
                     
                     <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '300px' }}>
@@ -286,7 +428,7 @@ export default function ProductsPage() {
                                 <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>Product Image</h3>
                                 {editingProduct && <Badge status="Completed" label="Locked" />}
                             </div>
-                            <input type="file" ref={fileInputRef} onChange={handleUpload} style={{ display: 'none' }} accept="image/*" />
+                            <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />
                             <div 
                                 onClick={() => !editingProduct && fileInputRef.current?.click()}
                                 style={{ 
@@ -311,8 +453,8 @@ export default function ProductsPage() {
                                         <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--primary)' }}>Uploading to Cloudinary...</div>
                                     </div>
                                 )}
-                                {formData.image ? (
-                                    <img src={formData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                {imagePreview || formData.image ? (
+                                    <img src={imagePreview || formData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 ) : (
                                     <>
                                         <span style={{ fontSize: '32px', marginBottom: '8px' }}>📸</span>
@@ -338,7 +480,14 @@ export default function ProductsPage() {
                     </div>
 
                     <div style={{ width: '100%', display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '24px', borderTop: '1px solid #e2e8f0', marginTop: 'auto', background: '#fff', position: 'sticky', bottom: '-40px', paddingBottom: '40px', zIndex: 10 }}>
-                        <Btn label="Cancel" variant="secondary" onClick={() => setDrawerOpen(false)} />
+                        <Btn label="Cancel" variant="secondary" onClick={() => {
+                            if (imagePreview) {
+                                URL.revokeObjectURL(imagePreview);
+                                setImagePreview('');
+                            }
+                            setSelectedFile(null);
+                            setDrawerOpen(false);
+                        }} />
                         <Btn label={submitting ? "Saving..." : editingProduct ? "Save Changes" : "Publish Product"} submit disabled={submitting || uploading} />
                     </div>
                 </form>

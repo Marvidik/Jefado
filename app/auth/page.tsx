@@ -241,7 +241,7 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { o
     const [success, setSuccess] = useState(false);
     const set = (k: keyof typeof form) => (v: string) => setForm(f => ({ ...f, [k]: v }));
 
-    const canSubmit = form.firstName && form.lastName && form.email && form.password && form.confirm && agreed && (form.accountType === 'buyer' || (form.storeName && form.rcNumber));
+    const canSubmit = form.firstName && form.lastName && form.email && form.password && form.confirm && agreed && (form.accountType === 'buyer' || form.storeName);
 
     if (success) return (
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
@@ -345,7 +345,7 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { o
                 {form.accountType === 'seller' && (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                         <Field label="Store Name" value={form.storeName} onChange={set('storeName')} placeholder="Elite" required />
-                        <Field label="RC Number" value={form.rcNumber} onChange={set('rcNumber')} placeholder="RC-123" required />
+                        <Field label="RC Number" value={form.rcNumber} onChange={set('rcNumber')} placeholder="RC-123" />
                     </div>
                 )}
                 <div>
@@ -376,7 +376,7 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { o
                 }
                 setLoading(true); 
                 try {
-                    await register({ username: form.email, email: form.email, password1: form.password, password2: form.password, first_name: form.firstName, last_name: form.lastName, user_type: form.accountType === 'buyer' ? 'CUSTOMER' : 'SELLER', store_name: form.storeName, rc_number: form.rcNumber });
+                    await register({ username: form.email, email: form.email, password1: form.password, password2: form.password, first_name: form.firstName, last_name: form.lastName, user_type: form.accountType === 'buyer' ? 'BUYER' : 'SELLER', store_name: form.storeName, rc_number: form.rcNumber });
                     toast.success('Registration successful!');
                     onSuccess(form.accountType);
                     setSuccess(true);
