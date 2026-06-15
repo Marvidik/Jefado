@@ -109,7 +109,7 @@ export default function Footer() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', color: '#cbd5e1', fontSize: '13px', lineHeight: 1.65 }}>
                             <p style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                                 <span style={{ fontSize: '16px', flexShrink: 0 }}>📍</span>
-                                <span>no 10 JEFEDO street , amafor nkpor idemili lga anambra state nigeria.</span>
+                                <span>No. 10 Jefedo Street, Amafor Nkpor, Idemili LGA, Anambra State, Nigeria.</span>
                             </p>
                             <p style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                                 <span style={{ fontSize: '16px', flexShrink: 0 }}>📧</span>

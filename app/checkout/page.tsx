@@ -176,7 +176,7 @@ function OrderSidebar({ items, coupon, setCoupon, couponCode, setCouponCode }: {
                 {/* Totals */}
                 {[
                     { label: 'Subtotal', value: `₦${subtotal.toFixed(2)}` },
-                    { label: 'Shipping/Service Fee', value: 'FREE', green: true },
+                    { label: 'Shipping/Service Fee', value: 'Calculated by seller', green: false },
                     ...(applied ? [{ label: `Coupon (${applied})`, value: `-₦${couponSave.toFixed(2)}`, green: true }] : []),
                 ].map(row => (
                     <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '8px' }}>

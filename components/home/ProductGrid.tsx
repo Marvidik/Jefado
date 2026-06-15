@@ -87,8 +87,20 @@ export default function ProductGrid() {
                     position: 'relative'
                 }}>
                     {loading ? (
-                        <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <div className="loader" style={{ width: '32px', height: '32px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                        <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 0', gap: '20px' }}>
+                            <div style={{ position: 'relative', width: '56px', height: '56px' }}>
+                                <div style={{ position: 'absolute', inset: 0, border: '4px solid rgba(238,18,23,0.1)', borderRadius: '50%' }} />
+                                <div style={{ position: 'absolute', inset: 0, border: '4px solid var(--primary)', borderRadius: '50%', borderTopColor: 'transparent', animation: 'spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite' }} />
+                                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', animation: 'pulse 1.5s ease-in-out infinite' }}>🛍️</div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', margin: 0 }}>Curating deals</p>
+                                <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>Finding the best offers...</p>
+                            </div>
+                            <style>{`
+                                @keyframes spin { to { transform: rotate(360deg); } }
+                                @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.85); opacity: 0.7; } }
+                            `}</style>
                         </div>
                     ) : (
                         products.map((p) => (

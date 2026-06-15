@@ -34,7 +34,7 @@ function OrderSummary({ items, onCheckout }: {
                 {[
                     { label: `Subtotal (${items.reduce((s, i) => s + i.qty, 0)} items)`, value: `₦${subtotal.toLocaleString()}`, color: 'var(--text-primary)' },
                     { label: 'You save', value: `-₦${savings.toLocaleString()}`, color: 'var(--success)' },
-                    { label: 'Shipping', value: 'FREE', color: 'var(--success)' },
+                    { label: 'Shipping', value: 'Calculated at checkout', color: 'var(--text-secondary)' },
                     ...(appliedCoupon ? [{ label: `Coupon (${appliedCoupon})`, value: `-₦${couponSave.toLocaleString()}`, color: 'var(--success)' }] : []),
                 ].map(row => (
                     <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>

@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 
 import { ToastProvider } from "@/components/ui/Toast";
 import { CartProvider } from "@/context/CartContext";
+import SmartsuppChat from "@/components/ui/SmartsuppChat";
+import CookieBanner from "@/components/ui/CookieBanner";
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -23,6 +25,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <ConditionalLayout>{children}</ConditionalLayout>
           </ToastProvider>
         </CartProvider>
+        <SmartsuppChat />
+        <CookieBanner />
       </body>
     </html>
   );

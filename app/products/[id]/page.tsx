@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { getProductDetail } from '@/services/publicService';
 import { ProductDetail as IProductDetail } from '@/services/types';
@@ -20,6 +20,11 @@ export default function ProductDetailPage() {
     const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews'>('description');
     const [added, setAdded] = useState(false);
     const [wishlisted, setWishlisted] = useState(false);
+    const [zoom, setZoom] = useState(1);
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+    const imgRef = useRef<HTMLDivElement>(null);
 
     const [product, setProduct] = useState<IProductDetail | null>(null);
     const [loading, setLoading] = useState(true);
@@ -87,9 +92,31 @@ export default function ProductDetailPage() {
 
                     {/* ── Images ── */}
                     <div>
-                        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', position: 'relative', overflow: 'hidden' }}>
-                            {product.image ? (
-                                <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div ref={imgRef} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', position: 'relative', overflow: 'hidden', cursor: zoom > 1 ? 'grab' : 'zoom-in' }}
+                            onWheel={e => {
+                                e.preventDefault();
+                                setZoom(z => Math.min(3, Math.max(1, z - e.deltaY * 0.003)));
+                                if (zoom <= 1) setPanOffset({ x: 0, y: 0 });
+                            }}
+                            onMouseDown={e => { if (zoom > 1) { setIsDragging(true); setDragStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y }); }}}
+                            onMouseMove={e => { if (isDragging && zoom > 1) { setPanOffset({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y }); }}}
+                            onMouseUp={() => setIsDragging(false)}
+                            onMouseLeave={() => setIsDragging(false)}
+                        >
+                            {[product.image, product.image2, product.image3, product.image4].filter(Boolean).length > 0 ? (
+                                <img
+                                    src={[product.image, product.image2, product.image3, product.image4].filter(Boolean)[activeImage] as string}
+                                    alt={product.name}
+                                    draggable={false}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                        transform: `scale(${zoom}) translate(${panOffset.x / zoom}px, ${panOffset.y / zoom}px)`,
+                                        transition: isDragging ? 'none' : 'transform 0.25s ease',
+                                        userSelect: 'none',
+                                    }}
+                                />
                             ) : (
                                 <span style={{ fontSize: '120px', filter: 'drop-shadow(0 20px 60px rgba(0,0,0,0.15))' }}>{product.emoji || '📦'}</span>
                             )}
@@ -101,6 +128,41 @@ export default function ProductDetailPage() {
                                 )}
                                 {product.is_best_seller && <span style={{ background: 'var(--warning)', color: '#fff', fontSize: '12px', fontWeight: 700, padding: '4px 10px', borderRadius: '6px' }}>BESTSELLER</span>}
                             </div>
+                            {/* Zoom controls */}
+                            <div style={{ position: 'absolute', bottom: '12px', right: '12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                <button onClick={() => { setZoom(z => Math.min(3, z + 0.5)); }} style={{ width: '32px', height: '32px', background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '18px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', backdropFilter: 'blur(4px)', transition: 'all 0.15s' }} title="Zoom In">+</button>
+                                <button onClick={() => { setZoom(z => { const nz = Math.max(1, z - 0.5); if (nz === 1) setPanOffset({ x: 0, y: 0 }); return nz; }); }} style={{ width: '32px', height: '32px', background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '18px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', backdropFilter: 'blur(4px)', transition: 'all 0.15s' }} title="Zoom Out">−</button>
+                                {zoom > 1 && <button onClick={() => { setZoom(1); setPanOffset({ x: 0, y: 0 }); }} style={{ width: '32px', height: '32px', background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', backdropFilter: 'blur(4px)', color: 'var(--primary)' }} title="Reset Zoom">1:1</button>}
+                            </div>
+                            {zoom > 1 && (
+                                <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px', backdropFilter: 'blur(4px)' }}>
+                                    {Math.round(zoom * 100)}%
+                                </div>
+                            )}
+                        </div>
+                        <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px' }}>Scroll or use +/− to zoom · Drag to pan</p>
+                        
+                        {/* Thumbnails */}
+                        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+                            {[product.image, product.image2, product.image3, product.image4].filter(Boolean).map((img, index) => (
+                                <div 
+                                    key={index} 
+                                    onClick={() => { setActiveImage(index); setZoom(1); setPanOffset({ x: 0, y: 0 }); }}
+                                    style={{ 
+                                        width: '60px', 
+                                        height: '60px', 
+                                        borderRadius: 'var(--radius)', 
+                                        border: activeImage === index ? '2px solid var(--primary)' : '1px solid var(--border)', 
+                                        cursor: 'pointer', 
+                                        overflow: 'hidden',
+                                        opacity: activeImage === index ? 1 : 0.6,
+                                        transition: 'all 0.2s',
+                                        flexShrink: 0
+                                    }}
+                                >
+                                    <img src={img as string} alt={`${product.name} ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                </div>
+                            ))}
                         </div>
                     </div>
 
@@ -171,7 +233,15 @@ export default function ProductDetailPage() {
                             <button onClick={() => setWishlisted(!wishlisted)} style={{ width: '48px', height: '48px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', background: wishlisted ? '#fff5f5' : 'var(--surface)', cursor: 'pointer', transition: 'all 0.2s' }}>{wishlisted ? '❤️' : '🤍'}</button>
                         </div>
 
-                        <button style={{ width: '100%', padding: '14px', border: '1.5px solid var(--primary)', color: 'var(--primary)', background: 'transparent', borderRadius: 'var(--radius-lg)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '15px', marginBottom: '24px', cursor: 'pointer' }} onClick={() => { window.location.href = `/checkout?type=product&id=${product.slug}&qty=${qty}`; }}>⚡ Buy It Now</button>
+                        <button style={{ width: '100%', padding: '14px', border: '1.5px solid var(--primary)', color: 'var(--primary)', background: 'transparent', borderRadius: 'var(--radius-lg)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '15px', cursor: 'pointer' }} onClick={() => { window.location.href = `/checkout?type=product&id=${product.slug}&qty=${qty}`; }}>⚡ Buy It Now</button>
+
+                        {/* Tax disclaimer */}
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', background: 'rgba(245, 158, 11, 0.08)', border: '1.5px solid rgba(245, 158, 11, 0.35)', borderRadius: 'var(--radius-lg)', padding: '10px 14px', marginBottom: '24px', marginTop: '10px' }}>
+                            <span style={{ fontSize: '16px', flexShrink: 0, lineHeight: 1.4 }}>⚠️</span>
+                            <p style={{ fontSize: '12.5px', color: 'var(--text-primary)', fontWeight: 600, lineHeight: 1.55, margin: 0 }}>
+                                Sales Taxes may apply at checkout. Final price will be confirmed before payment.
+                            </p>
+                        </div>
 
                         {/* Seller */}
                         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '16px', marginBottom: '16px' }}>
@@ -188,14 +258,7 @@ export default function ProductDetailPage() {
                             </div>
                         </div>
 
-                        {/* Guarantees */}
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            {[['↩️', '30-day Free Returns'], ['🚚', 'Secure Shipping'], ['🔒', 'Verified Payments']].map(([icon, text]) => (
-                                <div key={text} style={{ flex: 1, padding: '10px', background: 'var(--surface-2)', borderRadius: 'var(--radius-lg)', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                                    <span>{icon}</span>{text}
-                                </div>
-                            ))}
-                        </div>
+
                     </div>
                 </div>
 

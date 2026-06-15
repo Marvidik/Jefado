@@ -135,7 +135,20 @@ export default function Navbar() {
                         ))}
                     </nav>
 
-                    {/* Desktop icons */}
+                    {/* Cart icon — always visible (mobile + desktop) */}
+                    <Link href="/cart" title="Cart" style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', fontSize: '20px', color: 'var(--text-secondary)', transition: 'all 0.2s', flexShrink: 0 }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'var(--primary-light)'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
+                    >
+                        🛒
+                        {cartCount > 0 && (
+                            <span style={{ position: 'absolute', top: '1px', right: '1px', background: 'var(--primary)', color: '#fff', fontSize: '8px', fontWeight: 700, width: '14px', height: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {cartCount}
+                            </span>
+                        )}
+                    </Link>
+
+                    {/* Desktop icons (account, sign in/out) */}
                     <div className="nav-desktop-icons" style={{ display: 'flex', gap: '4px', alignItems: 'center', flexShrink: 0 }}>
                         {isLoggedIn && isSellerOrAdmin ? (
                             <Link href="/dashboard" style={{ padding: '8px 16px', background: 'var(--surface-2)', border: '1.5px solid var(--primary)', color: 'var(--primary)', borderRadius: 'var(--radius)', fontSize: '13px', fontWeight: 800, fontFamily: 'var(--font-body)', textDecoration: 'none', transition: 'all 0.2s' }}
@@ -148,17 +161,6 @@ export default function Navbar() {
                                 onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
                             >👤</Link>
                         )}
-                        <Link href="/cart" title="Cart" style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', fontSize: '18px', color: 'var(--text-secondary)', transition: 'all 0.2s' }}
-                            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'var(--primary-light)'; }}
-                            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
-                        >
-                            🛒
-                            {cartCount > 0 && (
-                                <span style={{ position: 'absolute', top: '1px', right: '1px', background: 'var(--primary)', color: '#fff', fontSize: '8px', fontWeight: 700, width: '14px', height: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    {cartCount}
-                                </span>
-                            )}
-                        </Link>
                         {isLoggedIn ? (
                             <button onClick={handleLogout} style={{ padding: '7px 14px', background: 'var(--surface-2)', border: '1.5px solid var(--border)', color: 'var(--text-primary)', borderRadius: 'var(--radius)', fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-body)', whiteSpace: 'nowrap', transition: 'all 0.2s', cursor: 'pointer' }}
                                 onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--primary)')}

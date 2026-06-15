@@ -99,6 +99,9 @@ export interface Product {
     discount?: number;
     emoji?: string;
     specifications?: Record<string, string> | null;
+    image2?: string | null;
+    image3?: string | null;
+    image4?: string | null;
 }
 
 export interface ProductDetail extends Product {

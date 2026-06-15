@@ -36,7 +36,10 @@ export default function ProductsPage() {
         stock_qty: '0', 
         status: 'PUBLISHED' as 'DRAFT' | 'PUBLISHED',
         category: '',
-        image: ''
+        image: '',
+        image2: '',
+        image3: '',
+        image4: ''
     });
 
     const [specifications, setSpecifications] = useState<{ key: string; value: string }[]>([]);
@@ -92,15 +95,34 @@ export default function ProductsPage() {
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>('');
+    const [selectedFile2, setSelectedFile2] = useState<File | null>(null);
+    const [imagePreview2, setImagePreview2] = useState<string>('');
+    const [selectedFile3, setSelectedFile3] = useState<File | null>(null);
+    const [imagePreview3, setImagePreview3] = useState<string>('');
+    const [selectedFile4, setSelectedFile4] = useState<File | null>(null);
+    const [imagePreview4, setImagePreview4] = useState<string>('');
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, num: number = 1) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        setSelectedFile(file);
-        if (imagePreview) {
-            URL.revokeObjectURL(imagePreview);
+        
+        if (num === 1) {
+            setSelectedFile(file);
+            if (imagePreview) URL.revokeObjectURL(imagePreview);
+            setImagePreview(URL.createObjectURL(file));
+        } else if (num === 2) {
+            setSelectedFile2(file);
+            if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+            setImagePreview2(URL.createObjectURL(file));
+        } else if (num === 3) {
+            setSelectedFile3(file);
+            if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+            setImagePreview3(URL.createObjectURL(file));
+        } else if (num === 4) {
+            setSelectedFile4(file);
+            if (imagePreview4) URL.revokeObjectURL(imagePreview4);
+            setImagePreview4(URL.createObjectURL(file));
         }
-        setImagePreview(URL.createObjectURL(file));
     };
 
     const uploadFileToCloudinary = async (file: File): Promise<string> => {
@@ -138,13 +160,23 @@ export default function ProductsPage() {
             stock_qty: product.stock_qty.toString(), 
             status: product.status as any,
             category: product.category?.toString() || '',
-            image: product.image || ''
+            image: product.image || '',
+            image2: product.image2 || '',
+            image3: product.image3 || '',
+            image4: product.image4 || ''
         });
-        if (imagePreview) {
-            URL.revokeObjectURL(imagePreview);
-        }
+        if (imagePreview) URL.revokeObjectURL(imagePreview);
+        if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+        if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+        if (imagePreview4) URL.revokeObjectURL(imagePreview4);
         setImagePreview('');
+        setImagePreview2('');
+        setImagePreview3('');
+        setImagePreview4('');
         setSelectedFile(null);
+        setSelectedFile2(null);
+        setSelectedFile3(null);
+        setSelectedFile4(null);
         if (product.specifications && typeof product.specifications === 'object') {
             setSpecifications(
                 Object.entries(product.specifications).map(([key, value]) => ({ key, value: String(value) }))
@@ -165,13 +197,23 @@ export default function ProductsPage() {
             stock_qty: '0', 
             status: 'PUBLISHED',
             category: '',
-            image: ''
+            image: '',
+            image2: '',
+            image3: '',
+            image4: ''
         });
-        if (imagePreview) {
-            URL.revokeObjectURL(imagePreview);
-        }
+        if (imagePreview) URL.revokeObjectURL(imagePreview);
+        if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+        if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+        if (imagePreview4) URL.revokeObjectURL(imagePreview4);
         setImagePreview('');
+        setImagePreview2('');
+        setImagePreview3('');
+        setImagePreview4('');
         setSelectedFile(null);
+        setSelectedFile2(null);
+        setSelectedFile3(null);
+        setSelectedFile4(null);
         setSpecifications([]);
         setDrawerOpen(true);
     };
@@ -202,13 +244,18 @@ export default function ProductsPage() {
         setSubmitting(true);
         try {
             let imageUrl = formData.image;
-            if (selectedFile) {
-                setUploading(true);
-                try {
-                    imageUrl = await uploadFileToCloudinary(selectedFile);
-                } finally {
-                    setUploading(false);
-                }
+            let imageUrl2 = formData.image2;
+            let imageUrl3 = formData.image3;
+            let imageUrl4 = formData.image4;
+            
+            setUploading(true);
+            try {
+                if (selectedFile) imageUrl = await uploadFileToCloudinary(selectedFile);
+                if (selectedFile2) imageUrl2 = await uploadFileToCloudinary(selectedFile2);
+                if (selectedFile3) imageUrl3 = await uploadFileToCloudinary(selectedFile3);
+                if (selectedFile4) imageUrl4 = await uploadFileToCloudinary(selectedFile4);
+            } finally {
+                setUploading(false);
             }
 
             const specsObj: Record<string, string> = {};
@@ -221,6 +268,9 @@ export default function ProductsPage() {
             const payload = {
                 ...formData,
                 image: imageUrl,
+                image2: imageUrl2,
+                image3: imageUrl3,
+                image4: imageUrl4,
                 price: formData.price,
                 original: formData.original || formData.price,
                 stock_qty: parseInt(formData.stock_qty) || 0,
@@ -235,11 +285,18 @@ export default function ProductsPage() {
                 await createSellerProduct(payload);
             }
 
-            if (imagePreview) {
-                URL.revokeObjectURL(imagePreview);
-                setImagePreview('');
-            }
+            if (imagePreview) URL.revokeObjectURL(imagePreview);
+            if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+            if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+            if (imagePreview4) URL.revokeObjectURL(imagePreview4);
+            setImagePreview('');
+            setImagePreview2('');
+            setImagePreview3('');
+            setImagePreview4('');
             setSelectedFile(null);
+            setSelectedFile2(null);
+            setSelectedFile3(null);
+            setSelectedFile4(null);
 
             setDrawerOpen(false);
             fetchProducts();
@@ -319,11 +376,18 @@ export default function ProductsPage() {
             </Card>
 
             <Drawer open={isDrawerOpen} onClose={() => {
-                if (imagePreview) {
-                    URL.revokeObjectURL(imagePreview);
-                    setImagePreview('');
-                }
+                if (imagePreview) URL.revokeObjectURL(imagePreview);
+                if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+                if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+                if (imagePreview4) URL.revokeObjectURL(imagePreview4);
+                setImagePreview('');
+                setImagePreview2('');
+                setImagePreview3('');
+                setImagePreview4('');
                 setSelectedFile(null);
+                setSelectedFile2(null);
+                setSelectedFile3(null);
+                setSelectedFile4(null);
                 setDrawerOpen(false);
             }} title={editingProduct ? "Update Product" : "Publish New Product"} maxWidth="860px">
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', paddingBottom: '40px' }}>
@@ -425,10 +489,10 @@ export default function ProductsPage() {
                     <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '24px', minWidth: '300px' }}>
                         <Card style={{ padding: '24px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>Product Image</h3>
+                                <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>Product Images</h3>
                                 {editingProduct && <Badge status="Completed" label="Locked" />}
                             </div>
-                            <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />
+                            <input type="file" ref={fileInputRef} onChange={e => handleFileChange(e, 1)} style={{ display: 'none' }} accept="image/*" />
                             <div 
                                 onClick={() => !editingProduct && fileInputRef.current?.click()}
                                 style={{ 
@@ -445,7 +509,8 @@ export default function ProductsPage() {
                                     cursor: editingProduct ? 'not-allowed' : 'pointer', 
                                     transition: 'all 0.2s', 
                                     overflow: 'hidden',
-                                    position: 'relative'
+                                    position: 'relative',
+                                    marginBottom: '16px'
                                 }}
                             >
                                 {uploading && (
@@ -454,17 +519,54 @@ export default function ProductsPage() {
                                     </div>
                                 )}
                                 {imagePreview || formData.image ? (
-                                    <img src={imagePreview || formData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <img src={imagePreview || formData.image} alt="Preview 1" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 ) : (
                                     <>
                                         <span style={{ fontSize: '32px', marginBottom: '8px' }}>📸</span>
-                                        <span style={{ fontSize: '14px', fontWeight: 700 }}>{uploading ? 'Uploading...' : 'Click to Upload'}</span>
-                                        <span style={{ fontSize: '11px' }}>High quality images convert better</span>
+                                        <span style={{ fontSize: '14px', fontWeight: 700 }}>{uploading ? 'Uploading...' : 'Main Image'}</span>
+                                        <span style={{ fontSize: '11px' }}>Primary product image</span>
                                     </>
                                 )}
                             </div>
+                            
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                                {[2, 3, 4].map(num => {
+                                    const imgPreview = num === 2 ? imagePreview2 : num === 3 ? imagePreview3 : imagePreview4;
+                                    const imgData = num === 2 ? formData.image2 : num === 3 ? formData.image3 : formData.image4;
+                                    return (
+                                        <div key={num}>
+                                            <input type="file" id={`file-input-${num}`} onChange={e => handleFileChange(e, num)} style={{ display: 'none' }} accept="image/*" />
+                                            <div 
+                                                onClick={() => !editingProduct && document.getElementById(`file-input-${num}`)?.click()}
+                                                style={{ 
+                                                    width: '100%', 
+                                                    aspectRatio: '1', 
+                                                    background: '#f8fafc', 
+                                                    border: '1.5px dashed #cbd5e1', 
+                                                    borderRadius: '12px', 
+                                                    display: 'flex', 
+                                                    flexDirection: 'column', 
+                                                    alignItems: 'center', 
+                                                    justifyContent: 'center', 
+                                                    color: '#94a3b8', 
+                                                    cursor: editingProduct ? 'not-allowed' : 'pointer', 
+                                                    overflow: 'hidden',
+                                                    position: 'relative'
+                                                }}
+                                            >
+                                                {imgPreview || imgData ? (
+                                                    <img src={imgPreview || imgData} alt={`Preview ${num}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                ) : (
+                                                    <span style={{ fontSize: '18px' }}>+</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
                             {editingProduct && (
-                                <p style={{ fontSize: '11px', color: '#64748b', marginTop: '12px', fontStyle: 'italic', lineHeight: 1.4 }}>
+                                <p style={{ fontSize: '11px', color: '#64748b', marginTop: '16px', fontStyle: 'italic', lineHeight: 1.4 }}>
                                     Note: Images are hosted on Cloudinary and cannot be modified after initial publication for security reasons.
                                 </p>
                             )}
@@ -481,11 +583,18 @@ export default function ProductsPage() {
 
                     <div style={{ width: '100%', display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '24px', borderTop: '1px solid #e2e8f0', marginTop: 'auto', background: '#fff', position: 'sticky', bottom: '-40px', paddingBottom: '40px', zIndex: 10 }}>
                         <Btn label="Cancel" variant="secondary" onClick={() => {
-                            if (imagePreview) {
-                                URL.revokeObjectURL(imagePreview);
-                                setImagePreview('');
-                            }
+                            if (imagePreview) URL.revokeObjectURL(imagePreview);
+                            if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+                            if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+                            if (imagePreview4) URL.revokeObjectURL(imagePreview4);
+                            setImagePreview('');
+                            setImagePreview2('');
+                            setImagePreview3('');
+                            setImagePreview4('');
                             setSelectedFile(null);
+                            setSelectedFile2(null);
+                            setSelectedFile3(null);
+                            setSelectedFile4(null);
                             setDrawerOpen(false);
                         }} />
                         <Btn label={submitting ? "Saving..." : editingProduct ? "Save Changes" : "Publish Product"} submit disabled={submitting || uploading} />
