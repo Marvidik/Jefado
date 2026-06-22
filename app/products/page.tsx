@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { getProducts } from '@/services/publicService';
 import { Product } from '@/services/types';
 import { CATEGORIES as GLOBAL_CATEGORIES } from '@/lib/data';
+import Loader from '@/components/ui/Loader';
 
 const BRANDS_LIST = ['Samsung', 'Apple', 'Sony', 'Huawei', 'LG', 'Panasonic', 'Dell', 'HP', 'Lenovo', 'Asus', 'Acer', 'Microsoft', 'Logitech', 'Razer', 'SteelSeries', 'HyperX', 'Corsair', 'Western Digital', 'Seagate', 'SanDisk', 'Kingston'];
 const CATEGORIES_LIST = ['fashion', 'electronics', 'home', 'sports', 'health', 'automotive', 'toys', 'beauty', 'office', 'garden', 'pet', 'grocery'];
@@ -252,21 +253,7 @@ export default function ProductsPage() {
                         </div>
 
                         {loading ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '120px 0', gap: '24px' }}>
-                                <div style={{ position: 'relative', width: '64px', height: '64px' }}>
-                                    <div style={{ position: 'absolute', inset: 0, border: '4px solid rgba(238,18,23,0.1)', borderRadius: '50%' }} />
-                                    <div style={{ position: 'absolute', inset: 0, border: '4px solid var(--primary)', borderRadius: '50%', borderTopColor: 'transparent', animation: 'spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite' }} />
-                                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', animation: 'pulse 1.5s ease-in-out infinite' }}>🛍️</div>
-                                </div>
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '18px', color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.3px' }}>Curating products</p>
-                                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>Finding the best deals for you...</p>
-                                </div>
-                                <style>{`
-                                    @keyframes spin { to { transform: rotate(360deg); } }
-                                    @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.85); opacity: 0.7; } }
-                                `}</style>
-                            </div>
+                            <Loader text="Curating products" subtext="Finding the best deals for you..." icon="🛍️" />
                         ) : products.length === 0 ? (
                             <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '48px', textAlign: 'center' }}>
                                 <p style={{ fontSize: '40px', marginBottom: '12px' }}>🔍</p>

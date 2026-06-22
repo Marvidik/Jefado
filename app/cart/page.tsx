@@ -118,9 +118,9 @@ function CartItemRow({ item, onQtyChange, onRemove, onSaveForLater }: {
                 <div className="cart-item-price" style={{ flexShrink: 0, textAlign: 'right', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', gap: '4px' }}>
                     <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '18px', color: 'var(--primary)' }}>₦{(item.price * item.qty).toLocaleString()}</div>
                     {item.qty > 1 && <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>₦{item.price.toLocaleString()} each</div>}
-                    {item.originalPrice && item.originalPrice > item.price && (
+                    {/* {item.originalPrice && item.originalPrice > item.price && (
                         <div style={{ fontSize: '11px', color: 'var(--success)', fontWeight: 600 }}>Save ₦{((item.originalPrice - item.price) * item.qty).toLocaleString()}</div>
-                    )}
+                    )} */}
                 </div>
             </div>
         </div>

@@ -279,8 +279,7 @@ export default function ProductsPage() {
             };
 
             if (editingProduct) {
-                const { image, ...updatePayload } = payload;
-                await updateSellerProduct(editingProduct.id, updatePayload);
+                await updateSellerProduct(editingProduct.id, payload);
             } else {
                 await createSellerProduct(payload);
             }
@@ -329,6 +328,7 @@ export default function ProductsPage() {
             <Badge key="stat" status={p.status === 'PUBLISHED' ? 'Active' : 'Draft'} label={p.status === 'PUBLISHED' ? 'Published' : 'Draft'} />,
             <div key="a" style={{ display: 'flex', gap: '12px', color: '#94a3b8' }}>
                 <button onClick={() => handleEdit(p)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', transition: 'color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '8px' }} onMouseEnter={e => {e.currentTarget.style.color = '#2563eb'; e.currentTarget.style.background = '#eff6ff';}} onMouseLeave={e => {e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.background = 'transparent';}}>{Icons.edit}</button>
+                <button onClick={() => handleDelete(p.id)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', transition: 'color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '8px' }} onMouseEnter={e => {e.currentTarget.style.color = '#dc2626'; e.currentTarget.style.background = '#fef2f2';}} onMouseLeave={e => {e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.background = 'transparent';}}>{Icons.trash}</button>
             </div>
         ];
     });
@@ -494,7 +494,7 @@ export default function ProductsPage() {
                             </div>
                             <input type="file" ref={fileInputRef} onChange={e => handleFileChange(e, 1)} style={{ display: 'none' }} accept="image/*" />
                             <div 
-                                onClick={() => !editingProduct && fileInputRef.current?.click()}
+                                onClick={() => fileInputRef.current?.click()}
                                 style={{ 
                                     width: '100%', 
                                     height: '200px', 
@@ -506,7 +506,7 @@ export default function ProductsPage() {
                                     alignItems: 'center', 
                                     justifyContent: 'center', 
                                     color: '#64748b', 
-                                    cursor: editingProduct ? 'not-allowed' : 'pointer', 
+                                    cursor: 'pointer', 
                                     transition: 'all 0.2s', 
                                     overflow: 'hidden',
                                     position: 'relative',
@@ -519,7 +519,20 @@ export default function ProductsPage() {
                                     </div>
                                 )}
                                 {imagePreview || formData.image ? (
-                                    <img src={imagePreview || formData.image} alt="Preview 1" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <>
+                                        <img src={imagePreview || formData.image} alt="Preview 1" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <button 
+                                            type="button" 
+                                            onClick={(e) => { 
+                                                e.stopPropagation(); 
+                                                if (imagePreview) URL.revokeObjectURL(imagePreview); 
+                                                setImagePreview(''); 
+                                                setFormData({ ...formData, image: '' }); 
+                                                setSelectedFile(null); 
+                                            }}
+                                            style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', zIndex: 10 }}
+                                        >✕</button>
+                                    </>
                                 ) : (
                                     <>
                                         <span style={{ fontSize: '32px', marginBottom: '8px' }}>📸</span>
@@ -537,7 +550,7 @@ export default function ProductsPage() {
                                         <div key={num}>
                                             <input type="file" id={`file-input-${num}`} onChange={e => handleFileChange(e, num)} style={{ display: 'none' }} accept="image/*" />
                                             <div 
-                                                onClick={() => !editingProduct && document.getElementById(`file-input-${num}`)?.click()}
+                                                onClick={() => document.getElementById(`file-input-${num}`)?.click()}
                                                 style={{ 
                                                     width: '100%', 
                                                     aspectRatio: '1', 
@@ -549,13 +562,26 @@ export default function ProductsPage() {
                                                     alignItems: 'center', 
                                                     justifyContent: 'center', 
                                                     color: '#94a3b8', 
-                                                    cursor: editingProduct ? 'not-allowed' : 'pointer', 
+                                                    cursor: 'pointer', 
                                                     overflow: 'hidden',
                                                     position: 'relative'
                                                 }}
                                             >
                                                 {imgPreview || imgData ? (
-                                                    <img src={imgPreview || imgData} alt={`Preview ${num}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    <>
+                                                        <img src={imgPreview || imgData} alt={`Preview ${num}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                        <button 
+                                                            type="button" 
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); 
+                                                                if (imgPreview) URL.revokeObjectURL(imgPreview);
+                                                                if (num === 2) { setImagePreview2(''); setFormData({ ...formData, image2: '' }); setSelectedFile2(null); }
+                                                                else if (num === 3) { setImagePreview3(''); setFormData({ ...formData, image3: '' }); setSelectedFile3(null); }
+                                                                else if (num === 4) { setImagePreview4(''); setFormData({ ...formData, image4: '' }); setSelectedFile4(null); }
+                                                            }}
+                                                            style={{ position: 'absolute', top: '6px', right: '6px', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', zIndex: 10 }}
+                                                        >✕</button>
+                                                    </>
                                                 ) : (
                                                     <span style={{ fontSize: '18px' }}>+</span>
                                                 )}
@@ -565,11 +591,7 @@ export default function ProductsPage() {
                                 })}
                             </div>
 
-                            {editingProduct && (
-                                <p style={{ fontSize: '11px', color: '#64748b', marginTop: '16px', fontStyle: 'italic', lineHeight: 1.4 }}>
-                                    Note: Images are hosted on Cloudinary and cannot be modified after initial publication for security reasons.
-                                </p>
-                            )}
+                            <div style={{ marginTop: '16px' }} />
                         </Card>
 
                         <Card style={{ padding: '24px' }}>

@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { getProductDetail } from '@/services/publicService';
 import { ProductDetail as IProductDetail } from '@/services/types';
 import ProductCard from '@/components/ui/ProductCard';
+import Loader from '@/components/ui/Loader';
 import ReviewsSection from '@/components/ui/ReviewsSection';
 import { useCart } from '@/context/CartContext';
 
@@ -47,13 +48,7 @@ export default function ProductDetailPage() {
     }, [params.id]);
 
 
-    if (loading) return (
-        <div className="container" style={{ padding: '100px 0', textAlign: 'center' }}>
-            <div className="loader" style={{ width: '40px', height: '40px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 20px' }} />
-            <p style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Synchronizing with Hub...</p>
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
-    );
+    if (loading) return <Loader text="Synchronizing with Hub..." />;
 
     if (error || !product) {
         return (
@@ -195,14 +190,14 @@ export default function ProductDetailPage() {
                         {/* Price */}
                         <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '20px 24px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
                             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', color: 'var(--primary)', letterSpacing: '-1px' }}>₦{(parseFloat(product.price) || 0).toLocaleString()}</span>
-                            {(product.original || (product as any).original_price) && (
+                            {/* {(product.original || (product as any).original_price) && (
                                 <div>
                                     <div style={{ fontSize: '16px', color: 'var(--text-muted)', textDecoration: 'line-through' }}>₦{(parseFloat((product.original || (product as any).original_price)) || 0).toLocaleString()}</div>
                                     <div style={{ background: 'var(--danger)', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '4px', display: 'inline-block', marginTop: '4px' }}>
                                         Save ₦{((parseFloat((product.original || (product as any).original_price)) || 0) - (parseFloat(product.price) || 0)).toLocaleString()}
                                     </div>
                                 </div>
-                            )}
+                            )} */}
                         </div>
 
                         {/* Qty + Actions */}

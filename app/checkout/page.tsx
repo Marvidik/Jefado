@@ -8,6 +8,7 @@ import { checkoutProduct, checkoutService, verifyPayment } from '@/services/chec
 import { getAddresses } from '@/services/accountService';
 import { tokenStorage } from '@/services/axiosInstance';
 import { ProductDetail, ServiceDetail, Address } from '@/services/types';
+import Loader from '@/components/ui/Loader';
 
 /* ── Types ──────────────────────────────── */
 interface FormData {
@@ -30,8 +31,6 @@ interface OrderItem {
     time?: string;
 }
 
-const COUNTRIES = ['Nigeria', 'Ghana', 'Kenya', 'South Africa'];
-const NIGERIAN_STATES = ['Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT - Abuja', 'Gombe', 'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'];
 const PAYSTACK_PUBLIC_KEY = process.env.NEXT_PUBLIC_PAYSTACK_KEY || '';
 
 /* ── Step indicator ─────────────────────── */
@@ -194,8 +193,10 @@ function OrderSidebar({ items, coupon, setCoupon, couponCode, setCouponCode }: {
             {/* Trust */}
             <div style={{ marginTop: '16px', padding: '12px', background: 'var(--surface-2)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', marginBottom: '8px' }}>🔒 Secured by SSL encryption</p>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', fontSize: '20px' }}>
-                    {['💳', '🏦', '📱', '🅿️'].map((ic, i) => <span key={i}>{ic}</span>)}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', flexWrap: 'wrap' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ fontSize: '18px' }}>💳</span> Cards</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ fontSize: '18px' }}>🏦</span> Bank Transfer</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ fontSize: '18px' }}>📱</span> Mobile Money</span>
                 </div>
             </div>
         </div>
@@ -207,6 +208,30 @@ function ShippingStep({ form, setForm, onNext, isService }: {
     form: FormData; setForm: (f: FormData) => void; onNext: () => void; isService: boolean;
 }) {
     const set = (k: keyof FormData) => (v: string | boolean) => setForm({ ...form, [k]: v });
+
+    const [countryList, setCountryList] = useState<string[]>([]);
+    const [allCountryData, setAllCountryData] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetch('https://countriesnow.space/api/v0.1/countries/states')
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.data && Array.isArray(data.data)) {
+                    setAllCountryData(data.data);
+                    const names = data.data.map((d: any) => d.name).sort((a: string, b: string) => a.localeCompare(b));
+                    setCountryList(names);
+                }
+            })
+            .catch(err => console.error("Could not fetch countries", err));
+    }, []);
+
+    const stateList = useMemo(() => {
+        const countryData = allCountryData.find(d => d.name === form.country);
+        if (countryData && countryData.states && Array.isArray(countryData.states)) {
+            return countryData.states.map((s: any) => s.name).sort((a: string, b: string) => a.localeCompare(b));
+        }
+        return [];
+    }, [form.country, allCountryData]);
 
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
     const valid = form.firstName && form.lastName && isEmailValid && form.phone && form.address && form.city && form.zip && form.country;
@@ -240,13 +265,17 @@ function ShippingStep({ form, setForm, onNext, isService }: {
             {/* City + State + Zip */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                 <Field label="City" value={form.city} onChange={set('city') as (v: string) => void} placeholder="New York" required />
-                <SelectField label="State" value={form.state} onChange={set('state') as (v: string) => void} options={NIGERIAN_STATES} />
+                {stateList.length > 0 ? (
+                    <SelectField label="State" value={form.state} onChange={set('state') as (v: string) => void} options={stateList} />
+                ) : (
+                    <Field label="State / Province" value={form.state} onChange={set('state') as (v: string) => void} placeholder="Your State" required />
+                )}
                 <Field label="ZIP / Postal Code" value={form.zip} onChange={set('zip') as (v: string) => void} placeholder="10001" required maxLength={10} />
             </div>
 
             {/* Country */}
             <div style={{ marginBottom: '14px' }}>
-                <SelectField label="Country" value={form.country} onChange={set('country') as (v: string) => void} options={COUNTRIES} required />
+                <SelectField label="Country" value={form.country} onChange={set('country') as (v: string) => void} options={countryList} required />
             </div>
 
             {/* Booking Notes (Service Only) */}
@@ -334,7 +363,7 @@ function ReviewStep({ items, form, onBack, onPlace, loading }: { items: OrderIte
             {/* T&C */}
             <label style={{ display: 'flex', gap: '10px', marginBottom: '20px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-secondary)', alignItems: 'flex-start' }}>
                 <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} style={{ accentColor: 'var(--primary)', width: '15px', height: '15px', marginTop: '2px', flexShrink: 0 }} />
-                <span>I agree to the <a href="#" style={{ color: 'var(--primary)', fontWeight: 600 }}>Terms of Service</a> and <a href="#" style={{ color: 'var(--primary)', fontWeight: 600 }}>Privacy Policy</a>. I confirm this order is correct.</span>
+                <span>I agree to the <a href="/refund-policy" style={{ color: 'var(--primary)', fontWeight: 600 }}>Refund Policy</a> and <a href="/privacy-policy" style={{ color: 'var(--primary)', fontWeight: 600 }}>Privacy Policy</a>. I confirm this order is correct.</span>
             </label>
 
             <div style={{ display: 'flex', gap: '12px' }}>
@@ -600,13 +629,7 @@ function CheckoutContent() {
 
     const isService = type === 'service';
 
-    if (loadingData) return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', gap: '20px' }}>
-            <div style={{ width: '40px', height: '40px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: 'var(--text-secondary)' }}>Syncing Secure Terminal...</p>
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
-    );
+    if (loadingData) return <Loader text="Syncing Secure Terminal..." />;
 
     if (placed) return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: '48px', paddingBottom: '60px' }}>
@@ -665,7 +688,7 @@ const EMPTY_FORM: FormData = {
 export default function CheckoutPage() {
     return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingBottom: '60px' }}>
-            <Suspense fallback={<div style={{ textAlign: 'center', padding: '100px' }}>Loading Checkout...</div>}>
+            <Suspense fallback={<Loader text="Loading Checkout..." />}>
                 <CheckoutContent />
             </Suspense>
         </div>

@@ -343,10 +343,13 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { o
                 </div>
                 <Field label="Email Address" type="email" value={form.email} onChange={set('email')} placeholder="Enter your email" required />
                 {form.accountType === 'seller' && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                        <Field label="Store Name" value={form.storeName} onChange={set('storeName')} placeholder="Elite" required />
-                        <Field label="RC Number" value={form.rcNumber} onChange={set('rcNumber')} placeholder="RC-123" />
-                    </div>
+                    <>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                            <Field label="Store Name" value={form.storeName} onChange={set('storeName')} placeholder="Elite" required />
+                            <Field label="RC Number" value={form.rcNumber} onChange={set('rcNumber')} placeholder="RC-123" />
+                        </div>
+                        <Field label="Phone Number" value={form.phone} onChange={set('phone')} placeholder="08123456789" type="tel" required />
+                    </>
                 )}
                 <div>
                     <Field label="Password" type="password" value={form.password} onChange={set('password')} placeholder="••••••••" required />
@@ -376,7 +379,7 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { o
                 }
                 setLoading(true); 
                 try {
-                    await register({ username: form.email, email: form.email, password1: form.password, password2: form.password, first_name: form.firstName, last_name: form.lastName, user_type: form.accountType === 'buyer' ? 'BUYER' : 'SELLER', store_name: form.storeName, rc_number: form.rcNumber });
+                    await register({ username: form.email, email: form.email, password1: form.password, password2: form.password, first_name: form.firstName, last_name: form.lastName, user_type: form.accountType === 'buyer' ? 'BUYER' : 'SELLER', store_name: form.storeName, rc_number: form.rcNumber, phone: form.phone });
                     toast.success('Registration successful!');
                     onSuccess(form.accountType);
                     setSuccess(true);
@@ -574,7 +577,7 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
                     color: '#fff', borderRadius: '14px', fontWeight: 800, fontSize: '16px', cursor: (step === 1 ? email : (otp && newPassword)) ? 'pointer' : 'not-allowed'
                 }}
             >
-                {loading ? 'Processing...' : (step === 1 ? 'Send Reset Link' : 'Reset Password')}
+                {loading ? 'Processing...' : (step === 1 ? 'Send OTP' : 'Reset Password')}
             </button>
             
             {step === 2 && (

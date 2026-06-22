@@ -168,8 +168,7 @@ export default function ServicesManagementPage() {
             };
 
             if (editingService) {
-                const { image, ...updatePayload } = payload;
-                await updateSellerService(editingService.id, updatePayload);
+                await updateSellerService(editingService.id, payload);
             } else {
                 await createSellerService(payload);
             }
@@ -291,7 +290,16 @@ export default function ServicesManagementPage() {
                                     </div>
                                 )}
                                 {formData.image ? (
-                                    <img src={formData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <>
+                                        <img src={formData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        {!editingService && (
+                                            <button 
+                                                type="button" 
+                                                onClick={(e) => { e.stopPropagation(); setFormData({ ...formData, image: '' }); }}
+                                                style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', zIndex: 10 }}
+                                            >✕</button>
+                                        )}
+                                    </>
                                 ) : (
                                     <>
                                         <span style={{ fontSize: '32px', marginBottom: '8px' }}>🖼️</span>

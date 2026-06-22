@@ -520,3 +520,13 @@ button {
   color: var(--primary) !important;
   transform: translateX(4px);
 }
+
+::placeholder {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+::-webkit-input-placeholder {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
