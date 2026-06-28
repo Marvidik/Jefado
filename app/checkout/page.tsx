@@ -5,7 +5,7 @@ import Script from 'next/script';
 import { useToast } from '@/components/ui/Toast';
 import { getProductDetail, getServiceDetail } from '@/services/publicService';
 import { checkoutProduct, checkoutService, verifyPayment } from '@/services/checkoutService';
-import { getAddresses } from '@/services/accountService';
+import { getAddresses, getProfile } from '@/services/accountService';
 import { tokenStorage } from '@/services/axiosInstance';
 import { ProductDetail, ServiceDetail, Address } from '@/services/types';
 import Loader from '@/components/ui/Loader';
@@ -97,9 +97,9 @@ function Field({ label, value, onChange, placeholder, type = 'text', required = 
 }
 
 /* ── Select field ───────────────────────── */
-function SelectField({ label, value, onChange, options, required }: {
+function SelectField({ label, value, onChange, options = [], required }: {
     label: string; value: string; onChange: (v: string) => void;
-    options: string[]; required?: boolean;
+    options?: string[]; required?: boolean;
 }) {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
@@ -108,7 +108,7 @@ function SelectField({ label, value, onChange, options, required }: {
             </label>
             <select value={value} onChange={e => onChange(e.target.value)} style={{ padding: '10px 14px', fontSize: '14px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius)', outline: 'none', fontFamily: 'var(--font-body)', background: 'var(--surface)', color: 'var(--text-primary)', cursor: 'pointer', width: '100%' }}>
                 <option value="">Select {label}</option>
-                {options.map(o => <option key={o} value={o}>{o}</option>)}
+                {options.map((o, idx) => <option key={`${o || ""}-${idx}`} value={o}>{o}</option>)}
             </select>
         </div>
     );
@@ -219,16 +219,17 @@ function ShippingStep({ form, setForm, onNext, isService }: {
                 if (data && data.data && Array.isArray(data.data)) {
                     setAllCountryData(data.data);
                     const names = data.data.map((d: any) => d.name).sort((a: string, b: string) => a.localeCompare(b));
-                    setCountryList(names);
+                    setCountryList(Array.from(new Set(names)));
                 }
             })
             .catch(err => console.error("Could not fetch countries", err));
     }, []);
 
-    const stateList = useMemo(() => {
+    const stateList = useMemo<string[]>(() => {
         const countryData = allCountryData.find(d => d.name === form.country);
         if (countryData && countryData.states && Array.isArray(countryData.states)) {
-            return countryData.states.map((s: any) => s.name).sort((a: string, b: string) => a.localeCompare(b));
+            const names = countryData.states.map((s: any) => s.name).sort((a: string, b: string) => a.localeCompare(b));
+            return Array.from(new Set(names)) as string[];
         }
         return [];
     }, [form.country, allCountryData]);
@@ -283,14 +284,14 @@ function ShippingStep({ form, setForm, onNext, isService }: {
                 <div style={{ marginBottom: '20px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                         <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Booking Notes</label>
-                        <textarea 
+                        <textarea
                             value={form.bookingNotes}
                             onChange={e => set('bookingNotes')(e.target.value)}
                             placeholder="Any specific requests or instructions for the service provider?"
-                            style={{ 
-                                padding: '10px 14px', fontSize: '14px', border: '1.5px solid var(--border)', 
-                                borderRadius: 'var(--radius)', outline: 'none', fontFamily: 'var(--font-body)', 
-                                background: 'var(--surface)', color: 'var(--text-primary)', minHeight: '80px', width: '100%' 
+                            style={{
+                                padding: '10px 14px', fontSize: '14px', border: '1.5px solid var(--border)',
+                                borderRadius: 'var(--radius)', outline: 'none', fontFamily: 'var(--font-body)',
+                                background: 'var(--surface)', color: 'var(--text-primary)', minHeight: '80px', width: '100%'
                             }}
                         />
                     </div>
@@ -368,21 +369,21 @@ function ReviewStep({ items, form, onBack, onPlace, loading }: { items: OrderIte
 
             <div style={{ display: 'flex', gap: '12px' }}>
                 <button onClick={onBack} style={{ flex: 1, padding: '13px', border: '1.5px solid var(--border)', color: 'var(--text-secondary)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '14px', cursor: 'pointer', background: 'var(--surface)' }}>← Back</button>
-                <button 
+                <button
                     disabled={!agreed || loading}
-                    onClick={() => agreed && !loading && onPlace()} 
-                    style={{ 
-                        flex: 2, 
-                        padding: '13px', 
-                        background: (agreed && !loading) ? 'var(--success)' : 'var(--border)', 
-                        color: (agreed && !loading) ? '#fff' : 'var(--text-muted)', 
-                        borderRadius: 'var(--radius)', 
-                        fontFamily: 'var(--font-body)', 
-                        fontWeight: 800, 
-                        fontSize: '14px', 
-                        cursor: (agreed && !loading) ? 'pointer' : 'not-allowed', 
-                        transition: 'all 0.2s', 
-                        boxShadow: (agreed && !loading) ? '0 4px 20px rgba(34,197,94,0.3)' : 'none' 
+                    onClick={() => agreed && !loading && onPlace()}
+                    style={{
+                        flex: 2,
+                        padding: '13px',
+                        background: (agreed && !loading) ? 'var(--success)' : 'var(--border)',
+                        color: (agreed && !loading) ? '#fff' : 'var(--text-muted)',
+                        borderRadius: 'var(--radius)',
+                        fontFamily: 'var(--font-body)',
+                        fontWeight: 800,
+                        fontSize: '14px',
+                        cursor: (agreed && !loading) ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.2s',
+                        boxShadow: (agreed && !loading) ? '0 4px 20px rgba(34,197,94,0.3)' : 'none'
                     }}
                 >
                     {loading ? 'Processing Transaction...' : '✓ Place Order'}
@@ -393,24 +394,39 @@ function ReviewStep({ items, form, onBack, onPlace, loading }: { items: OrderIte
 }
 
 /* ── Order Success ───────────────────────── */
-function OrderSuccess({ form, items }: { form: FormData; items: OrderItem[] }) {
-    const orderId = `JFD-${Math.floor(Math.random() * 90000 + 10000)}`;
-    const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
-    const isService = items.some(i => i.date);
+function OrderSuccess({ form, items, verifiedOrder, reference }: { form: FormData; items: OrderItem[]; verifiedOrder?: any; reference?: string | null }) {
+    const orderId = reference || verifiedOrder?.reference || verifiedOrder?.order_id || verifiedOrder?.id || `JFD-${Math.floor(Math.random() * 90000 + 10000)}`;
+
+    const subtotal = verifiedOrder
+        ? parseFloat(verifiedOrder.total_amount || 0)
+        : items.reduce((s, i) => s + i.price * i.qty, 0);
+
+    const isService = verifiedOrder
+        ? (verifiedOrder.order_type === 'SERVICE' || !!verifiedOrder.booking_date)
+        : items.some(i => i.date);
+
+    const buyerName = verifiedOrder?.buyer_name || `${form.firstName} ${form.lastName}`.trim() || 'Customer';
+    const buyerEmail = verifiedOrder?.buyer_email || form.email || 'your email';
+    const city = verifiedOrder?.city || form.city || '';
+    const country = verifiedOrder?.country || form.country || 'Nigeria';
+
+    const appointmentDate = verifiedOrder?.booking_date || (items[0]?.date || '');
+    const appointmentTime = verifiedOrder?.booking_time || (items[0]?.time || '');
+    const appointmentText = appointmentDate ? `${appointmentDate} @ ${appointmentTime}` : '3–5 business days';
 
     return (
         <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center', padding: '20px' }}>
             <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '40px 32px', animation: 'fadeInUp 0.5s ease' }}>
                 <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '36px', boxShadow: '0 8px 30px rgba(34,197,94,0.3)' }}>✓</div>
                 <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', marginBottom: '8px', color: 'var(--text-primary)' }}>{isService ? 'Booking Confirmed!' : 'Order Placed!'}</h2>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '4px', fontSize: '14px' }}>Thank you, <strong>{form.firstName}</strong>! Your {isService ? 'booking' : 'order'} has been received.</p>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '13px' }}>Once your payment is confirmed by our system, your order will be processed and you'll receive a confirmation at <strong>{form.email}</strong></p>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '4px', fontSize: '14px' }}>Thank you, <strong>{buyerName}</strong>! Your {isService ? 'booking' : 'order'} has been received.</p>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '13px' }}>Once your payment is confirmed by our system, your order will be processed and you'll receive a confirmation at <strong>{buyerEmail}</strong></p>
 
                 <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '16px', marginBottom: '24px', textAlign: 'left' }}>
-                    {[['Order Number', orderId], ['Total', `₦${subtotal.toFixed(2)}`], [isService ? 'Service Location' : 'Shipping To', `${form.city}, ${form.country}`], [isService ? 'Appointment' : 'Estimated Delivery', isService ? `${items[0].date} @ ${items[0].time}` : '3–5 business days']].map(([k, v]) => (
+                    {[['Reference', orderId], ['Total', `₦${subtotal.toFixed(2)}`], [isService ? 'Service Location' : 'Shipping To', `${city}, ${country}`.replace(/^,\s*/, '')], [isService ? 'Appointment' : 'Estimated Delivery', appointmentText]].map(([k, v]) => (
                         <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
                             <span style={{ color: 'var(--text-muted)' }}>{k}</span>
-                            <span style={{ fontWeight: 600, color: k === 'Order Number' ? 'var(--primary)' : 'var(--text-primary)' }}>{v}</span>
+                            <span style={{ fontWeight: 600, color: k === 'Reference' ? 'var(--primary)' : 'var(--text-primary)' }}>{v}</span>
                         </div>
                     ))}
                 </div>
@@ -423,6 +439,24 @@ function OrderSuccess({ form, items }: { form: FormData; items: OrderItem[] }) {
         </div>
     );
 }
+
+/* ── Order Failure ───────────────────────── */
+function OrderFailure({ message }: { message: string }) {
+    return (
+        <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center', padding: '20px' }}>
+            <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '40px 32px', animation: 'fadeInUp 0.5s ease' }}>
+                <div style={{ width: '72px', height: '72px', background: 'var(--danger)', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '36px', boxShadow: '0 8px 30px rgba(239,68,68,0.3)' }}>✗</div>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', marginBottom: '8px', color: 'var(--text-primary)' }}>Payment Verification Failed</h2>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '14px' }}>{message}</p>
+
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                    <a href="/cart" style={{ padding: '12px 28px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '14px' }}>Return to Cart</a>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 
 import { useCart } from '@/context/CartContext';
 
@@ -440,37 +474,79 @@ function CheckoutContent() {
     const [loading, setLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(true);
 
+    const [verifiedOrder, setVerifiedOrder] = useState<any>(null);
+    const [verificationError, setVerificationError] = useState<string>('');
+
     const type = searchParams.get('type') || (searchParams.get('id') ? 'product' : 'cart');
     const id = searchParams.get('id');
     const date = searchParams.get('date');
     const time = searchParams.get('time');
     const qtyParam = searchParams.get('qty');
+    const reference = searchParams.get('reference');
 
     const [item, setItem] = useState<ProductDetail | ServiceDetail | null>(null);
 
     useEffect(() => {
-        const reference = searchParams.get('reference');
-
         const load = async () => {
             try {
                 if (reference) {
-                    setPlaced(true);
-                    clearCart();
+                    setLoadingData(true);
+                    try {
+                        const res = await verifyPayment(reference);
+                        const orderData = res?.data || res?.order || res;
+                        setVerifiedOrder(orderData);
+                        setPlaced(true);
+                        clearCart();
+                        success("Payment verified successfully!");
+                    } catch (e: any) {
+                        console.error("Payment verification failed:", e);
+                        setVerificationError(e?.detail || e?.message || "Failed to verify payment status.");
+                        toastError(e?.detail || e?.message || "Failed to verify payment status.");
+                    } finally {
+                        setLoadingData(false);
+                    }
                     return;
                 }
 
                 const fetchAddress = async () => {
                     try {
                         if (!tokenStorage.getAccessToken()) return;
+
+                        try {
+                            const profile = await getProfile();
+                            if (profile) {
+                                setForm(prev => ({
+                                    ...prev,
+                                    firstName: profile.first_name || prev.firstName,
+                                    lastName: profile.last_name || prev.lastName,
+                                    email: profile.email || prev.email,
+                                    phone: profile.phone || prev.phone,
+                                }));
+                            }
+                        } catch (e) {
+                            console.error("Failed to fetch profile info:", e);
+                        }
+
                         const response = await getAddresses();
                         const addresses = (response as any).data || response;
                         if (Array.isArray(addresses)) {
                             const def = addresses.find(a => a.is_default) || addresses[0];
                             if (def) {
-                                setForm(prev => ({ ...prev, firstName: def.full_name?.split(' ')[0] || '', lastName: def.full_name?.split(' ').slice(1).join(' ') || '', address: def.street_address || '', city: def.city || '', state: def.state || '', zip: def.postal_code || '', country: def.country || 'Nigeria', phone: def.phone || '', email: def.email || prev.email || '' }));
+                                setForm(prev => ({
+                                    ...prev,
+                                    firstName: def.full_name?.split(' ')[0] || prev.firstName,
+                                    lastName: def.full_name?.split(' ').slice(1).join(' ') || prev.lastName,
+                                    address: def.street_address || prev.address,
+                                    city: def.city || prev.city,
+                                    state: def.state || prev.state,
+                                    zip: def.postal_code || prev.zip,
+                                    country: def.country || prev.country || 'Nigeria',
+                                    phone: def.phone || prev.phone,
+                                    email: def.email || prev.email,
+                                }));
                             }
                         }
-                    } catch (e) {}
+                    } catch (e) { }
                 };
 
                 if (id) {
@@ -505,7 +581,7 @@ function CheckoutContent() {
             }
         };
         load();
-    }, [id, type, searchParams, router, toastError, cartItems.length, clearCart, isInitialized]);
+    }, [id, type, searchParams, router, toastError, success, reference, cartItems.length, clearCart, isInitialized]);
 
     const items = useMemo<OrderItem[]>(() => {
         if (type === 'cart') {
@@ -560,23 +636,9 @@ function CheckoutContent() {
                     coupon_code: couponCode || undefined,
                     items: [{ item_id: item!.id, quantity: qtyParam ? parseInt(qtyParam) : 1 }]
                 });
-                
+
                 const actualData = (response as any).data || response;
-                if (actualData.access_code && (window as any).PaystackPop) {
-                    const handler = (window as any).PaystackPop.setup({
-                        key: PAYSTACK_PUBLIC_KEY,
-                        email: form.email,
-                        amount: Math.round(parseFloat(actualData.total_amount) * 100),
-                        access_code: actualData.access_code,
-                        onClose: () => { setLoading(false); toastError("Payment window closed."); },
-                        callback: (res: any) => {
-                            setPlaced(true);
-                            clearCart();
-                            success("Service booking received!");
-                        }
-                    });
-                    handler.openIframe();
-                } else if (actualData.payment_url) {
+                if (actualData.payment_url) {
                     window.location.href = actualData.payment_url;
                 } else {
                     setPlaced(true);
@@ -597,23 +659,9 @@ function CheckoutContent() {
                     coupon_code: couponCode || undefined,
                     items: payloadItems
                 });
-                
+
                 const actualData = (response as any).data || response;
-                if (actualData.access_code && (window as any).PaystackPop) {
-                    const handler = (window as any).PaystackPop.setup({
-                        key: PAYSTACK_PUBLIC_KEY,
-                        email: form.email,
-                        amount: Math.round(parseFloat(actualData.total_amount) * 100),
-                        access_code: actualData.access_code,
-                        onClose: () => { setLoading(false); toastError("Payment window closed."); },
-                        callback: (res: any) => {
-                            setPlaced(true);
-                            clearCart();
-                            success("Order received!");
-                        }
-                    });
-                    handler.openIframe();
-                } else if (actualData.payment_url) {
+                if (actualData.payment_url) {
                     window.location.href = actualData.payment_url;
                 } else {
                     setPlaced(true);
@@ -631,9 +679,15 @@ function CheckoutContent() {
 
     if (loadingData) return <Loader text="Syncing Secure Terminal..." />;
 
+    if (verificationError) return (
+        <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: '48px', paddingBottom: '60px' }}>
+            <OrderFailure message={verificationError} />
+        </div>
+    );
+
     if (placed) return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: '48px', paddingBottom: '60px' }}>
-            <OrderSuccess form={form} items={items} />
+            <OrderSuccess form={form} items={items} verifiedOrder={verifiedOrder} reference={reference} />
         </div>
     );
 
@@ -645,7 +699,6 @@ function CheckoutContent() {
                 <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Secure Checkout</p>
             </div>
 
-            <Script src="https://js.paystack.co/v1/inline.js" strategy="lazyOnload" />
             <StepBar step={step} isService={isService} />
 
             {/* Responsive two-column layout */}
