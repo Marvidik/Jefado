@@ -1,6 +1,48 @@
 export default function FullWidthPromo() {
     return (
         <section className="container" style={{ padding: '0 var(--gutter) 28px' }}>
+            <style>{`
+                .video-promo-wrap {
+                    margin-top: 48px;
+                    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+                    border-radius: var(--radius-xl);
+                    padding: 48px;
+                    text-align: center;
+                    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2);
+                    position: relative;
+                    overflow: hidden;
+                }
+                .video-promo-title {
+                    font-family: var(--font-display);
+                    font-weight: 800;
+                    font-size: 36px;
+                    color: #fff;
+                    margin-bottom: 16px;
+                    position: relative;
+                    z-index: 1;
+                }
+                .video-promo-desc {
+                    font-size: 18px;
+                    color: #94a3b8;
+                    max-width: 600px;
+                    margin: 0 auto 40px auto;
+                    position: relative;
+                    z-index: 1;
+                }
+                @media (max-width: 768px) {
+                    .video-promo-wrap {
+                        padding: 32px 20px;
+                        margin-top: 32px;
+                    }
+                    .video-promo-title {
+                        font-size: 28px;
+                    }
+                    .video-promo-desc {
+                        font-size: 15px;
+                        margin-bottom: 24px;
+                    }
+                }
+            `}</style>
             <div
                 className="promo-full"
                 style={{
@@ -119,6 +161,39 @@ export default function FullWidthPromo() {
                             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                         />
                     </div>
+                </div>
+            </div>
+
+            {/* Platform Guide Video Section */}
+            <div className="video-promo-wrap">
+                <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: '30%', height: '50%', background: 'var(--primary)', filter: 'blur(120px)', opacity: 0.4, borderRadius: '50%', pointerEvents: 'none' }}></div>
+                <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: '30%', height: '50%', background: 'var(--accent)', filter: 'blur(120px)', opacity: 0.3, borderRadius: '50%', pointerEvents: 'none' }}></div>
+                
+                <h3 className="video-promo-title">
+                    Master the Platform
+                </h3>
+                <p className="video-promo-desc">
+                    Watch our comprehensive quick-start guide to see exactly how you can maximize your sales and manage your products effortlessly.
+                </p>
+                
+                <div style={{
+                    position: 'relative',
+                    paddingBottom: '56.25%',
+                    height: 0,
+                    overflow: 'hidden',
+                    borderRadius: '20px',
+                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    zIndex: 1,
+                    background: '#000'
+                }}>
+                    <iframe 
+                        src="https://www.youtube.com/embed/97h-ISpDlus?si=ThTDjsDRHkk4WLAH" 
+                        title="Platform Guide"
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowFullScreen
+                    ></iframe>
                 </div>
             </div>
         </section>
