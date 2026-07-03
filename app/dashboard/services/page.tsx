@@ -292,6 +292,7 @@ export default function ServicesManagementPage() {
             <Badge key="stat" status={s.status === 'PUBLISHED' ? 'Active' : 'Draft'} label={s.status === 'PUBLISHED' ? 'Published' : 'Draft'} />,
             <div key="a" style={{ display: 'flex', gap: '12px', color: '#94a3b8' }}>
                 <button onClick={() => handleEdit(s)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', transition: 'color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '8px' }} onMouseEnter={e => {e.currentTarget.style.color = '#2563eb'; e.currentTarget.style.background = '#eff6ff';}} onMouseLeave={e => {e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.background = 'transparent';}}>{Icons.edit}</button>
+                <button onClick={() => handleDelete(s.id)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'inherit', transition: 'color 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '8px' }} onMouseEnter={e => {e.currentTarget.style.color = '#dc2626'; e.currentTarget.style.background = '#fef2f2';}} onMouseLeave={e => {e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.background = 'transparent';}}>{Icons.trash}</button>
             </div>
         ];
     });

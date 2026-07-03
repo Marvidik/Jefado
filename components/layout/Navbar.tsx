@@ -55,7 +55,6 @@ export default function Navbar() {
           .nav-desktop-cat   { display: none !important; }
           .nav-mobile-menu-btn { display: flex !important; }
           .nav-search-wrap { max-width: 100% !important; flex: 1 !important; }
-          .nav-inquire-badge { display: none !important; }
           .nav-logo { height: 48px !important; }
         }
         @media (min-width: 769px) {
