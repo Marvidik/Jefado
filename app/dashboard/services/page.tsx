@@ -20,7 +20,7 @@ export default function ServicesManagementPage() {
     const [page, setPage] = useState(1);
     const PER = 10;
 
-    const [isDrawerOpen, setDrawerOpen] = useState(false);
+        const [isDrawerOpen, setDrawerOpen] = useState(false);
     const [editingService, setEditingService] = useState<Service | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -33,8 +33,68 @@ export default function ServicesManagementPage() {
         status: 'PUBLISHED' as 'DRAFT' | 'PUBLISHED', 
         emoji: '✨',
         category: '',
-        image: ''
+        image: '',
+        image2: '',
+        image3: '',
+        image4: ''
     });
+
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string>('');
+    const [selectedFile2, setSelectedFile2] = useState<File | null>(null);
+    const [imagePreview2, setImagePreview2] = useState<string>('');
+    const [selectedFile3, setSelectedFile3] = useState<File | null>(null);
+    const [imagePreview3, setImagePreview3] = useState<string>('');
+    const [selectedFile4, setSelectedFile4] = useState<File | null>(null);
+    const [imagePreview4, setImagePreview4] = useState<string>('');
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, num: number = 1) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        
+        if (num === 1) {
+            setSelectedFile(file);
+            if (imagePreview) URL.revokeObjectURL(imagePreview);
+            setImagePreview(URL.createObjectURL(file));
+        } else if (num === 2) {
+            setSelectedFile2(file);
+            if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+            setImagePreview2(URL.createObjectURL(file));
+        } else if (num === 3) {
+            setSelectedFile3(file);
+            if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+            setImagePreview3(URL.createObjectURL(file));
+        } else if (num === 4) {
+            setSelectedFile4(file);
+            if (imagePreview4) URL.revokeObjectURL(imagePreview4);
+            setImagePreview4(URL.createObjectURL(file));
+        }
+    };
+
+    const uploadFileToCloudinary = async (file: File): Promise<string> => {
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+        
+        if (!cloudName || !preset) {
+            throw new Error('Cloudinary configuration missing in environment variables.');
+        }
+
+        const data = new FormData();
+        data.append('file', file);
+        data.append('upload_preset', preset);
+
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: 'POST',
+            body: data
+        });
+        
+        const result = await res.json();
+        if (result.secure_url) {
+            return result.secure_url;
+        } else {
+            throw new Error(result.error?.message || 'Upload failed');
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -73,43 +133,6 @@ export default function ServicesManagementPage() {
         fetchServices();
     }, [page, search, statusFilter]);
 
-    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setUploading(true);
-        try {
-            const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-            const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-            
-            if (!cloudName || !preset) {
-                throw new Error('Cloudinary configuration missing in environment variables.');
-            }
-
-            const data = new FormData();
-            data.append('file', file);
-            data.append('upload_preset', preset);
-
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                method: 'POST',
-                body: data
-            });
-            
-            const result = await res.json();
-            if (result.secure_url) {
-                setFormData(prev => ({ ...prev, image: result.secure_url }));
-                success('Service image uploaded successfully.');
-            } else {
-                throw new Error(result.error?.message || 'Upload failed');
-            }
-        } catch (err: any) {
-            console.error('Cloudinary upload error:', err);
-            toastError(err.message || 'Failed to upload image');
-        } finally {
-            setUploading(false);
-        }
-    };
-
     const handleEdit = (service: Service) => {
         setEditingService(service);
         setFormData({ 
@@ -120,8 +143,23 @@ export default function ServicesManagementPage() {
             status: service.status as any, 
             emoji: service.emoji || '✨',
             category: service.category?.toString() || '',
-            image: service.image || ''
+            image: service.image || '',
+            image2: service.image2 || '',
+            image3: service.image3 || '',
+            image4: service.image4 || ''
         });
+        if (imagePreview) URL.revokeObjectURL(imagePreview);
+        if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+        if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+        if (imagePreview4) URL.revokeObjectURL(imagePreview4);
+        setImagePreview('');
+        setImagePreview2('');
+        setImagePreview3('');
+        setImagePreview4('');
+        setSelectedFile(null);
+        setSelectedFile2(null);
+        setSelectedFile3(null);
+        setSelectedFile4(null);
         setDrawerOpen(true);
     };
 
@@ -135,8 +173,23 @@ export default function ServicesManagementPage() {
             status: 'PUBLISHED', 
             emoji: '✨',
             category: '',
-            image: ''
+            image: '',
+            image2: '',
+            image3: '',
+            image4: ''
         });
+        if (imagePreview) URL.revokeObjectURL(imagePreview);
+        if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+        if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+        if (imagePreview4) URL.revokeObjectURL(imagePreview4);
+        setImagePreview('');
+        setImagePreview2('');
+        setImagePreview3('');
+        setImagePreview4('');
+        setSelectedFile(null);
+        setSelectedFile2(null);
+        setSelectedFile3(null);
+        setSelectedFile4(null);
         setDrawerOpen(true);
     };
 
@@ -153,14 +206,39 @@ export default function ServicesManagementPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        const previewUrl = imagePreview || formData.image;
+        if (!previewUrl) {
+            toastError('Please select a service image first.');
+            return;
+        }
         if (!formData.category) {
             toastError('Please select a category.');
             return;
         }
         setSubmitting(true);
         try {
+            let imageUrl = formData.image;
+            let imageUrl2 = formData.image2;
+            let imageUrl3 = formData.image3;
+            let imageUrl4 = formData.image4;
+            
+            setUploading(true);
+            try {
+                if (selectedFile) imageUrl = await uploadFileToCloudinary(selectedFile);
+                if (selectedFile2) imageUrl2 = await uploadFileToCloudinary(selectedFile2);
+                if (selectedFile3) imageUrl3 = await uploadFileToCloudinary(selectedFile3);
+                if (selectedFile4) imageUrl4 = await uploadFileToCloudinary(selectedFile4);
+            } finally {
+                setUploading(false);
+            }
+
             const payload = {
                 ...formData,
+                image: imageUrl,
+                image2: imageUrl2,
+                image3: imageUrl3,
+                image4: imageUrl4,
                 original: "0", // Default original price to zero as requested
                 duration: 0,
                 review_count: 0,
@@ -172,11 +250,26 @@ export default function ServicesManagementPage() {
             } else {
                 await createSellerService(payload);
             }
+
+            if (imagePreview) URL.revokeObjectURL(imagePreview);
+            if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+            if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+            if (imagePreview4) URL.revokeObjectURL(imagePreview4);
+            setImagePreview('');
+            setImagePreview2('');
+            setImagePreview3('');
+            setImagePreview4('');
+            setSelectedFile(null);
+            setSelectedFile2(null);
+            setSelectedFile3(null);
+            setSelectedFile4(null);
+
             setDrawerOpen(false);
             fetchServices();
             success(`Service ${editingService ? 'updated' : 'published'} successfully.`);
-        } catch (err) {
-            toastError('Failed to save service');
+        } catch (err: any) {
+            console.error('Save error:', err);
+            toastError(err.message || 'Failed to save service');
         } finally {
             setSubmitting(false);
         }
@@ -245,7 +338,21 @@ export default function ServicesManagementPage() {
                 <Pagination total={totalCount} page={page} perPage={PER} onPage={setPage} />
             </Card>
 
-            <Drawer open={isDrawerOpen} onClose={() => setDrawerOpen(false)} title={editingService ? "Update Service" : "Publish New Service"} maxWidth="640px">
+            <Drawer open={isDrawerOpen} onClose={() => {
+                if (imagePreview) URL.revokeObjectURL(imagePreview);
+                if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+                if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+                if (imagePreview4) URL.revokeObjectURL(imagePreview4);
+                setImagePreview('');
+                setImagePreview2('');
+                setImagePreview3('');
+                setImagePreview4('');
+                setSelectedFile(null);
+                setSelectedFile2(null);
+                setSelectedFile3(null);
+                setSelectedFile4(null);
+                setDrawerOpen(false);
+            }} title={editingService ? "Update Service" : "Publish New Service"} maxWidth="860px">
                 <div style={{ maxHeight: 'calc(100vh - 120px)', overflowY: 'auto', paddingRight: '4px' }}>
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
                         <Card style={{ padding: '24px' }}>
@@ -261,15 +368,14 @@ export default function ServicesManagementPage() {
 
                         <Card style={{ padding: '24px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>Visual Media</h3>
-                                {editingService && <Badge status="Completed" label="Locked" />}
+                                <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>Service Images</h3>
                             </div>
-                            <input type="file" ref={fileInputRef} onChange={handleUpload} style={{ display: 'none' }} accept="image/*" />
+                            <input type="file" ref={fileInputRef} onChange={e => handleFileChange(e, 1)} style={{ display: 'none' }} accept="image/*" />
                             <div 
-                                onClick={() => !editingService && fileInputRef.current?.click()}
+                                onClick={() => fileInputRef.current?.click()}
                                 style={{ 
                                     width: '100%', 
-                                    height: '180px', 
+                                    height: '200px', 
                                     background: '#f8fafc', 
                                     border: '2px dashed #cbd5e1', 
                                     borderRadius: '16px', 
@@ -278,10 +384,11 @@ export default function ServicesManagementPage() {
                                     alignItems: 'center', 
                                     justifyContent: 'center', 
                                     color: '#64748b', 
-                                    cursor: editingService ? 'not-allowed' : 'pointer', 
+                                    cursor: 'pointer', 
                                     transition: 'all 0.2s', 
                                     overflow: 'hidden',
-                                    position: 'relative'
+                                    position: 'relative',
+                                    marginBottom: '16px'
                                 }}
                             >
                                 {uploading && (
@@ -289,30 +396,79 @@ export default function ServicesManagementPage() {
                                         <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--primary)' }}>Uploading to Cloudinary...</div>
                                     </div>
                                 )}
-                                {formData.image ? (
+                                {imagePreview || formData.image ? (
                                     <>
-                                        <img src={formData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        {!editingService && (
-                                            <button 
-                                                type="button" 
-                                                onClick={(e) => { e.stopPropagation(); setFormData({ ...formData, image: '' }); }}
-                                                style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', zIndex: 10 }}
-                                            >✕</button>
-                                        )}
+                                        <img src={imagePreview || formData.image} alt="Preview 1" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <button 
+                                            type="button" 
+                                            onClick={(e) => { 
+                                                e.stopPropagation(); 
+                                                if (imagePreview) URL.revokeObjectURL(imagePreview); 
+                                                setImagePreview(''); 
+                                                setFormData({ ...formData, image: '' }); 
+                                                setSelectedFile(null); 
+                                            }}
+                                            style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', zIndex: 10 }}
+                                        >✕</button>
                                     </>
                                 ) : (
                                     <>
-                                        <span style={{ fontSize: '32px', marginBottom: '8px' }}>🖼️</span>
-                                        <span style={{ fontSize: '14px', fontWeight: 700 }}>Upload Cover Image</span>
-                                        <span style={{ fontSize: '11px' }}>Standard PNG/JPG formats</span>
+                                        <span style={{ fontSize: '32px', marginBottom: '8px' }}>📸</span>
+                                        <span style={{ fontSize: '14px', fontWeight: 700 }}>{uploading ? 'Uploading...' : 'Main Image'}</span>
+                                        <span style={{ fontSize: '11px' }}>Primary service image</span>
                                     </>
                                 )}
                             </div>
-                            {editingService && (
-                                <p style={{ fontSize: '11px', color: '#64748b', marginTop: '12px', fontStyle: 'italic' }}>
-                                    Images are managed via Cloudinary and cannot be updated after publication.
-                                </p>
-                            )}
+                            
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
+                                {[2, 3, 4].map(num => {
+                                    const imgPreview = num === 2 ? imagePreview2 : num === 3 ? imagePreview3 : imagePreview4;
+                                    const imgData = num === 2 ? formData.image2 : num === 3 ? formData.image3 : formData.image4;
+                                    return (
+                                        <div key={num}>
+                                            <input type="file" id={`service-file-input-${num}`} onChange={e => handleFileChange(e, num)} style={{ display: 'none' }} accept="image/*" />
+                                            <div 
+                                                onClick={() => document.getElementById(`service-file-input-${num}`)?.click()}
+                                                style={{ 
+                                                    width: '100%', 
+                                                    aspectRatio: '1', 
+                                                    background: '#f8fafc', 
+                                                    border: '1.5px dashed #cbd5e1', 
+                                                    borderRadius: '12px', 
+                                                    display: 'flex', 
+                                                    flexDirection: 'column', 
+                                                    alignItems: 'center', 
+                                                    justifyContent: 'center', 
+                                                    color: '#94a3b8', 
+                                                    cursor: 'pointer', 
+                                                    overflow: 'hidden',
+                                                    position: 'relative'
+                                                }}
+                                            >
+                                                {imgPreview || imgData ? (
+                                                    <>
+                                                        <img src={imgPreview || imgData} alt={`Preview ${num}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                        <button 
+                                                            type="button" 
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); 
+                                                                if (imgPreview) URL.revokeObjectURL(imgPreview);
+                                                                if (num === 2) { setImagePreview2(''); setFormData({ ...formData, image2: '' }); setSelectedFile2(null); }
+                                                                else if (num === 3) { setImagePreview3(''); setFormData({ ...formData, image3: '' }); setSelectedFile3(null); }
+                                                                else if (num === 4) { setImagePreview4(''); setFormData({ ...formData, image4: '' }); setSelectedFile4(null); }
+                                                            }}
+                                                            style={{ position: 'absolute', top: '6px', right: '6px', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', zIndex: 10 }}
+                                                        >✕</button>
+                                                    </>
+                                                ) : (
+                                                    <span style={{ fontSize: '18px' }}>+</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
                             <div style={{ marginTop: '16px' }}>
                                 <Input label="Secondary Visual (Emoji)" value={formData.emoji} onChange={v => setFormData({ ...formData, emoji: v })} placeholder="✂️" />
                             </div>
@@ -330,7 +486,21 @@ export default function ServicesManagementPage() {
                         </Card>
 
                         <div style={{ width: '100%', display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '24px', borderTop: '1px solid #e2e8f0', background: '#fff', position: 'sticky', bottom: '-40px', paddingBottom: '40px', zIndex: 10 }}>
-                            <Btn label="Cancel" variant="secondary" onClick={() => setDrawerOpen(false)} />
+                            <Btn label="Cancel" variant="secondary" onClick={() => {
+                                if (imagePreview) URL.revokeObjectURL(imagePreview);
+                                if (imagePreview2) URL.revokeObjectURL(imagePreview2);
+                                if (imagePreview3) URL.revokeObjectURL(imagePreview3);
+                                if (imagePreview4) URL.revokeObjectURL(imagePreview4);
+                                setImagePreview('');
+                                setImagePreview2('');
+                                setImagePreview3('');
+                                setImagePreview4('');
+                                setSelectedFile(null);
+                                setSelectedFile2(null);
+                                setSelectedFile3(null);
+                                setSelectedFile4(null);
+                                setDrawerOpen(false);
+                            }} />
                             <Btn label={submitting ? "Saving..." : editingService ? "Save Changes" : "Publish Service"} submit disabled={submitting || uploading} />
                         </div>
                     </form>

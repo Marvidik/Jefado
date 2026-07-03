@@ -78,22 +78,22 @@ export default function Navbar() {
                         >
                             +2347064957209
                         </a>
-                        <span className="nav-inquire-badge" style={{ 
-                            marginLeft: '8px', 
-                            background: 'var(--primary)', 
-                            color: '#fff', 
-                            fontSize: '10px', 
-                            fontWeight: 800, 
-                            padding: '3px 10px', 
-                            borderRadius: '100px', 
-                            textTransform: 'uppercase', 
+                        <span className="nav-inquire-badge" style={{
+                            marginLeft: '8px',
+                            background: 'var(--primary)',
+                            color: '#fff',
+                            fontSize: '10px',
+                            fontWeight: 800,
+                            padding: '3px 10px',
+                            borderRadius: '100px',
+                            textTransform: 'uppercase',
                             letterSpacing: '1px',
                             display: 'inline-flex',
                             alignItems: 'center',
                             boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
                             flexShrink: 0,
                         }}>
-                            Inquire Now
+                            Call to Order or Inquire Now
                         </span>
                     </div>
                     <div className="nav-desktop-links" style={{ fontSize: '12px', opacity: 0.9, flexShrink: 0 }}>

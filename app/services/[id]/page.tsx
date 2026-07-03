@@ -1,16 +1,24 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { getServiceDetail } from '@/services/publicService';
 import { ServiceDetail as IServiceDetail } from '@/services/types';
 import { useToast } from '@/components/ui/Toast';
 import ReviewsSection from '@/components/ui/ReviewsSection';
+import Loader from '@/components/ui/Loader';
 
 export default function ServiceDetailPage() {
     const params = useParams();
+    const { success, error: toastError } = useToast();
     const [bookingDate, setBookingDate] = useState('');
     const [bookingTime, setBookingTime] = useState('');
     const [added, setAdded] = useState(false);
+    const [activeImage, setActiveImage] = useState(0);
+    const [zoom, setZoom] = useState(1);
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+    const imgRef = useRef<HTMLDivElement>(null);
 
     const [service, setService] = useState<IServiceDetail | null>(null);
     const [loading, setLoading] = useState(true);
@@ -32,13 +40,7 @@ export default function ServiceDetailPage() {
         fetchService();
     }, [params.id]);
 
-    if (loading) return (
-        <div className="container" style={{ padding: '100px 0', textAlign: 'center' }}>
-            <div className="loader" style={{ width: '40px', height: '40px', border: '3px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 20px' }} />
-            <p style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Syncing Service Provider Terminal...</p>
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
-    );
+    if (loading) return <Loader text="Syncing Service Provider Terminal..." />;
 
     if (error || !service) {
         return (
@@ -49,7 +51,6 @@ export default function ServiceDetailPage() {
         );
     }
 
-    const { success, error: toastError } = useToast();
     const handleBookNow = () => {
         if (!bookingDate || !bookingTime) {
             toastError('Please select a date and time for your booking.');
@@ -78,16 +79,78 @@ export default function ServiceDetailPage() {
                 <div className="detail-grid" style={{ display: 'grid', gridTemplateColumns: '0.5fr 1fr', gap: '48px', marginBottom: '48px' }}>
                     {/* Visual Section */}
                     <div>
-                        <div style={{ position: 'relative', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', background: 'var(--surface-2)', aspectRatio: '16/10', marginBottom: '24px', border: '1px solid var(--border)' }}>
-                            {service.image ? (
-                                <img src={service.image} alt={service.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div ref={imgRef} style={{ position: 'relative', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', background: 'var(--surface-2)', aspectRatio: '16/10', marginBottom: '24px', border: '1px solid var(--border)', cursor: zoom > 1 ? 'grab' : 'zoom-in' }}
+                            onWheel={e => {
+                                e.preventDefault();
+                                setZoom(z => Math.min(3, Math.max(1, z - e.deltaY * 0.003)));
+                                if (zoom <= 1) setPanOffset({ x: 0, y: 0 });
+                            }}
+                            onMouseDown={e => { if (zoom > 1) { setIsDragging(true); setDragStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y }); }}}
+                            onMouseMove={e => { if (isDragging && zoom > 1) { setPanOffset({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y }); }}}
+                            onMouseUp={() => setIsDragging(false)}
+                            onMouseLeave={() => setIsDragging(false)}
+                        >
+                            {[service.image, service.image2, service.image3, service.image4].filter(Boolean).length > 0 ? (
+                                <img
+                                    src={[service.image, service.image2, service.image3, service.image4].filter(Boolean)[activeImage] as string}
+                                    alt={service.name}
+                                    draggable={false}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                        transform: `scale(${zoom}) translate(${panOffset.x / zoom}px, ${panOffset.y / zoom}px)`,
+                                        transition: isDragging ? 'none' : 'transform 0.25s ease',
+                                        userSelect: 'none',
+                                    }}
+                                />
                             ) : (
                                 <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '120px' }}>{service.emoji || '🛠️'}</div>
                             )}
                             <div style={{ position: 'absolute', top: '20px', left: '20px' }}>
                                 <span style={{ background: 'var(--primary)', color: '#fff', fontSize: '12px', fontWeight: 700, padding: '6px 16px', borderRadius: '30px' }}>{service.category}</span>
                             </div>
+                            {/* Zoom controls */}
+                            {[service.image, service.image2, service.image3, service.image4].filter(Boolean).length > 0 && (
+                                <div style={{ position: 'absolute', bottom: '12px', right: '12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    <button onClick={(e) => { e.stopPropagation(); setZoom(z => Math.min(3, z + 0.5)); }} style={{ width: '32px', height: '32px', background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '18px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', backdropFilter: 'blur(4px)', transition: 'all 0.15s' }} title="Zoom In">+</button>
+                                    <button onClick={(e) => { e.stopPropagation(); setZoom(z => { const nz = Math.max(1, z - 0.5); if (nz === 1) setPanOffset({ x: 0, y: 0 }); return nz; }); }} style={{ width: '32px', height: '32px', background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '18px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', backdropFilter: 'blur(4px)', transition: 'all 0.15s' }} title="Zoom Out">−</button>
+                                    {zoom > 1 && <button onClick={(e) => { e.stopPropagation(); setZoom(1); setPanOffset({ x: 0, y: 0 }); }} style={{ width: '32px', height: '32px', background: 'rgba(255,255,255,0.9)', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.15)', backdropFilter: 'blur(4px)', color: 'var(--primary)' }} title="Reset Zoom">1:1</button>}
+                                </div>
+                            )}
+                            {zoom > 1 && (
+                                <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px', backdropFilter: 'blur(4px)' }}>
+                                    {Math.round(zoom * 100)}%
+                                </div>
+                            )}
                         </div>
+                        {[service.image, service.image2, service.image3, service.image4].filter(Boolean).length > 0 && (
+                            <>
+                                <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px' }}>Scroll or use +/− to zoom · Drag to pan</p>
+                                {/* Thumbnails */}
+                                <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', marginBottom: '24px' }}>
+                                    {[service.image, service.image2, service.image3, service.image4].filter(Boolean).map((img, index) => (
+                                        <div 
+                                            key={index} 
+                                            onClick={() => { setActiveImage(index); setZoom(1); setPanOffset({ x: 0, y: 0 }); }}
+                                            style={{ 
+                                                width: '60px', 
+                                                height: '60px', 
+                                                borderRadius: 'var(--radius)', 
+                                                border: activeImage === index ? '2px solid var(--primary)' : '1px solid var(--border)', 
+                                                cursor: 'pointer', 
+                                                overflow: 'hidden',
+                                                opacity: activeImage === index ? 1 : 0.6,
+                                                transition: 'all 0.2s',
+                                                flexShrink: 0
+                                            }}
+                                        >
+                                            <img src={img as string} alt={`${service.name} ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        )}
 
                         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '32px' }}>
                             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', marginBottom: '16px' }}>Service Overview</h2>

@@ -128,6 +128,9 @@ export interface Service {
     updated_at: string;
     category?: number | null;
     emoji?: string;
+    image2?: string | null;
+    image3?: string | null;
+    image4?: string | null;
 }
 
 export interface ServiceDetail extends Service {

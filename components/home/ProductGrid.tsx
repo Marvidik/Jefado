@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import ProductCard from '../ui/ProductCard';
+import Loader from '../ui/Loader';
 import { getProducts } from '@/services/publicService';
 import { Product } from '@/services/types';
 
@@ -87,20 +88,8 @@ export default function ProductGrid() {
                     position: 'relative'
                 }}>
                     {loading ? (
-                        <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 0', gap: '20px' }}>
-                            <div style={{ position: 'relative', width: '56px', height: '56px' }}>
-                                <div style={{ position: 'absolute', inset: 0, border: '4px solid rgba(238,18,23,0.1)', borderRadius: '50%' }} />
-                                <div style={{ position: 'absolute', inset: 0, border: '4px solid var(--primary)', borderRadius: '50%', borderTopColor: 'transparent', animation: 'spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite' }} />
-                                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', animation: 'pulse 1.5s ease-in-out infinite' }}>🛍️</div>
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', margin: 0 }}>Curating deals</p>
-                                <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>Finding the best offers...</p>
-                            </div>
-                            <style>{`
-                                @keyframes spin { to { transform: rotate(360deg); } }
-                                @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.85); opacity: 0.7; } }
-                            `}</style>
+                        <div style={{ gridColumn: '1 / -1' }}>
+                            <Loader text="Curating deals" icon="🛍️" subtext="Finding the best offers..." />
                         </div>
                     ) : (
                         products.map((p) => (
@@ -131,8 +120,8 @@ export default function ProductGrid() {
                         flex: 1,
                     }}>
                         <p style={{ fontSize: '24px', marginBottom: '12px' }}>🎧</p>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff', marginBottom: '6px' }}>Xiaomi True Wireless Earbuds</p>
-                        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '12px' }}>Escape the noise. It&apos;s time to hear the magic.</p>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff', marginBottom: '6px' }}>Shop JEFEDO core products</p>
+                        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '12px' }}>Escape the noise. It&apos;s time to shop the magic.</p>
                         <div style={{
                             background: 'rgba(255,255,255,0.1)',
                             borderRadius: 'var(--radius)',
@@ -140,7 +129,7 @@ export default function ProductGrid() {
                             marginBottom: '14px',
                         }}>
                             <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>Only for:</p>
-                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: '#fff' }}>₦299,000</p>
+                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: '#fff' }}>The Best Prices</p>
                         </div>
                         <button style={{
                             width: '100%', padding: '10px',
@@ -158,10 +147,10 @@ export default function ProductGrid() {
                         padding: '20px',
                         textAlign: 'center',
                     }}>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '28px', color: '#fff', marginBottom: '4px' }}>37%</p>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '28px', color: '#fff', marginBottom: '4px' }}>10%</p>
                         <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: '#fff', marginBottom: '4px' }}>DISCOUNT</p>
                         <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', marginBottom: '4px' }}>Summer Sales</p>
-                        <p style={{ fontSize: '11px', color: '#fff', fontWeight: 600, marginBottom: '12px' }}>only for <strong>SmartPhone</strong> product.</p>
+                        <p style={{ fontSize: '11px', color: '#fff', fontWeight: 600, marginBottom: '12px' }}>only for <strong>JEFEDO CORE </strong> PRODUCTS.</p>
                         <button style={{
                             width: '100%', padding: '9px',
                             background: '#fff', color: '#f97316',
