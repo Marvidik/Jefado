@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import CountdownTimer from '../ui/CountdownTimer';
 import ProductCard from '../ui/ProductCard';
-import Loader from '../ui/Loader';
+import { ProductSkeleton } from '../ui/Skeleton';
 import { getProducts } from '@/services/publicService';
 import { Product } from '@/services/types';
 
@@ -47,9 +47,7 @@ export default function FlashSale() {
                 minHeight: '200px'
             }}>
                 {loading ? (
-                    <div style={{ gridColumn: '1 / -1' }}>
-                        <Loader text="Loading flash sales..." icon="⚡" subtext="Grabbing today's hottest deals..." />
-                    </div>
+                    Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
                 ) : (
                     products.map((p) => (
                         <ProductCard key={p.id} {...p as any} badgeColor="#ef4444" />

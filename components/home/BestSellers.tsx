@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { getProducts } from '@/services/publicService';
 import { Product } from '@/services/types';
-import Loader from '../ui/Loader';
+import { Skeleton } from '../ui/Skeleton';
 
 export default function BestSellers() {
     const [sections, setSections] = useState<{ title: string; badge: string; products: Product[] }[]>([]);
@@ -46,9 +46,16 @@ export default function BestSellers() {
 
             <div className="bs-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
                 {loading ? (
-                    <div style={{ gridColumn: '1 / -1' }}>
-                        <Loader text="Loading best sellers..." icon="⭐" subtext="Finding top items..." />
-                    </div>
+                    Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i}>
+                            <Skeleton style={{ height: '30px', marginBottom: '14px', borderRadius: 'var(--radius)' }} />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {Array.from({ length: 4 }).map((_, j) => (
+                                    <Skeleton key={j} style={{ height: '70px', borderRadius: 'var(--radius)' }} />
+                                ))}
+                            </div>
+                        </div>
+                    ))
                 ) : sections.map((col) => (
                     <div key={col.title}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '12px', borderBottom: '2px solid var(--primary)', marginBottom: '14px' }}>

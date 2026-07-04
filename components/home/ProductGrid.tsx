@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import ProductCard from '../ui/ProductCard';
-import Loader from '../ui/Loader';
+import { ProductSkeleton } from '../ui/Skeleton';
 import { getProducts } from '@/services/publicService';
 import { Product } from '@/services/types';
 
@@ -88,9 +88,7 @@ export default function ProductGrid() {
                     position: 'relative'
                 }}>
                     {loading ? (
-                        <div style={{ gridColumn: '1 / -1' }}>
-                            <Loader text="Curating deals" icon="🛍️" subtext="Finding the best offers..." />
-                        </div>
+                        Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
                     ) : (
                         products.map((p) => (
                             <ProductCard key={p.id} {...p as any} />
