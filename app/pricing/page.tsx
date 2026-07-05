@@ -21,7 +21,7 @@ const TIERS = [
         price: '15000',
         period: '/mo',
         description: 'Advanced features for growing businesses and power sellers.',
-        features: ['Unlimited listings', 'Priority 24/7 support', 'Advanced sales analytics', 'Custom store URL', 'Promotion tools', 'Bulk import/export'],
+        features: ['Unlimited listings', 'Priority 24/7 support', 'Advanced sales analytics', 'Custom store URL'],
         buttonText: 'Try Pro Now',
         highlight: true,
     },
@@ -31,7 +31,7 @@ const TIERS = [
         price: 'Custom',
         period: '',
         description: 'Tailored solutions for large-scale vendors and agencies.',
-        features: ['Everything in Pro', 'Dedicated account manager', 'API access & integrations', 'Custom contract terms', 'White-labeling options'],
+        features: ['Everything in Pro', 'Dedicated account manager', 'Custom contract terms'],
         buttonText: 'Contact Sales',
         highlight: false,
     }
@@ -64,7 +64,7 @@ export default function PricingPage() {
 
             // Handle standard Jefedo response wrapper if present
             const data = (response.data as any).data || response.data;
-            
+
             if (data.authorization_url) {
                 success("Redirecting to secure payment...");
                 window.location.href = data.authorization_url;
@@ -83,9 +83,9 @@ export default function PricingPage() {
     return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
             {/* Hero Section */}
-            <div style={{ 
-                background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
-                padding: '100px 0 160px', 
+            <div style={{
+                background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                padding: '100px 0 160px',
                 textAlign: 'center',
                 position: 'relative',
                 overflow: 'hidden'
@@ -94,21 +94,21 @@ export default function PricingPage() {
                 <div style={{ position: 'absolute', bottom: '-100px', left: '-100px', width: '300px', height: '300px', background: 'var(--secondary)', filter: 'blur(150px)', opacity: 0.15 }}></div>
 
                 <div className="container animate-in">
-                    <h1 style={{ 
-                        fontFamily: 'var(--font-display)', 
-                        fontWeight: 800, 
-                        fontSize: '52px', 
-                        color: '#fff', 
+                    <h1 style={{
+                        fontFamily: 'var(--font-display)',
+                        fontWeight: 800,
+                        fontSize: '52px',
+                        color: '#fff',
                         marginBottom: '20px',
                         letterSpacing: '-1.5px',
                         lineHeight: 1.1
                     }}>
                         Simple, Transparent <span style={{ color: 'var(--primary)' }}>Pricing</span>
                     </h1>
-                    <p style={{ 
-                        fontSize: '18px', 
-                        color: 'rgba(255,255,255,0.7)', 
-                        maxWidth: '600px', 
+                    <p style={{
+                        fontSize: '18px',
+                        color: 'rgba(255,255,255,0.7)',
+                        maxWidth: '600px',
                         margin: '0 auto 40px',
                         lineHeight: 1.6
                     }}>
@@ -116,10 +116,10 @@ export default function PricingPage() {
                     </p>
 
                     {/* Billing Toggle */}
-                    <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         gap: '16px',
                         background: 'rgba(255,255,255,0.05)',
                         backdropFilter: 'blur(10px)',
@@ -129,11 +129,11 @@ export default function PricingPage() {
                         margin: '0 auto',
                         border: '1px solid rgba(255,255,255,0.1)'
                     }}>
-                        <button 
+                        <button
                             onClick={() => setBilling('monthly')}
-                            style={{ 
-                                padding: '10px 24px', 
-                                borderRadius: '100px', 
+                            style={{
+                                padding: '10px 24px',
+                                borderRadius: '100px',
                                 background: billing === 'monthly' ? 'var(--primary)' : 'transparent',
                                 color: '#fff',
                                 fontWeight: 700,
@@ -141,11 +141,11 @@ export default function PricingPage() {
                                 transition: 'all 0.3s'
                             }}
                         >Monthly</button>
-                        <button 
+                        <button
                             onClick={() => setBilling('yearly')}
-                            style={{ 
-                                padding: '10px 24px', 
-                                borderRadius: '100px', 
+                            style={{
+                                padding: '10px 24px',
+                                borderRadius: '100px',
                                 background: billing === 'yearly' ? 'var(--primary)' : 'transparent',
                                 color: '#fff',
                                 fontWeight: 700,
@@ -162,10 +162,10 @@ export default function PricingPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
                     {TIERS.map((tier, idx) => (
                         <div key={tier.name} className="animate-in" style={{ animationDelay: `${idx * 0.1}s` }}>
-                            <div style={{ 
-                                background: 'var(--surface)', 
-                                borderRadius: 'var(--radius-2xl)', 
-                                padding: '48px 40px', 
+                            <div style={{
+                                background: 'var(--surface)',
+                                borderRadius: 'var(--radius-2xl)',
+                                padding: '48px 40px',
                                 height: '100%',
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -174,14 +174,14 @@ export default function PricingPage() {
                                 boxShadow: tier.highlight ? 'var(--shadow-lg)' : 'var(--shadow)',
                                 transition: 'transform 0.3s ease'
                             }}
-                            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-10px)'}
-                            onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-10px)'}
+                                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                             >
                                 {tier.highlight && (
-                                    <div style={{ 
-                                        position: 'absolute', 
-                                        top: '0', 
-                                        left: '50%', 
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '0',
+                                        left: '50%',
                                         transform: 'translate(-50%, -50%)',
                                         background: 'var(--primary)',
                                         color: '#fff',
@@ -204,12 +204,12 @@ export default function PricingPage() {
                                 </div>
                                 <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>{tier.description}</p>
 
-                                <button 
+                                <button
                                     onClick={() => handleBuyPlan(tier.slug)}
                                     disabled={loadingSlug === tier.slug}
-                                    style={{ 
-                                        width: '100%', 
-                                        padding: '16px', 
+                                    style={{
+                                        width: '100%',
+                                        padding: '16px',
                                         background: tier.highlight ? 'var(--primary)' : 'var(--surface-2)',
                                         color: tier.highlight ? '#fff' : 'var(--text-primary)',
                                         borderRadius: 'var(--radius-xl)',
@@ -253,9 +253,35 @@ export default function PricingPage() {
                         </div>
                         <div style={{ flex: '1 1 500px', display: 'grid', gap: '24px' }}>
                             {[
-                                { q: 'Can I change plans at any time?', a: 'Yes! You can upgrade or downgrade your plan whenever you need from your store dashboard.' },
-                                { q: 'Are there any hidden transaction fees?', a: 'No hidden fees. We maintain a transparent 2.5% platform fee on all successful sales for Basic accounts.' },
-                                { q: 'How do payouts work?', a: 'Payouts are processed every Friday for balance settled 7 days prior, directly to your linked bank account.' }
+
+                                {
+                                    q: 'How do I use the platform?',
+                                    a: 'Sign in to your dashboard, open "Products & Services," then click "Add Product" or "Add Service." Fill in the required details, upload images, set your price, and publish your listing.'
+                                },
+                                {
+                                    q: 'Can I sell both products and services?',
+                                    a: 'Yes. Your store can list physical products, digital products, and services all from a single dashboard.'
+                                },
+                                {
+                                    q: 'Can I edit or delete my listings?',
+                                    a: 'Absolutely. You can update, archive, or delete any product or service from your dashboard at any time.'
+                                },
+                                {
+                                    q: 'Can I change plans at any time?',
+                                    a: 'Yes. Upgrade or downgrade your subscription whenever your business needs change.'
+                                },
+                                {
+                                    q: 'Are there any hidden transaction fees?',
+                                    a: 'No. Our pricing is transparent, with only the platform fee applicable to your plan.'
+                                },
+                                {
+                                    q: 'How do payouts work?',
+                                    a: 'Payouts are sent directly to your linked bank account on the scheduled payout dates once your funds are eligible.'
+                                },
+                                {
+                                    q: 'How secure are payments?',
+                                    a: 'Payments are processed through trusted payment partners using industry-standard security and encryption.'
+                                }
                             ].map(faq => (
                                 <div key={faq.q} style={{ paddingBottom: '24px', borderBottom: '1px solid var(--border)' }}>
                                     <h4 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '12px', color: 'var(--text-primary)' }}>{faq.q}</h4>
