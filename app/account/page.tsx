@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { getProfile, updateProfile, getAddresses, getMyOrders, createAddress, deleteAddress, setDefaultAddress, changeAccountPassword, toggleTwoFactor, getNotifications, markNotificationRead, markAllNotificationsRead } from '@/services/accountService';
+import { getProfile, updateProfile, getAddresses, getMyOrders, createAddress, deleteAddress, setDefaultAddress, changeAccountPassword, getTwoFactorStatus, toggleTwoFactor, getNotifications, markNotificationRead, markAllNotificationsRead } from '@/services/accountService';
 import { getWallet, getTransactions, initiateFunding, verifyFunding } from '@/services/walletService';
 import { getMyCode, getReferralStats, getReferralHistory, claimReferral } from '@/services/referralService';
 import { UserProfile, Address, Order, AppNotification, Wallet, Transaction, ReferralStats, ReferralHistory, ReferralCode } from '@/services/types';
@@ -53,7 +53,7 @@ export default function AccountPage() {
             setLoading(true);
             try {
                 if (tokenStorage.getAccessToken()) {
-                    const [p, a, o, notifs, wal, txs, refStats, refHist, refCode] = await Promise.all([
+                    const [p, a, o, notifs, wal, txs, refStats, refHist, refCode, twoFa] = await Promise.all([
                         getProfile(),
                         getAddresses(),
                         getMyOrders(),
@@ -62,7 +62,8 @@ export default function AccountPage() {
                         getTransactions().catch(() => []),
                         getReferralStats().catch(() => null),
                         getReferralHistory().catch(() => []),
-                        getMyCode().catch(() => null)
+                        getMyCode().catch(() => null),
+                        getTwoFactorStatus().catch(() => ({ two_factor_enabled: false }))
                     ]);
                     setUser(p);
                     setProfileForm(p);
@@ -74,6 +75,7 @@ export default function AccountPage() {
                     setReferralStats(refStats);
                     setReferralHistory(refHist);
                     setReferralCode(refCode);
+                    setTwoFactorEnabled(twoFa?.two_factor_enabled || false);
                 } else {
                     window.location.href = '/login';
                 }
@@ -204,8 +206,9 @@ export default function AccountPage() {
     const handleToggleTwoFactor = async () => {
         try {
             setTogglingTwoFactor(true);
-            const result = await toggleTwoFactor();
-            setTwoFactorEnabled(result.two_factor_enabled);
+            const newState = !twoFactorEnabled;
+            const result = await toggleTwoFactor(newState);
+            setTwoFactorEnabled(result.two_factor_enabled ?? newState);
             success(result.detail || (result.two_factor_enabled ? 'Two-factor authentication enabled!' : 'Two-factor authentication disabled.'));
         } catch (err: any) {
             toastError(err.detail || err.message || 'Failed to toggle two-factor authentication.');
