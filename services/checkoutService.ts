@@ -15,6 +15,7 @@ export interface ProductCheckoutPayload {
         item_id: number;
         quantity: number;
     }[];
+    payment_method?: string;
 }
 
 export interface ServiceCheckoutPayload {
@@ -29,6 +30,7 @@ export interface ServiceCheckoutPayload {
         item_id: number;
         quantity: number;
     }[];
+    payment_method?: string;
 }
 
 /**
