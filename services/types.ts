@@ -25,6 +25,7 @@ export interface UserProfile {
     gender?: 'MALE' | 'FEMALE' | 'NON_BINARY' | 'PREFER_NOT_TO_SAY';
     date_of_birth?: string;
     bio?: string;
+    two_factor_enabled?: boolean;
     notify_order_updates: boolean;
     notify_promotions: boolean;
     notify_new_arrivals: boolean;
@@ -241,4 +242,61 @@ export interface Wishlist {
     id: number;
     product: Product;
     created_at: string;
+}
+
+export interface AppNotification {
+    id: number;
+    title: string;
+    message: string;
+    notification_type: string;
+    is_read: boolean;
+    created_at: string;
+}
+
+export interface Wallet {
+    id: number;
+    currency: string;
+    balance: string;
+    status: string;
+    created_at: string;
+}
+
+export interface Transaction {
+    id: number;
+    reference: string;
+    type: string;
+    direction: 'CREDIT' | 'DEBIT';
+    amount: string;
+    balance_before: string;
+    balance_after: string;
+    status: 'PENDING' | 'SUCCESS' | 'FAILED';
+    order?: number;
+    description: string;
+    created_at: string;
+}
+
+export interface ReferralCode {
+    code: string;
+    is_active: boolean;
+    created_at: string;
+}
+
+export interface ReferralHistory {
+    id: string;
+    referrer_email: string;
+    status: string;
+    status_display: string;
+    created_at: string;
+    qualified_at: string | null;
+    rewarded_at: string | null;
+}
+
+export interface ReferralStats {
+    code: string;
+    total_referrals: number;
+    successful_referrals: number;
+    pending_referrals: number;
+    total_earned: string;
+    reward_per_referral: string;
+    minimum_funding: string;
 }

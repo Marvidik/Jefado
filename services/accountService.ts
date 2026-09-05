@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance';
-import { Address, Order, UserProfile, Wishlist, PaginatedResponse } from './types';
+import { Address, Order, UserProfile, Wishlist, PaginatedResponse, AppNotification } from './types';
 
 // Profile
 export const getProfile = (): Promise<UserProfile> => 
@@ -47,3 +47,20 @@ export const removeFromWishlist = (productId: number) =>
 // Password
 export const changeAccountPassword = (data: any) => 
     axiosInstance.post('/api/v1/accounts/change-password/', data);
+
+// Two-Factor Authentication
+export const getTwoFactorStatus = (): Promise<{ two_factor_enabled: boolean }> =>
+    axiosInstance.get('/api/v1/accounts/2fa/status/').then(res => res.data);
+
+export const toggleTwoFactor = (enabled: boolean): Promise<{ two_factor_enabled: boolean; detail: string }> =>
+    axiosInstance.post('/api/v1/accounts/two-factor/toggle/', { enabled }).then(res => res.data);
+
+// Notifications
+export const getNotifications = (params?: any): Promise<PaginatedResponse<AppNotification>> =>
+    axiosInstance.get('/api/v1/accounts/notifications/', { params }).then(res => res.data);
+
+export const markNotificationRead = (id: number) =>
+    axiosInstance.post(`/api/v1/accounts/notifications/${id}/mark-read/`);
+
+export const markAllNotificationsRead = () =>
+    axiosInstance.post('/api/v1/accounts/notifications/mark-all-read/');

@@ -16,6 +16,7 @@ interface FormData {
     address: string; city: string; state: string; zip: string; country: string;
     saveAddress: boolean;
     bookingNotes: string;
+    paymentMethod: string;
 }
 
 interface OrderItem {
@@ -313,13 +314,44 @@ function ShippingStep({ form, setForm, onNext, isService }: {
 
 
 /* ── Step 3: Review & confirm ───────────── */
-function ReviewStep({ items, form, onBack, onPlace, loading }: { items: OrderItem[]; form: FormData; onBack: () => void; onPlace: () => void; loading: boolean }) {
+function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn }: { items: OrderItem[]; form: FormData; setForm: (f: FormData) => void; onBack: () => void; onPlace: () => void; loading: boolean; isLoggedIn: boolean; }) {
     const [agreed, setAgreed] = useState(false);
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
 
     return (
         <div>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', marginBottom: '20px' }}>Review Your Order</h2>
+
+            {/* Payment Method Selection */}
+            <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '14px' }}>
+                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', marginBottom: '12px' }}>💳 Payment Method</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'paystack' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'paystack' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'transparent' }}>
+                        <input 
+                            type="radio" 
+                            name="paymentMethod" 
+                            value="paystack" 
+                            checked={form.paymentMethod === 'paystack'} 
+                            onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })} 
+                            style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }}
+                        />
+                        <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Paystack (Cards / Bank / USSD)</span>
+                    </label>
+                    {isLoggedIn && (
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'wallet' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'wallet' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'transparent' }}>
+                            <input 
+                                type="radio" 
+                                name="paymentMethod" 
+                                value="wallet" 
+                                checked={form.paymentMethod === 'wallet'} 
+                                onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })}
+                                style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }}
+                            />
+                            <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Jefedo Wallet Balance</span>
+                        </label>
+                    )}
+                </div>
+            </div>
 
             {/* Shipping summary */}
             <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '14px' }}>
@@ -634,6 +666,7 @@ function CheckoutContent() {
                     booking_time: normalizeTime(time!),
                     booking_notes: `Address: ${form.address}, ${form.city}, ${form.state}. ${form.bookingNotes}`,
                     coupon_code: couponCode || undefined,
+                    payment_method: form.paymentMethod,
                     items: [{ item_id: item!.id, quantity: qtyParam ? parseInt(qtyParam) : 1 }]
                 });
 
@@ -657,6 +690,7 @@ function CheckoutContent() {
                     country: form.country,
                     postal_code: form.zip,
                     coupon_code: couponCode || undefined,
+                    payment_method: form.paymentMethod,
                     items: payloadItems
                 });
 
@@ -708,7 +742,7 @@ function CheckoutContent() {
                 <div style={{ flex: '1 1 65%', minWidth: 0 }}>
                     <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '28px', minWidth: 0 }}>
                         {step === 1 && <ShippingStep form={form} setForm={setForm} onNext={() => setStep(2)} isService={isService} />}
-                        {step === 2 && <ReviewStep items={items} form={form} onBack={() => setStep(1)} onPlace={handlePlaceOrder} loading={loading} />}
+                        {step === 2 && <ReviewStep items={items} form={form} setForm={setForm} onBack={() => setStep(1)} onPlace={handlePlaceOrder} loading={loading} isLoggedIn={!!tokenStorage.getAccessToken()} />}
                     </div>
 
                 </div>
@@ -735,6 +769,7 @@ const EMPTY_FORM: FormData = {
     address: '', city: '', state: '', zip: '', country: 'Nigeria',
     saveAddress: true,
     bookingNotes: '',
+    paymentMethod: 'paystack',
 };
 
 

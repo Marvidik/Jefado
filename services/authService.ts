@@ -1,15 +1,42 @@
 import axiosInstance, { tokenStorage } from './axiosInstance';
 import { JWT, User } from './types';
 
-export const login = async (data: any): Promise<JWT> => {
+export interface TwoFactorLoginResponse {
+    two_factor_required: true;
+    detail: string;
+    email: string;
+}
+
+export const login = async (data: any): Promise<JWT | TwoFactorLoginResponse> => {
     try {
         const response = await axiosInstance.post('/api/v1/auth/login/', data);
         console.log("%c📥 [LOGIN DATA]:", "color: #00ff00; font-weight: bold; font-size: 14px;", response.data);
         
+        // If 2FA is required, return the response without storing tokens
+        if (response.data.two_factor_required) {
+            return response.data as TwoFactorLoginResponse;
+        }
+
         const access = response.data.access || response.data.access_token;
         const refresh = response.data.refresh || response.data.refresh_token;
         const userType = response.data.user?.user_type;
         
+        tokenStorage.setTokens(access, refresh, userType);
+        return response.data;
+    } catch (error: any) {
+        throw error.response?.data || error;
+    }
+};
+
+export const verifyLoginOtp = async (data: { email: string; otp: number }): Promise<JWT> => {
+    try {
+        const response = await axiosInstance.post('/api/v1/auth/login/verify-otp/', data);
+        console.log("%c📥 [2FA VERIFY DATA]:", "color: #00ff00; font-weight: bold; font-size: 14px;", response.data);
+
+        const access = response.data.access || response.data.access_token;
+        const refresh = response.data.refresh || response.data.refresh_token;
+        const userType = response.data.user?.user_type;
+
         tokenStorage.setTokens(access, refresh, userType);
         return response.data;
     } catch (error: any) {

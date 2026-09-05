@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { login, register, verifyEmail, requestPasswordReset, completePasswordReset } from '@/services/authService';
+import { login, verifyLoginOtp, register, verifyEmail, requestPasswordReset, completePasswordReset, TwoFactorLoginResponse } from '@/services/authService';
 import { useToast } from '@/components/ui/Toast';
 
-type Mode = 'login' | 'register' | 'forgot' | 'otp';
+type Mode = 'login' | 'register' | 'forgot' | 'otp' | '2fa';
 
 /* ── Reusable input ─────────────────────── */
 function Field({ label, type = 'text', value, onChange, placeholder, required }: {
@@ -51,7 +51,7 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
 
 /* ── Illustrated side panel ─────────────── */
 function AuthPanel({ mode }: { mode: Mode }) {
-    const content = {
+    const content: Record<Mode, { title: string; desc: string }> = {
         login: {
             title: 'Welcome\nBack.',
             desc: 'Sign in to manage your account, track orders, and access your dashboard.',
@@ -67,6 +67,10 @@ function AuthPanel({ mode }: { mode: Mode }) {
         otp: {
             title: 'Verify\nOTP.',
             desc: 'Enter the verification code sent to your email to complete your registration.',
+        },
+        '2fa': {
+            title: 'Two-Factor\nAuth.',
+            desc: 'Enter the 4-digit verification code sent to your email to complete sign in.',
         },
     };
     const c = content[mode];
@@ -136,7 +140,7 @@ function AuthPanel({ mode }: { mode: Mode }) {
 }
 
 /* ── Login Form ─────────────────────────── */
-function LoginForm({ onSwitch, onForgot, onSuccess }: { onSwitch: () => void; onForgot: () => void; onSuccess: (type: string) => void }) {
+function LoginForm({ onSwitch, onForgot, onSuccess, onTwoFactor }: { onSwitch: () => void; onForgot: () => void; onSuccess: (type: string) => void; onTwoFactor: (email: string) => void }) {
     const toast = useToast();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -172,7 +176,13 @@ function LoginForm({ onSwitch, onForgot, onSuccess }: { onSwitch: () => void; on
                 setLoading(true); 
                 try {
                     const result = await login({ username: email, email: email, password });
-                    const uType = result.user?.user_type || 'CUSTOMER';
+                    // Check if 2FA is required
+                    if ('two_factor_required' in result && result.two_factor_required) {
+                        toast.success(result.detail || 'Verification code sent to your email.');
+                        onTwoFactor(result.email || email);
+                        return;
+                    }
+                    const uType = (result as any).user?.user_type || 'CUSTOMER';
                     toast.success('Successfully logged in!');
                     onSuccess(uType.toLowerCase());
                 } catch (err: any) {
@@ -221,6 +231,142 @@ function LoginForm({ onSwitch, onForgot, onSuccess }: { onSwitch: () => void; on
                     </button>
                 </p>
             </div>
+        </div>
+    );
+}
+
+/* ── Two-Factor OTP Form ──────────────────── */
+function TwoFactorForm({ email, onBack, onSuccess }: { email: string; onBack: () => void; onSuccess: (type: string) => void }) {
+    const toast = useToast();
+    const [otp, setOtp] = useState(['', '', '', '']);
+    const [loading, setLoading] = useState(false);
+
+    const handleChange = (val: string, index: number) => {
+        if (!/^\d*$/.test(val)) return;
+        const newOtp = [...otp];
+        newOtp[index] = val.slice(-1);
+        setOtp(newOtp);
+        if (val && index < 3) document.getElementById(`2fa-otp-${index + 1}`)?.focus();
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (e.key === 'Backspace' && !otp[index] && index > 0) {
+            document.getElementById(`2fa-otp-${index - 1}`)?.focus();
+        }
+    };
+
+    const handlePaste = (e: React.ClipboardEvent) => {
+        e.preventDefault();
+        const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+        if (pasted.length > 0) {
+            const newOtp = [...otp];
+            for (let i = 0; i < 4; i++) {
+                newOtp[i] = pasted[i] || '';
+            }
+            setOtp(newOtp);
+            const focusIdx = Math.min(pasted.length, 3);
+            document.getElementById(`2fa-otp-${focusIdx}`)?.focus();
+        }
+    };
+
+    const valid = otp.every(v => v !== '');
+    const code = otp.join('');
+
+    const handleVerify = async () => {
+        if (!valid) return;
+        setLoading(true);
+        try {
+            const result = await verifyLoginOtp({ email, otp: parseInt(code, 10) });
+            const uType = result.user?.user_type || 'CUSTOMER';
+            toast.success('Successfully verified! Logging you in...');
+            onSuccess(uType.toLowerCase());
+        } catch (err: any) {
+            toast.error(err.non_field_errors?.[0] || err.detail || err.message || 'Invalid verification code.');
+            setOtp(['', '', '', '']);
+            document.getElementById('2fa-otp-0')?.focus();
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div style={{ width: '100%' }}>
+            <button onClick={onBack} style={{ color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer', marginBottom: '24px', fontSize: '14px', fontWeight: 600 }}>← Back to Login</button>
+            
+            <div style={{ textAlign: 'center', marginBottom: '12px' }}>
+                <div style={{ 
+                    width: '72px', height: '72px', borderRadius: '50%', 
+                    background: 'linear-gradient(135deg, rgba(26,86,219,0.1) 0%, rgba(238,18,23,0.08) 100%)', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                    margin: '0 auto 20px', fontSize: '32px'
+                }}>🔐</div>
+            </div>
+
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '32px', color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-1.5px', textAlign: 'center' }}>Two-Factor Verification</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '12px', textAlign: 'center', lineHeight: 1.6 }}>
+                A 4-digit code has been sent to<br/>
+                <strong style={{ color: 'var(--text-primary)' }}>{email}</strong>
+            </p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '36px', textAlign: 'center' }}>
+                Enter the code below to complete sign in.
+            </p>
+
+            <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', marginBottom: '40px' }} onPaste={handlePaste}>
+                {otp.map((v, i) => (
+                    <input 
+                        key={i} 
+                        id={`2fa-otp-${i}`} 
+                        type="text" 
+                        inputMode="numeric" 
+                        maxLength={1}
+                        value={v} 
+                        onChange={e => handleChange(e.target.value, i)} 
+                        onKeyDown={e => handleKeyDown(e, i)}
+                        autoFocus={i === 0}
+                        style={{ 
+                            width: '68px', height: '76px', textAlign: 'center', 
+                            fontSize: '28px', fontWeight: 800, 
+                            border: `2.5px solid ${v ? 'var(--primary)' : 'var(--border)'}`, 
+                            borderRadius: '16px', 
+                            background: v ? 'rgba(26,86,219,0.03)' : 'var(--surface-2)',
+                            color: 'var(--text-primary)',
+                            outline: 'none',
+                            transition: 'all 0.2s ease',
+                            fontFamily: 'var(--font-display)',
+                            caretColor: 'var(--primary)',
+                            boxShadow: v ? '0 4px 12px rgba(26,86,219,0.08)' : 'none'
+                        }} 
+                        onFocus={e => {
+                            e.currentTarget.style.borderColor = 'var(--primary)';
+                            e.currentTarget.style.boxShadow = '0 0 0 3px rgba(26,86,219,0.08)';
+                        }}
+                        onBlur={e => {
+                            e.currentTarget.style.borderColor = v ? 'var(--primary)' : 'var(--border)';
+                            e.currentTarget.style.boxShadow = v ? '0 4px 12px rgba(26,86,219,0.08)' : 'none';
+                        }}
+                    />
+                ))}
+            </div>
+
+            <button 
+                onClick={handleVerify}
+                disabled={!valid || loading}
+                style={{ 
+                    width: '100%', padding: '18px', 
+                    background: valid ? 'var(--primary)' : 'var(--border)', 
+                    color: valid ? '#fff' : 'var(--text-muted)', 
+                    borderRadius: '14px', fontFamily: 'var(--font-display)', 
+                    fontWeight: 800, fontSize: '16px', 
+                    cursor: valid ? 'pointer' : 'not-allowed', 
+                    letterSpacing: '0.5px',
+                    border: 'none',
+                    transition: 'all 0.2s ease'
+                }}
+            >{loading ? 'Verifying...' : 'Verify & Sign In'}</button>
+
+            <p style={{ textAlign: 'center', marginTop: '24px', fontSize: '13px', color: 'var(--text-muted)' }}>
+                Didn't receive a code? <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 700, cursor: 'pointer', fontSize: '13px' }}>Try logging in again</button>
+            </p>
         </div>
     );
 }
@@ -598,6 +744,7 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
 export default function AuthPage() {
     const [mode, setMode] = useState<Mode>('login');
     const [userType, setUserType] = useState('buyer');
+    const [twoFactorEmail, setTwoFactorEmail] = useState('');
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -615,11 +762,16 @@ export default function AuthPage() {
 
     const handleSuccess = (type: string) => {
         setUserType(type);
-        if (mode === 'login') {
-            window.location.href = type === 'seller' ? '/dashboard' : '/';
+        if (mode === 'login' || mode === '2fa') {
+            window.location.href = type === 'seller' || type === 'merchant' ? '/dashboard' : '/';
         } else {
             // Registration success is handled locally in RegisterForm success state
         }
+    };
+
+    const handleTwoFactor = (email: string) => {
+        setTwoFactorEmail(email);
+        setMode('2fa');
     };
 
     return (
@@ -645,7 +797,8 @@ export default function AuthPage() {
                 <div className="auth-panel"><AuthPanel mode={mode} /></div>
                 <div className="auth-form-col">
                     <div className="auth-form-inner">
-                        {mode === 'login' && <LoginForm onSwitch={() => setMode('register')} onForgot={() => setMode('forgot')} onSuccess={handleSuccess} />}
+                        {mode === 'login' && <LoginForm onSwitch={() => setMode('register')} onForgot={() => setMode('forgot')} onSuccess={handleSuccess} onTwoFactor={handleTwoFactor} />}
+                        {mode === '2fa' && <TwoFactorForm email={twoFactorEmail} onBack={() => setMode('login')} onSuccess={handleSuccess} />}
                         {mode === 'register' && <RegisterForm onSwitch={() => setMode('login')} onSuccess={handleSuccess} defaultAccountType={userType} />}
                         {mode === 'forgot' && <ForgotForm onBack={() => setMode('login')} />}
                         {mode === 'otp' && <OTPForm onBack={() => setMode('login')} userType={userType} />}

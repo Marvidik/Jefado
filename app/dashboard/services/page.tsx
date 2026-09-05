@@ -297,10 +297,13 @@ export default function ServicesManagementPage() {
         ];
     });
 
-    const categoryOptions = categories.map(c => ({
-        value: c.id.toString(),
-        label: c.name
-    }));
+    const categoryOptions = [
+        { value: '', label: 'Select a category...' },
+        ...categories.map(c => ({
+            value: c.id.toString(),
+            label: c.name
+        }))
+    ];
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
