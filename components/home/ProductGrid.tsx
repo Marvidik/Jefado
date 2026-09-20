@@ -111,31 +111,54 @@ export default function ProductGrid() {
                 }}>
                     {/* Ad 1 */}
                     <div style={{
-                        background: 'var(--announce-bg)',
                         borderRadius: 'var(--radius-xl)',
-                        padding: '24px 20px',
-                        textAlign: 'center',
+                        overflow: 'hidden',
+                        position: 'relative',
                         flex: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                        minHeight: '350px',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
                     }}>
-                        <p style={{ fontSize: '24px', marginBottom: '12px' }}>🎧</p>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff', marginBottom: '6px' }}>Shop JEFEDO core products</p>
-                        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '12px' }}>Escape the noise. It&apos;s time to shop the magic.</p>
+                        <img 
+                            src="/images/ads.jpeg" 
+                            alt="JEFEDO Core Products" 
+                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} 
+                        />
                         <div style={{
-                            background: 'rgba(255,255,255,0.1)',
-                            borderRadius: 'var(--radius)',
-                            padding: '8px',
-                            marginBottom: '14px',
-                        }}>
-                            <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginBottom: '2px' }}>Only for:</p>
-                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: '#fff' }}>The Best Prices</p>
+                            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', 
+                            background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%)', zIndex: 1
+                        }}></div>
+                        
+                        <div style={{ position: 'relative', zIndex: 2, padding: '24px 20px', textAlign: 'center' }}>
+                            <p style={{ fontSize: '24px', marginBottom: '8px' }}>🎧</p>
+                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '16px', color: '#fff', marginBottom: '6px' }}>Shop JEFEDO core products</p>
+                            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', marginBottom: '16px', lineHeight: 1.4 }}>Escape the noise. It&apos;s time to shop the magic.</p>
+                            
+                            <div style={{
+                                background: 'rgba(255,255,255,0.15)',
+                                backdropFilter: 'blur(8px)',
+                                borderRadius: 'var(--radius)',
+                                padding: '10px',
+                                marginBottom: '16px',
+                                border: '1px solid rgba(255,255,255,0.2)'
+                            }}>
+                                <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>Only for:</p>
+                                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: '#fff' }}>The Best Prices</p>
+                            </div>
+                            
+                            <button style={{
+                                width: '100%', padding: '12px',
+                                background: '#fff', color: '#000',
+                                borderRadius: 'var(--radius)',
+                                fontWeight: 800, fontSize: '13px',
+                                fontFamily: 'var(--font-body)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: 'none',
+                            }}>Shop Now →</button>
                         </div>
-                        <button style={{
-                            width: '100%', padding: '10px',
-                            background: 'var(--primary)', color: '#fff',
-                            borderRadius: 'var(--radius)',
-                            fontWeight: 700, fontSize: '13px',
-                            fontFamily: 'var(--font-body)',
-                        }}>Shop Now →</button>
                     </div>
 
                     {/* Ad 2 */}
