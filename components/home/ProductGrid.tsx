@@ -121,33 +121,19 @@ export default function ProductGrid() {
                         minHeight: '350px',
                         boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
                     }}>
-                        <img 
-                            src="/images/ads.jpeg" 
-                            alt="JEFEDO Core Products" 
-                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} 
+                        <img
+                            src="/images/ads.jpg"
+                            alt="JEFEDO Core Products"
+                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
                         />
                         <div style={{
-                            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', 
+                            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
                             background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%)', zIndex: 1
                         }}></div>
-                        
+
                         <div style={{ position: 'relative', zIndex: 2, padding: '24px 20px', textAlign: 'center' }}>
-                            <p style={{ fontSize: '24px', marginBottom: '8px' }}>🎧</p>
-                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '16px', color: '#fff', marginBottom: '6px' }}>Shop JEFEDO core products</p>
-                            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', marginBottom: '16px', lineHeight: 1.4 }}>Escape the noise. It&apos;s time to shop the magic.</p>
-                            
-                            <div style={{
-                                background: 'rgba(255,255,255,0.15)',
-                                backdropFilter: 'blur(8px)',
-                                borderRadius: 'var(--radius)',
-                                padding: '10px',
-                                marginBottom: '16px',
-                                border: '1px solid rgba(255,255,255,0.2)'
-                            }}>
-                                <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>Only for:</p>
-                                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: '#fff' }}>The Best Prices</p>
-                            </div>
-                            
+                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '18px', color: '#fff', marginBottom: '16px' }}>Shop JEFEDO Core</p>
+
                             <button style={{
                                 width: '100%', padding: '12px',
                                 background: '#fff', color: '#000',
@@ -163,22 +149,37 @@ export default function ProductGrid() {
 
                     {/* Ad 2 */}
                     <div style={{
-                        background: 'linear-gradient(135deg, #fbbf24, #f97316)',
+                        position: 'relative',
                         borderRadius: 'var(--radius-xl)',
-                        padding: '20px',
-                        textAlign: 'center',
+                        overflow: 'hidden',
+                        minHeight: '350px',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
                     }}>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '28px', color: '#fff', marginBottom: '4px' }}>10%</p>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: '#fff', marginBottom: '4px' }}>DISCOUNT</p>
-                        <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', marginBottom: '4px' }}>Summer Sales</p>
-                        <p style={{ fontSize: '11px', color: '#fff', fontWeight: 600, marginBottom: '12px' }}>only for <strong>JEFEDO CORE </strong> PRODUCTS.</p>
-                        <button style={{
-                            width: '100%', padding: '9px',
-                            background: '#fff', color: '#f97316',
-                            borderRadius: 'var(--radius)',
-                            fontWeight: 700, fontSize: '13px',
-                            fontFamily: 'var(--font-body)',
-                        }}>Shop Now →</button>
+                        <img
+                            src="/images/ads2.jpg"
+                            alt="JEFEDO Summer Sale"
+                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+                        />
+                        <div style={{
+                            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                            background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%)', zIndex: 1
+                        }}></div>
+
+                        <div style={{ position: 'relative', zIndex: 2, padding: '24px 20px', textAlign: 'center' }}>
+                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '28px', color: '#fff', marginBottom: '4px' }}>10%</p>
+                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: '#fff', marginBottom: '16px' }}>DISCOUNT</p>
+
+                            <button style={{
+                                width: '100%', padding: '12px',
+                                background: '#fff', color: '#000',
+                                borderRadius: 'var(--radius)',
+                                fontWeight: 800, fontSize: '13px',
+                                fontFamily: 'var(--font-body)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                border: 'none',
+                            }}>Shop Now →</button>
+                        </div>
                     </div>
                 </div>
             </div>

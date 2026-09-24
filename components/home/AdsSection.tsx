@@ -82,13 +82,18 @@ export default function AdsSection() {
                     position: relative;
                     z-index: 2;
                     display: flex;
+                    flex-direction: row;
                     justify-content: center;
                     align-items: center;
+                    gap: 12px;
                     max-width: 500px;
                 }
                 .ads-image {
-                    width: 100%;
-                    height: auto;
+                    flex: 1;
+                    min-width: 0;
+                    max-width: 50%;
+                    height: 280px;
+                    object-fit: contain;
                     border-radius: var(--radius-lg);
                     box-shadow: 0 24px 48px -12px rgba(0,0,0,0.15);
                     transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
@@ -126,31 +131,37 @@ export default function AdsSection() {
                     .ads-title {
                         font-size: 32px;
                     }
+                    .ads-image-container {
+                        max-width: 100%;
+                        width: 100%;
+                    }
                     .ads-image {
                         transform: none;
+                        height: 180px;
                     }
                 }
             `}</style>
-            
+
             <div className="ads-promo-wrap">
                 <div className="ads-bg-glow"></div>
-                
+
                 <div className="ads-content">
                     <span className="ads-tag">🎧 Shop JEFEDO core products</span>
                     <h2 className="ads-title">Escape the noise. It&apos;s time to shop the magic.</h2>
 
                     <div className="ads-highlight">
-                        <span>Only for:</span> 
+                        <span>Only for:</span>
                         <span style={{ color: 'var(--primary)', background: 'var(--primary-light)', padding: '4px 12px', borderRadius: '12px', fontSize: '16px' }}>The Best Prices</span>
                     </div>
-                    
+
                     <a href="/shop" className="ads-button">
                         Shop Now <span style={{ fontSize: '20px' }}>→</span>
                     </a>
                 </div>
-                
+
                 <div className="ads-image-container">
-                    <img src="/images/ads.jpeg" alt="JEFEDO Core Products" className="ads-image" />
+                    <img src="/images/ads.jpg" alt="JEFEDO Core Products" className="ads-image" />
+                    <img src="/images/ads2.jpg" alt="JEFEDO Core Products 2" className="ads-image" />
                 </div>
             </div>
         </section>
