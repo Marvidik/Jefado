@@ -154,7 +154,7 @@ export default function AdsSection() {
                         <span style={{ color: 'var(--primary)', background: 'var(--primary-light)', padding: '4px 12px', borderRadius: '12px', fontSize: '16px' }}>The Best Prices</span>
                     </div>
 
-                    <a href="/shop" className="ads-button">
+                    <a href="/products" className="ads-button">
                         Shop Now <span style={{ fontSize: '20px' }}>→</span>
                     </a>
                 </div>

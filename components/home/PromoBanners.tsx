@@ -15,7 +15,7 @@ export default function PromoBanners() {
             ctaBg: 'var(--secondary)',
             ctaColor: '#fff',
             ctaBorder: 'none',
-            href: '/account?tab=orders'
+            href: '/dashboard'
         },
         {
             tag: 'Order History',

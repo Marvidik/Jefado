@@ -132,19 +132,21 @@ export default function ProductGrid() {
                         }}></div>
 
                         <div style={{ position: 'relative', zIndex: 2, padding: '24px 20px', textAlign: 'center' }}>
-                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '18px', color: '#fff', marginBottom: '16px' }}>Shop JEFEDO Core</p>
+                                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '18px', color: '#fff', marginBottom: '16px' }}>Shop JEFEDO Core</p>
 
-                            <button style={{
-                                width: '100%', padding: '12px',
-                                background: '#fff', color: '#000',
-                                borderRadius: 'var(--radius)',
-                                fontWeight: 800, fontSize: '13px',
-                                fontFamily: 'var(--font-body)',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                border: 'none',
-                            }}>Shop Now →</button>
-                        </div>
+                                <a href="/products" style={{
+                                    display: 'block',
+                                    width: '100%', padding: '12px',
+                                    background: '#fff', color: '#000',
+                                    borderRadius: 'var(--radius)',
+                                    fontWeight: 800, fontSize: '13px',
+                                    fontFamily: 'var(--font-body)',
+                                    textDecoration: 'none',
+                                    textAlign: 'center',
+                                    transition: 'all 0.2s',
+                                    boxSizing: 'border-box',
+                                }}>Shop Now →</a>
+                            </div>
                     </div>
 
                     {/* Ad 2 */}
@@ -166,20 +168,22 @@ export default function ProductGrid() {
                         }}></div>
 
                         <div style={{ position: 'relative', zIndex: 2, padding: '24px 20px', textAlign: 'center' }}>
-                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '28px', color: '#fff', marginBottom: '4px' }}>10%</p>
-                            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: '#fff', marginBottom: '16px' }}>DISCOUNT</p>
+                                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '28px', color: '#fff', marginBottom: '4px' }}>10%</p>
+                                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: '#fff', marginBottom: '16px' }}>DISCOUNT</p>
 
-                            <button style={{
-                                width: '100%', padding: '12px',
-                                background: '#fff', color: '#000',
-                                borderRadius: 'var(--radius)',
-                                fontWeight: 800, fontSize: '13px',
-                                fontFamily: 'var(--font-body)',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                border: 'none',
-                            }}>Shop Now →</button>
-                        </div>
+                                <a href="/products" style={{
+                                    display: 'block',
+                                    width: '100%', padding: '12px',
+                                    background: '#fff', color: '#000',
+                                    borderRadius: 'var(--radius)',
+                                    fontWeight: 800, fontSize: '13px',
+                                    fontFamily: 'var(--font-body)',
+                                    textDecoration: 'none',
+                                    textAlign: 'center',
+                                    transition: 'all 0.2s',
+                                    boxSizing: 'border-box',
+                                }}>Shop Now →</a>
+                            </div>
                     </div>
                 </div>
             </div>

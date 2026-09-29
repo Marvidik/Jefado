@@ -1,9 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Icons } from './icons';
 import { getSellerProfile } from '@/services/sellerService';
+import { tokenStorage } from '@/services/axiosInstance';
 
 const MENU_GROUPS = [
     {
@@ -34,14 +35,24 @@ const MENU_GROUPS = [
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const router = useRouter();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [expanded, setExpanded] = useState(true);
     const [shopSlug, setShopSlug] = useState<string | null>(null);
+    const [authChecked, setAuthChecked] = useState(false);
 
     useEffect(() => {
+        const token = tokenStorage.getAccessToken();
+        const userType = tokenStorage.getUserType();
+        const isSellerOrAdmin = userType?.toUpperCase() === 'SELLER' || userType?.toUpperCase() === 'ADMIN';
+        if (!token || !isSellerOrAdmin) {
+            router.push('/auth');
+            return;
+        }
+        setAuthChecked(true);
         getSellerProfile().then(p => setShopSlug(p.slug)).catch(() => { });
-    }, []);
+    }, [router]);
 
     useEffect(() => {
         const check = () => {

@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { getProfile, updateProfile, getAddresses, getMyOrders, createAddress, deleteAddress, setDefaultAddress, changeAccountPassword, getTwoFactorStatus, toggleTwoFactor, getNotifications, markNotificationRead, markAllNotificationsRead } from '@/services/accountService';
 import { getWallet, getTransactions, initiateFunding, verifyFunding } from '@/services/walletService';
 import { getMyCode, getReferralStats, getReferralHistory, claimReferral } from '@/services/referralService';
@@ -10,6 +11,7 @@ import { tokenStorage } from '@/services/axiosInstance';
 const NIGERIAN_STATES = ['Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT - Abuja', 'Gombe', 'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'];
 
 export default function AccountPage() {
+    const router = useRouter();
     const { success, error: toastError } = useToast();
     const [activeSection, setActiveSection] = useState<string | null>(null);
     const [viewingOrder, setViewingOrder] = useState<Order | null>(null);
@@ -77,7 +79,8 @@ export default function AccountPage() {
                     setReferralCode(refCode);
                     setTwoFactorEnabled(twoFa?.two_factor_enabled || false);
                 } else {
-                    window.location.href = '/login';
+                    router.push('/auth');
+                    return;
                 }
             } catch (err) {
                 console.error("Failed to fetch account data", err);

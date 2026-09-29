@@ -10,10 +10,10 @@ export default function ContactPage() {
         e.preventDefault();
         setLoading(true);
         setError(null);
-        
+
         const form = e.currentTarget as HTMLFormElement;
         const formData = new FormData(form);
-        
+
         const payload = {
             action: 'contact',
             name: formData.get('name'),
@@ -84,7 +84,7 @@ export default function ContactPage() {
                                 {[
                                     { label: 'Customer Support', val: 'support@jefedo.com', icon: '📩' },
                                     { label: 'Direct Line', val: '+2347064957209', icon: '📞' },
-                                    { label: 'Headquarters', val: 'no 10 JEFEDO street , amafor nkpor idemili lga anambra state nigeria', icon: '📍' }
+                                    { label: 'Headquarters', val: 'No. 10 Jefedo Street, Amafor Nkpor, Idemili LGA, Anambra State, Nigeria.', icon: '📍' }
                                 ].map((item, i) => (
                                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                                         <div className="contact-info-icon" style={{ width: '64px', height: '64px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', backdropFilter: 'blur(10px)' }}>
@@ -120,8 +120,8 @@ export default function ContactPage() {
                                 </div>
                             ) : (
                                 <>
-                                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>Send Message</h2>
-                                    <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '8px' }}>Please fill out the form below.</p>
+                                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 800, color: '#fff', marginBottom: '8px' }}>Send Us A Message</h2>
+                                    <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '8px' }}>Fill out the form below — whether it&apos;s a general inquiry, support request, or to <strong style={{ color: 'var(--primary)' }}>partner with Jefedo</strong>.</p>
 
                                     {error && (
                                         <div style={{ background: 'rgba(238,18,23,0.1)', border: '1px solid var(--primary)', color: '#fff', padding: '12px', borderRadius: '12px', fontSize: '13px', marginBottom: '16px' }}>
@@ -142,23 +142,24 @@ export default function ContactPage() {
                                         </div>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', position: 'relative' }}>
                                             <label style={{ fontSize: '11px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1px' }}>Inquiry Type</label>
-                                            <select name="subject" style={{ 
-                                                background: 'rgba(255,255,255,0.05)', 
-                                                border: '1.5px solid rgba(255,255,255,0.1)', 
-                                                padding: '16px 20px', 
-                                                borderRadius: '16px', 
-                                                color: '#fff', 
-                                                outline: 'none', 
+                                            <select name="subject" style={{
+                                                background: 'rgba(255,255,255,0.05)',
+                                                border: '1.5px solid rgba(255,255,255,0.1)',
+                                                padding: '16px 20px',
+                                                borderRadius: '16px',
+                                                color: '#fff',
+                                                outline: 'none',
                                                 appearance: 'none',
                                                 cursor: 'pointer',
                                                 transition: 'border-color 0.2s'
-                                            }} 
-                                            onFocus={e => (e.currentTarget.style.borderColor = 'var(--primary)')} 
-                                            onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}>
+                                            }}
+                                                onFocus={e => (e.currentTarget.style.borderColor = 'var(--primary)')}
+                                                onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}>
                                                 <option style={{ background: '#0f172a', color: '#fff' }}>General Inquiry</option>
                                                 <option style={{ background: '#0f172a', color: '#fff' }}>Support Request</option>
                                                 <option style={{ background: '#0f172a', color: '#fff' }}>Shipping & Logistics</option>
                                                 <option style={{ background: '#0f172a', color: '#fff' }}>Business Partnership</option>
+                                                <option style={{ background: '#0f172a', color: '#fff' }}>Partner With Jefedo</option>
                                             </select>
                                             <div style={{ position: 'absolute', right: '20px', bottom: '18px', pointerEvents: 'none', color: 'rgba(255,255,255,0.3)', fontSize: '12px' }}>▼</div>
                                         </div>
@@ -192,6 +193,49 @@ export default function ContactPage() {
                 </div>
             </div>
 
+            {/* Partnership Section */}
+            <div style={{ padding: '100px 0', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '400px', height: '400px', background: 'var(--primary)', filter: 'blur(160px)', opacity: 0.1 }} />
+                <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+                    <div style={{ display: 'inline-block', padding: '6px 20px', background: 'rgba(238,18,23,0.15)', border: '1px solid rgba(238,18,23,0.3)', borderRadius: '100px', color: 'var(--primary)', fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '28px' }}>
+                        Partnerships
+                    </div>
+                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 900, color: '#fff', marginBottom: '20px', letterSpacing: '-1.5px' }}>
+                        Want to Partner with <span style={{ color: 'var(--primary)' }}>Jefedo?</span>
+                    </h2>
+                    <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: '40px', maxWidth: '560px', margin: '0 auto 40px' }}>
+                        Whether you&apos;re a brand, logistics company, service provider, or investor — we want to hear from you. Fill out the form above and select &ldquo;Partner With Jefedo&rdquo; as your inquiry type.
+                    </p>
+                    <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '56px' }}>
+                        {[
+                            { icon: '🤝', title: 'Brand Collaborations', desc: 'Reach millions of Nigerian shoppers through co-branded campaigns.' },
+                            { icon: '🚚', title: 'Logistics Partners', desc: 'Join our delivery network and power last-mile fulfilment across Nigeria.' },
+                            { icon: '💡', title: 'Tech & Service Providers', desc: 'Integrate your solutions into the Jefedo ecosystem.' },
+                            { icon: '📈', title: 'Investors', desc: 'Be part of Nigeria&apos;s fastest-growing multi-vendor marketplace.' },
+                        ].map(item => (
+                            <div key={item.title} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', padding: '32px 28px', maxWidth: '240px', textAlign: 'left', backdropFilter: 'blur(10px)' }}>
+                                <div style={{ fontSize: '36px', marginBottom: '16px' }}>{item.icon}</div>
+                                <h4 style={{ fontFamily: 'var(--font-display)', fontSize: '16px', fontWeight: 800, color: '#fff', marginBottom: '10px' }}>{item.title}</h4>
+                                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>{item.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '8px',
+                        padding: '16px 40px',
+                        background: 'linear-gradient(135deg, var(--primary) 0%, #ff4b50 100%)',
+                        color: '#fff',
+                        borderRadius: '50px',
+                        fontWeight: 800,
+                        fontSize: '15px',
+                        textDecoration: 'none',
+                        boxShadow: '0 8px 24px rgba(238,18,23,0.35)',
+                    }}>
+                        Fill The Partnership Form ↑
+                    </a>
+                </div>
+            </div>
+
             {/* Marketing Section */}
             <div style={{ padding: '120px 0', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
                 <div className="container" style={{ textAlign: 'center' }}>
@@ -201,7 +245,7 @@ export default function ContactPage() {
                     <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 900, color: '#0f172a', marginBottom: '64px', letterSpacing: '-1.5px' }}>
                         Why Businesses <span style={{ color: 'var(--primary)' }}>Trust Us</span>
                     </h3>
-                    
+
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
                         {[
                             { title: 'Secure Ecosystem', desc: 'Advanced encryption and escrow systems ensuring every transaction is 100% protected.', icon: '🛡️', color: '#EE1217', bg: '#fef2f2' },
@@ -209,11 +253,11 @@ export default function ContactPage() {
                             { title: 'Verified Quality', desc: 'Stringent vendor verification process to ensure only premium products reach your door.', icon: '💎', color: '#f59e0b', bg: '#fffbeb' },
                             { title: 'Global Scaling', desc: 'Advanced tools designed to help small businesses reach millions of potential customers.', icon: '📈', color: '#22c55e', bg: '#f0fdf4' }
                         ].map(feature => (
-                            <div key={feature.title} className="presence-card" style={{ 
-                                background: '#fff', 
-                                border: '1px solid #e2e8f0', 
-                                padding: '48px 32px', 
-                                borderRadius: '32px', 
+                            <div key={feature.title} className="presence-card" style={{
+                                background: '#fff',
+                                border: '1px solid #e2e8f0',
+                                padding: '48px 32px',
+                                borderRadius: '32px',
                                 textAlign: 'left',
                                 transition: 'all 0.3s ease',
                                 position: 'relative',

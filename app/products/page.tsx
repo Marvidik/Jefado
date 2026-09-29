@@ -1,5 +1,6 @@
 'use client';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { getProducts } from '@/services/publicService';
 import { Product } from '@/services/types';
 import { CATEGORIES as GLOBAL_CATEGORIES } from '@/lib/data';
@@ -175,6 +176,15 @@ function FilterSidebar({ filters, onChange }: { filters: Filters; onChange: (f: 
 }
 
 export default function ProductsPage() {
+    return (
+        <Suspense fallback={<Loader text="Loading products" subtext="Please wait..." icon="🛍️" />}>
+            <ProductsContent />
+        </Suspense>
+    );
+}
+
+function ProductsContent() {
+    const searchParams = useSearchParams();
     const [filters, setFilters] = useState<Filters>({ brands: [], categories: [], priceRange: null, minRating: null, inStockOnly: false });
     const [sort, setSort] = useState('popular');
     const [search, setSearch] = useState('');
@@ -182,9 +192,25 @@ export default function ProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [totalResults, setTotalResults] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [initialized, setInitialized] = useState(false);
     const PER_PAGE = 12;
 
+    // Read URL params once on mount (from header search & hamburger category clicks)
     useEffect(() => {
+        const categoryParam = searchParams.get('category');
+        const searchParam = searchParams.get('search');
+        if (categoryParam) {
+            setFilters(f => ({ ...f, categories: [categoryParam] }));
+        }
+        if (searchParam) {
+            setSearch(searchParam);
+        }
+        setInitialized(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (!initialized) return;
         const fetchProducts = async () => {
             setLoading(true);
             try {
@@ -209,7 +235,7 @@ export default function ProductsPage() {
             }
         };
         fetchProducts();
-    }, [filters, sort, search, page]);
+    }, [filters, sort, search, page, initialized]);
 
     const activeCategoryLabel = useMemo(() => {
         if (filters.categories.length === 1) {
