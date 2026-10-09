@@ -101,6 +101,10 @@ export default function AccountPage() {
     }, []);
 
     const handleNavigate = (target: string) => {
+        if (target === 'Referral') {
+            router.push('/referral');
+            return;
+        }
         setActiveSection(target);
         setViewingOrder(null);
         setShowAddressForm(false);
@@ -519,69 +523,7 @@ export default function AccountPage() {
                     </div>
                 )}
 
-                {/* REFERRAL SECTION */}
-                {activeSection === 'Referral' && (
-                    <div className="section-content">
-                        <div className="card text-center" style={{ padding: '40px 20px' }}>
-                            <div style={{ fontSize: '60px', marginBottom: '16px' }}>🎁</div>
-                            <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 10px' }}>Refer & Earn</h2>
-                            <p style={{ color: '#475569', marginBottom: '24px', maxWidth: '400px', margin: '0 auto 24px' }}>Invite your friends to Jefado and earn ₦{referralStats ? parseFloat(referralStats.reward_per_referral).toLocaleString() : '500'} wallet bonus for every successful referral.</p>
-                            
-                            <div style={{ background: '#f8fafc', border: '1px dashed #cbd5e1', padding: '16px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '400px', margin: '0 auto' }}>
-                                <span style={{ fontWeight: 800, letterSpacing: '1px' }}>{referralCode ? referralCode.code : 'Loading...'}</span>
-                                <button className="btn-outline" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => { if(referralCode) { navigator.clipboard.writeText(referralCode.code); success('Code copied!'); } }}>Copy Code</button>
-                            </div>
 
-                            <div style={{ marginTop: '24px', display: 'flex', gap: '10px', justifyContent: 'center', alignItems: 'center' }}>
-                                <input 
-                                    type="text" 
-                                    placeholder="Got a referral code?" 
-                                    value={claimCode} 
-                                    onChange={e => setClaimCode(e.target.value)} 
-                                    className="form-input" 
-                                    style={{ width: '200px' }} 
-                                />
-                                <button className="btn-primary" style={{ width: 'auto' }} onClick={handleClaimReferral} disabled={submitting}>
-                                    {submitting ? '...' : 'Claim'}
-                                </button>
-                            </div>
-
-                            {referralStats && (
-                                <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '30px', borderTop: '1px solid #eef1f4', paddingTop: '20px' }}>
-                                    <div>
-                                        <p style={{ fontSize: '24px', fontWeight: 800, margin: 0, color: 'var(--primary)' }}>{referralStats.total_referrals}</p>
-                                        <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Total Referrals</p>
-                                    </div>
-                                    <div>
-                                        <p style={{ fontSize: '24px', fontWeight: 800, margin: 0, color: 'var(--primary)' }}>{referralStats.successful_referrals}</p>
-                                        <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Successful</p>
-                                    </div>
-                                    <div>
-                                        <p style={{ fontSize: '24px', fontWeight: 800, margin: 0, color: 'var(--primary)' }}>₦{parseFloat(referralStats.total_earned).toLocaleString()}</p>
-                                        <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Total Earned</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {referralHistory.length > 0 && (
-                            <div className="card" style={{ marginTop: '20px' }}>
-                                <h3 style={{ fontSize: '16px', fontWeight: 800, margin: '0 0 16px' }}>Referral History</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                    {referralHistory.map(history => (
-                                        <div key={history.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid #eef1f4' }}>
-                                            <div>
-                                                <p style={{ fontWeight: 700, margin: '0 0 4px', fontSize: '14px' }}>{history.referrer_email}</p>
-                                                <p style={{ color: '#94a3b8', margin: 0, fontSize: '12px' }}>{new Date(history.created_at).toLocaleDateString()}</p>
-                                            </div>
-                                            <span className={`status-badge ${history.status.toLowerCase()}`}>{history.status_display}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
 
                 {/* PROFILE SECTION */}
                 {activeSection === 'Profile' && (
