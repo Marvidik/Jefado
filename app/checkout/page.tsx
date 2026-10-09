@@ -326,17 +326,6 @@ function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn
             <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '14px' }}>
                 <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', marginBottom: '12px' }}>💳 Payment Method</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'paystack' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'paystack' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'transparent' }}>
-                        <input 
-                            type="radio" 
-                            name="paymentMethod" 
-                            value="paystack" 
-                            checked={form.paymentMethod === 'paystack'} 
-                            onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })} 
-                            style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }}
-                        />
-                        <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Paystack (Cards / Bank / USSD)</span>
-                    </label>
                     {isLoggedIn && (
                         <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'wallet' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'wallet' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'transparent' }}>
                             <input 
@@ -350,6 +339,17 @@ function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn
                             <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Jefedo Wallet Balance</span>
                         </label>
                     )}
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'paystack' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'paystack' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'transparent' }}>
+                        <input 
+                            type="radio" 
+                            name="paymentMethod" 
+                            value="paystack" 
+                            checked={form.paymentMethod === 'paystack'} 
+                            onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })} 
+                            style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }}
+                        />
+                        <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Paystack (Cards / Bank / USSD)</span>
+                    </label>
                 </div>
             </div>
 
