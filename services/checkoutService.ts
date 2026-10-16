@@ -42,8 +42,7 @@ export const checkoutProduct = async (data: ProductCheckoutPayload): Promise<Che
         const response = await axiosInstance.post('/api/v1/transactions/checkout/product/', data);
         return response.data;
     } catch (error: any) {
-        // Handle stock/validation errors specifically
-        throw error.response?.data || { detail: "Checkout failed. Please check your cart or network." };
+        throw error.response?.data || error?.data || error;
     }
 };
 
@@ -56,7 +55,7 @@ export const checkoutService = async (data: ServiceCheckoutPayload): Promise<Ser
         const response = await axiosInstance.post('/api/v1/transactions/checkout/service/', data);
         return response.data;
     } catch (error: any) {
-        throw error.response?.data || { detail: "Booking failed. Please check date/time availability." };
+        throw error.response?.data || error?.data || error;
     }
 };
 

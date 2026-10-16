@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://backend.jefedo.com";
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -11,15 +11,29 @@ const axiosInstance = axios.create({
 
 // Helper to handle tokens in localStorage (per user request for non-plain variables across sessions)
 const tokenStorage = {
-    getAccessToken: () => typeof window !== 'undefined' ? localStorage.getItem('access_token') : null,
-    getRefreshToken: () => typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null,
+    getAccessToken: () => {
+        if (typeof window === 'undefined') return null;
+        const token = localStorage.getItem('access_token');
+        if (!token || token === 'null' || token === 'undefined' || token.trim() === '') {
+            return null;
+        }
+        return token;
+    },
+    getRefreshToken: () => {
+        if (typeof window === 'undefined') return null;
+        const token = localStorage.getItem('refresh_token');
+        if (!token || token === 'null' || token === 'undefined' || token.trim() === '') {
+            return null;
+        }
+        return token;
+    },
     getUserType: () => typeof window !== 'undefined' ? localStorage.getItem('user_type') : null,
     setTokens: (access: string, refresh: string, userType?: string) => {
         if (typeof window !== 'undefined') {
             if (!access || !refresh) {
-                console.error("❌ [TOKEN MISSING]: One or both tokens are missing!", { 
-                    access: access === undefined ? 'undefined' : access, 
-                    refresh: refresh === undefined ? 'undefined' : refresh 
+                console.error("❌ [TOKEN MISSING]: One or both tokens are missing!", {
+                    access: access === undefined ? 'undefined' : access,
+                    refresh: refresh === undefined ? 'undefined' : refresh
                 });
                 return;
             }
@@ -34,6 +48,8 @@ const tokenStorage = {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('user_type');
+            delete axiosInstance.defaults.headers.common['Authorization'];
+            delete axiosInstance.defaults.headers.common['authorization'];
         }
     }
 };
@@ -42,9 +58,29 @@ const formatAPIError = (errorData: any) => {
         return { detail: "An unexpected error occurred." };
     }
 
+    if (typeof errorData === 'string') {
+        return { detail: errorData, message: errorData };
+    }
+
     if (typeof errorData === 'object') {
+        // If nested data has detail or message (e.g. { data: { detail: "..." } })
         const dataField = errorData.data;
         if (dataField && typeof dataField === 'object' && !Array.isArray(dataField)) {
+            if (typeof dataField.detail === 'string' && dataField.detail) {
+                return {
+                    ...errorData,
+                    detail: dataField.detail,
+                    message: dataField.detail
+                };
+            }
+            if (typeof dataField.message === 'string' && dataField.message) {
+                return {
+                    ...errorData,
+                    detail: dataField.message,
+                    message: dataField.message
+                };
+            }
+
             const keys = Object.keys(dataField);
             if (keys.length > 0) {
                 const firstKey = keys[0];
@@ -57,7 +93,7 @@ const formatAPIError = (errorData: any) => {
                 }
 
                 if (rawMessage) {
-                    if (firstKey === 'non_field_errors' || firstKey === 'nonFieldErrors') {
+                    if (firstKey === 'non_field_errors' || firstKey === 'nonFieldErrors' || firstKey === 'detail' || firstKey === 'message' || firstKey === 'error') {
                         return {
                             ...errorData,
                             detail: rawMessage,
@@ -72,7 +108,7 @@ const formatAPIError = (errorData: any) => {
                         .replace(/_/g, ' ')
                         .trim()
                         .replace(/\b\w/g, (c) => c.toUpperCase());
-                    
+
                     const finalMsg = `${formattedKey}: ${rawMessage}`;
                     return {
                         ...errorData,
@@ -104,7 +140,7 @@ const formatAPIError = (errorData: any) => {
                     .replace(/_/g, ' ')
                     .trim()
                     .replace(/\b\w/g, (c) => c.toUpperCase());
-                
+
                 const finalMsg = `${formattedKey}: ${errorData[key][0]}`;
                 return {
                     ...errorData,
@@ -115,8 +151,8 @@ const formatAPIError = (errorData: any) => {
             }
         }
 
-        if (errorData.detail) return errorData;
-        if (errorData.message) {
+        if (typeof errorData.detail === 'string' && errorData.detail) return errorData;
+        if (typeof errorData.message === 'string' && errorData.message && errorData.message !== 'An error occurred') {
             return {
                 ...errorData,
                 detail: errorData.message
@@ -137,6 +173,15 @@ axiosInstance.interceptors.request.use(
             if (typeof window !== 'undefined' && !(window as any)._tokenLogged) {
                 console.log("🔑 [CURRENT ACCESS TOKEN]:", token);
                 (window as any)._tokenLogged = true;
+            }
+        } else {
+            // Unauthenticated: ensure NO Authorization header is sent
+            delete config.headers.Authorization;
+            delete config.headers['Authorization'];
+            delete config.headers['authorization'];
+            if (config.headers.common) {
+                delete config.headers.common['Authorization'];
+                delete config.headers.common['authorization'];
             }
         }
         return config;
@@ -162,23 +207,27 @@ const processQueue = (error: any, token: string | null = null) => {
 axiosInstance.interceptors.response.use(
     (response) => {
         // Automatically unwrap the 'data' field if the response follows the {status, message, data} pattern
-        if (response.data && 
-            typeof response.data === 'object' && 
-            'status' in response.data && 
+        if (response.data &&
+            typeof response.data === 'object' &&
+            'status' in response.data &&
             'data' in response.data) {
-            
+
             const internalStatus = response.data.status;
             // If the internal status is an error code (not 2xx), treat it as an error
             if (internalStatus < 200 || internalStatus >= 300) {
+                const formatted = formatAPIError(response.data);
+                const finalDetail = formatted.detail || formatted.message || response.data.message || "API Internal Error";
                 return Promise.reject({
+                    ...formatted,
                     response: {
                         status: internalStatus,
-                        data: formatAPIError(response.data)
+                        data: formatted
                     },
-                    message: response.data.message || "API Internal Error"
+                    detail: finalDetail,
+                    message: finalDetail
                 });
             }
-            
+
             return {
                 ...response,
                 data: response.data.data
@@ -223,33 +272,33 @@ axiosInstance.interceptors.response.use(
                 const response = await axios.post(`${BASE_URL}/api/v1/auth/token/refresh/`, {
                     refresh: refreshToken,
                 });
-                
+
                 console.log("%c🔄 [REFRESH RESPONSE]:", "color: #3b82f6; font-weight: bold; font-size: 14px;", response.data);
 
                 // Handle nested data if present (common pattern in this project)
                 const resData = (response.data && response.data.data) ? response.data.data : response.data;
 
-                const access = resData.access || 
-                               resData.access_token || 
-                               resData.token?.access || 
-                               resData.tokens?.access ||
-                               resData.token;
-                
-                const newRefresh = resData.refresh || 
-                                   resData.refresh_token || 
-                                   resData.token?.refresh || 
-                                   resData.tokens?.refresh || 
-                                   refreshToken; // Fallback to current if not rotated
-                               
+                const access = resData.access ||
+                    resData.access_token ||
+                    resData.token?.access ||
+                    resData.tokens?.access ||
+                    resData.token;
+
+                const newRefresh = resData.refresh ||
+                    resData.refresh_token ||
+                    resData.token?.refresh ||
+                    resData.tokens?.refresh ||
+                    refreshToken; // Fallback to current if not rotated
+
                 if (!access) {
                     throw new Error("Access token missing in refresh response");
                 }
 
                 tokenStorage.setTokens(access, newRefresh);
-                
+
                 axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${access}`;
                 processQueue(null, access);
-                
+
                 return axiosInstance(originalRequest);
             } catch (refreshError) {
                 processQueue(refreshError, null);
@@ -261,7 +310,14 @@ axiosInstance.interceptors.response.use(
             }
         }
 
-        return Promise.reject(formatAPIError(error.response?.data));
+        const formatted = formatAPIError(error.response?.data || error);
+        const finalMsg = formatted.detail || formatted.message || error.message || "An unexpected error occurred.";
+        return Promise.reject({
+            ...formatted,
+            response: error.response,
+            detail: finalMsg,
+            message: finalMsg
+        });
     }
 );
 

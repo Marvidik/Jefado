@@ -3,6 +3,7 @@ import { useState, useMemo, Suspense, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { useToast } from '@/components/ui/Toast';
+import { useCart } from '@/context/CartContext';
 import { getProductDetail, getServiceDetail } from '@/services/publicService';
 import { checkoutProduct, checkoutService, verifyPayment } from '@/services/checkoutService';
 import { getAddresses, getProfile } from '@/services/accountService';
@@ -204,13 +205,22 @@ function OrderSidebar({ items, coupon, setCoupon, couponCode, setCouponCode }: {
     );
 }
 
+const DEFAULT_COUNTRIES = ['Nigeria', 'Ghana', 'Kenya', 'United Kingdom', 'United States', 'Canada', 'South Africa'];
+const DEFAULT_NIGERIAN_STATES = [
+    'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno',
+    'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT - Abuja', 'Gombe',
+    'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos',
+    'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto',
+    'Taraba', 'Yobe', 'Zamfara'
+];
+
 /* ── Step 1: Shipping form ──────────────── */
-function ShippingStep({ form, setForm, onNext, isService }: {
-    form: FormData; setForm: (f: FormData) => void; onNext: () => void; isService: boolean;
+function ShippingStep({ form, setForm, onNext, isService, isLoggedIn }: {
+    form: FormData; setForm: (f: FormData) => void; onNext: () => void; isService: boolean; isLoggedIn: boolean;
 }) {
     const set = (k: keyof FormData) => (v: string | boolean) => setForm({ ...form, [k]: v });
 
-    const [countryList, setCountryList] = useState<string[]>([]);
+    const [countryList, setCountryList] = useState<string[]>(DEFAULT_COUNTRIES);
     const [allCountryData, setAllCountryData] = useState<any[]>([]);
 
     useEffect(() => {
@@ -220,7 +230,7 @@ function ShippingStep({ form, setForm, onNext, isService }: {
                 if (data && data.data && Array.isArray(data.data)) {
                     setAllCountryData(data.data);
                     const names = data.data.map((d: any) => d.name).sort((a: string, b: string) => a.localeCompare(b));
-                    setCountryList(Array.from(new Set(names)));
+                    setCountryList(Array.from(new Set([...DEFAULT_COUNTRIES, ...names])));
                 }
             })
             .catch(err => console.error("Could not fetch countries", err));
@@ -228,24 +238,50 @@ function ShippingStep({ form, setForm, onNext, isService }: {
 
     const stateList = useMemo<string[]>(() => {
         const countryData = allCountryData.find(d => d.name === form.country);
-        if (countryData && countryData.states && Array.isArray(countryData.states)) {
+        if (countryData && countryData.states && Array.isArray(countryData.states) && countryData.states.length > 0) {
             const names = countryData.states.map((s: any) => s.name).sort((a: string, b: string) => a.localeCompare(b));
             return Array.from(new Set(names)) as string[];
+        }
+        if (form.country === 'Nigeria') {
+            return DEFAULT_NIGERIAN_STATES;
         }
         return [];
     }, [form.country, allCountryData]);
 
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
-    const valid = form.firstName && form.lastName && isEmailValid && form.phone && form.address && form.city && form.zip && form.country;
+    const valid = Boolean(
+        form.firstName?.trim() &&
+        form.lastName?.trim() &&
+        isEmailValid &&
+        form.phone?.trim() &&
+        form.address?.trim() &&
+        form.city?.trim() &&
+        form.state?.trim() &&
+        form.zip?.trim() &&
+        form.country?.trim()
+    );
 
     return (
         <div>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', marginBottom: '20px', color: 'var(--text-primary)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', marginBottom: '8px', color: 'var(--text-primary)' }}>
                 {isService ? 'Service Location' : 'Shipping Information'}
             </h2>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px' }}>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
                 {isService ? "Please provide the address where you want our professional to meet you." : "Provide your delivery address below."}
             </p>
+
+            {/* Auth status indicator */}
+            {isLoggedIn ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', background: 'rgba(34, 197, 94, 0.08)', border: '1px solid rgba(34, 197, 94, 0.25)', borderRadius: 'var(--radius)', marginBottom: '20px', fontSize: '13px', color: 'var(--text-primary)' }}>
+                    <span style={{ color: 'var(--success)', fontWeight: 700 }}>✓</span>
+                    <span>Logged in — your saved contact &amp; address details were filled automatically. You can edit them if needed.</span>
+                </div>
+            ) : (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', padding: '10px 14px', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', marginBottom: '20px', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                    <span>👤 <strong>Guest Checkout:</strong> No account required! Fill your details below to order.</span>
+                    <a href="/auth?returnUrl=/checkout" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'underline' }}>Have an account? Log in</a>
+                </div>
+            )}
 
             {/* Name row */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
@@ -268,7 +304,7 @@ function ShippingStep({ form, setForm, onNext, isService }: {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                 <Field label="City" value={form.city} onChange={set('city') as (v: string) => void} placeholder="New York" required />
                 {stateList.length > 0 ? (
-                    <SelectField label="State" value={form.state} onChange={set('state') as (v: string) => void} options={stateList} />
+                    <SelectField label="State" value={form.state} onChange={set('state') as (v: string) => void} options={stateList} required />
                 ) : (
                     <Field label="State / Province" value={form.state} onChange={set('state') as (v: string) => void} placeholder="Your State" required />
                 )}
@@ -299,11 +335,13 @@ function ShippingStep({ form, setForm, onNext, isService }: {
                 </div>
             )}
 
-            {/* Save address */}
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-secondary)' }}>
-                <input type="checkbox" checked={form.saveAddress} onChange={e => set('saveAddress')(e.target.checked)} style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }} />
-                Save this {isService ? 'location' : 'address'} for future orders
-            </label>
+            {/* Save address (only for logged-in users who have an account profile) */}
+            {isLoggedIn && (
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                    <input type="checkbox" checked={form.saveAddress} onChange={e => set('saveAddress')(e.target.checked)} style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }} />
+                    Save this {isService ? 'location' : 'address'} for future orders
+                </label>
+            )}
 
             <button onClick={() => valid && onNext()} style={{ width: '100%', padding: '14px', background: valid ? 'var(--primary)' : 'var(--border)', color: valid ? '#fff' : 'var(--text-muted)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', cursor: valid ? 'pointer' : 'not-allowed', transition: 'all 0.2s', boxShadow: valid ? '0 4px 20px rgba(238,18,23,0.25)' : 'none' }}>
                 Review Order →
@@ -318,6 +356,12 @@ function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn
     const [agreed, setAgreed] = useState(false);
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
 
+    useEffect(() => {
+        if (!isLoggedIn && form.paymentMethod === 'wallet') {
+            setForm({ ...form, paymentMethod: 'paystack' });
+        }
+    }, [isLoggedIn, form.paymentMethod, form, setForm]);
+
     return (
         <div>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', marginBottom: '20px' }}>Review Your Order</h2>
@@ -328,11 +372,11 @@ function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {isLoggedIn && (
                         <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'wallet' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'wallet' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'transparent' }}>
-                            <input 
-                                type="radio" 
-                                name="paymentMethod" 
-                                value="wallet" 
-                                checked={form.paymentMethod === 'wallet'} 
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="wallet"
+                                checked={form.paymentMethod === 'wallet'}
                                 onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })}
                                 style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }}
                             />
@@ -340,12 +384,12 @@ function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn
                         </label>
                     )}
                     <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'paystack' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'paystack' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'transparent' }}>
-                        <input 
-                            type="radio" 
-                            name="paymentMethod" 
-                            value="paystack" 
-                            checked={form.paymentMethod === 'paystack'} 
-                            onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })} 
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="paystack"
+                            checked={form.paymentMethod === 'paystack'}
+                            onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })}
                             style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }}
                         />
                         <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Paystack (Cards / Bank / USSD)</span>
@@ -426,7 +470,7 @@ function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn
 }
 
 /* ── Order Success ───────────────────────── */
-function OrderSuccess({ form, items, verifiedOrder, reference }: { form: FormData; items: OrderItem[]; verifiedOrder?: any; reference?: string | null }) {
+function OrderSuccess({ form, items, verifiedOrder, reference, isLoggedIn }: { form: FormData; items: OrderItem[]; verifiedOrder?: any; reference?: string | null; isLoggedIn: boolean }) {
     const orderId = reference || verifiedOrder?.reference || verifiedOrder?.order_id || verifiedOrder?.id || `JFD-${Math.floor(Math.random() * 90000 + 10000)}`;
 
     const subtotal = verifiedOrder
@@ -452,7 +496,7 @@ function OrderSuccess({ form, items, verifiedOrder, reference }: { form: FormDat
                 <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '36px', boxShadow: '0 8px 30px rgba(34,197,94,0.3)' }}>✓</div>
                 <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', marginBottom: '8px', color: 'var(--text-primary)' }}>{isService ? 'Booking Confirmed!' : 'Order Placed!'}</h2>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '4px', fontSize: '14px' }}>Thank you, <strong>{buyerName}</strong>! Your {isService ? 'booking' : 'order'} has been received.</p>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '13px' }}>Once your payment is confirmed by our system, your order will be processed and you'll receive a confirmation at <strong>{buyerEmail}</strong></p>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '13px' }}>Once your payment is confirmed by our system, your order will be processed and you&apos;ll receive a confirmation receipt at <strong>{buyerEmail}</strong></p>
 
                 <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '16px', marginBottom: '24px', textAlign: 'left' }}>
                     {[['Reference', orderId], ['Total', `₦${subtotal.toFixed(2)}`], [isService ? 'Service Location' : 'Shipping To', `${city}, ${country}`.replace(/^,\s*/, '')], [isService ? 'Appointment' : 'Estimated Delivery', appointmentText]].map(([k, v]) => (
@@ -464,8 +508,12 @@ function OrderSuccess({ form, items, verifiedOrder, reference }: { form: FormDat
                 </div>
 
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                    <a href="/account" style={{ flex: 1, minWidth: '120px', padding: '11px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '13px', textAlign: 'center' }}>Track {isService ? 'Booking' : 'Order'} →</a>
-                    <a href="/" style={{ display: 'inline-block', padding: '12px 28px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '14px' }}>Continue Shopping</a>
+                    {isLoggedIn ? (
+                        <a href="/account?section=Orders" style={{ flex: 1, minWidth: '120px', padding: '11px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '13px', textAlign: 'center' }}>Track {isService ? 'Booking' : 'Order'} →</a>
+                    ) : (
+                        <a href={`/auth?mode=register&email=${encodeURIComponent(buyerEmail)}`} style={{ flex: 1, minWidth: '140px', padding: '11px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '13px', textAlign: 'center' }}>Create Account to Track →</a>
+                    )}
+                    <a href="/" style={{ display: 'inline-block', padding: '12px 28px', background: isLoggedIn ? 'var(--surface-2)' : 'var(--surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '14px' }}>Continue Shopping</a>
                 </div>
             </div>
         </div>
@@ -490,8 +538,6 @@ function OrderFailure({ message }: { message: string }) {
 }
 
 
-import { useCart } from '@/context/CartContext';
-
 /* ── Checkout Content with Params ────────── */
 function CheckoutContent() {
     const { success, error: toastError } = useToast();
@@ -508,6 +554,7 @@ function CheckoutContent() {
 
     const [verifiedOrder, setVerifiedOrder] = useState<any>(null);
     const [verificationError, setVerificationError] = useState<string>('');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const type = searchParams.get('type') || (searchParams.get('id') ? 'product' : 'cart');
     const id = searchParams.get('id');
@@ -521,6 +568,9 @@ function CheckoutContent() {
     useEffect(() => {
         const load = async () => {
             try {
+                const loggedIn = !!tokenStorage.getAccessToken();
+                setIsLoggedIn(loggedIn);
+
                 if (reference) {
                     setLoadingData(true);
                     try {
@@ -545,12 +595,15 @@ function CheckoutContent() {
                         if (!tokenStorage.getAccessToken()) return;
 
                         try {
-                            const profile = await getProfile();
+                            const profileRes = await getProfile();
+                            const profile = (profileRes as any)?.data || profileRes;
                             if (profile) {
+                                const pFirst = profile.first_name || (profile.full_name ? profile.full_name.split(' ')[0] : '') || '';
+                                const pLast = profile.last_name || (profile.full_name ? profile.full_name.split(' ').slice(1).join(' ') : '') || '';
                                 setForm(prev => ({
                                     ...prev,
-                                    firstName: profile.first_name || prev.firstName,
-                                    lastName: profile.last_name || prev.lastName,
+                                    firstName: pFirst || prev.firstName,
+                                    lastName: pLast || prev.lastName,
                                     email: profile.email || prev.email,
                                     phone: profile.phone || prev.phone,
                                 }));
@@ -559,24 +612,37 @@ function CheckoutContent() {
                             console.error("Failed to fetch profile info:", e);
                         }
 
-                        const response = await getAddresses();
-                        const addresses = (response as any).data || response;
-                        if (Array.isArray(addresses)) {
-                            const def = addresses.find(a => a.is_default) || addresses[0];
-                            if (def) {
-                                setForm(prev => ({
-                                    ...prev,
-                                    firstName: def.full_name?.split(' ')[0] || prev.firstName,
-                                    lastName: def.full_name?.split(' ').slice(1).join(' ') || prev.lastName,
-                                    address: def.street_address || prev.address,
-                                    city: def.city || prev.city,
-                                    state: def.state || prev.state,
-                                    zip: def.postal_code || prev.zip,
-                                    country: def.country || prev.country || 'Nigeria',
-                                    phone: def.phone || prev.phone,
-                                    email: def.email || prev.email,
-                                }));
+                        try {
+                            const addrRes = await getAddresses();
+                            const addrList = Array.isArray(addrRes)
+                                ? addrRes
+                                : Array.isArray((addrRes as any)?.data)
+                                    ? (addrRes as any).data
+                                    : Array.isArray((addrRes as any)?.results)
+                                        ? (addrRes as any).results
+                                        : [];
+                            if (addrList.length > 0) {
+                                const def = addrList.find((a: any) => a.is_default) || addrList[0];
+                                if (def) {
+                                    const nameParts = (def.full_name || def.name || '').trim().split(' ').filter(Boolean);
+                                    const defFirst = nameParts[0] || '';
+                                    const defLast = nameParts.slice(1).join(' ') || '';
+                                    setForm(prev => ({
+                                        ...prev,
+                                        firstName: defFirst || prev.firstName,
+                                        lastName: defLast || prev.lastName,
+                                        address: def.street_address || def.address || prev.address,
+                                        city: def.city || prev.city,
+                                        state: def.state || prev.state,
+                                        zip: def.postal_code || def.zip || prev.zip,
+                                        country: def.country || prev.country || 'Nigeria',
+                                        phone: def.phone || prev.phone,
+                                        email: def.email || prev.email,
+                                    }));
+                                }
                             }
+                        } catch (e) {
+                            console.error("Failed to fetch addresses:", e);
                         }
                     } catch (e) { }
                 };
@@ -703,7 +769,14 @@ function CheckoutContent() {
                 }
             }
         } catch (err: any) {
-            toastError(err.detail || err.message || 'Order placement failed. Please verify your details.');
+            const raw =
+                err?.detail ||
+                err?.data?.detail ||
+                err?.message ||
+                err?.data?.message ||
+                (typeof err === 'string' ? err : 'Order placement failed. Please verify your details.');
+            const errorMsg = typeof raw === 'string' ? raw : JSON.stringify(raw);
+            toastError(errorMsg);
         } finally {
             setLoading(false);
         }
@@ -721,7 +794,7 @@ function CheckoutContent() {
 
     if (placed) return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: '48px', paddingBottom: '60px' }}>
-            <OrderSuccess form={form} items={items} verifiedOrder={verifiedOrder} reference={reference} />
+            <OrderSuccess form={form} items={items} verifiedOrder={verifiedOrder} reference={reference} isLoggedIn={isLoggedIn} />
         </div>
     );
 
@@ -741,8 +814,8 @@ function CheckoutContent() {
                 {/* Left: Forms */}
                 <div style={{ flex: '1 1 65%', minWidth: 0 }}>
                     <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '28px', minWidth: 0 }}>
-                        {step === 1 && <ShippingStep form={form} setForm={setForm} onNext={() => setStep(2)} isService={isService} />}
-                        {step === 2 && <ReviewStep items={items} form={form} setForm={setForm} onBack={() => setStep(1)} onPlace={handlePlaceOrder} loading={loading} isLoggedIn={!!tokenStorage.getAccessToken()} />}
+                        {step === 1 && <ShippingStep form={form} setForm={setForm} onNext={() => setStep(2)} isService={isService} isLoggedIn={isLoggedIn} />}
+                        {step === 2 && <ReviewStep items={items} form={form} setForm={setForm} onBack={() => setStep(1)} onPlace={handlePlaceOrder} loading={loading} isLoggedIn={isLoggedIn} />}
                     </div>
 
                 </div>
