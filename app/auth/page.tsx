@@ -1,7 +1,10 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { login, verifyLoginOtp, register, verifyEmail, requestPasswordReset, completePasswordReset, TwoFactorLoginResponse } from '@/services/authService';
+import { claimReferral } from '@/services/referralService';
 import { useToast } from '@/components/ui/Toast';
+import Loader from '@/components/ui/Loader';
 
 type Mode = 'login' | 'register' | 'forgot' | 'otp' | '2fa';
 
@@ -372,8 +375,10 @@ function TwoFactorForm({ email, onBack, onSuccess }: { email: string; onBack: ()
 }
 
 /* ── Register Form ───────────────────────── */
-function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { onSwitch: () => void; onSuccess: (type: string) => void; defaultAccountType?: string }) {
+function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer', initialReferralCode = '' }: { onSwitch: () => void; onSuccess: (type: string) => void; defaultAccountType?: string; initialReferralCode?: string }) {
     const toast = useToast();
+    const [referralCode, setReferralCode] = useState(initialReferralCode);
+    const [showRefInput, setShowRefInput] = useState(false);
     const [form, setForm] = useState({ 
         firstName: '', lastName: '', email: '', phone: '', password: '', confirm: '', accountType: (defaultAccountType === 'seller' ? 'seller' : 'buyer') as 'buyer' | 'seller', storeName: '', rcNumber: ''
     });
@@ -381,6 +386,12 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { o
     useEffect(() => {
         setForm(f => ({ ...f, accountType: (defaultAccountType === 'seller' ? 'seller' : 'buyer') }));
     }, [defaultAccountType]);
+
+    useEffect(() => {
+        if (initialReferralCode) {
+            setReferralCode(initialReferralCode);
+        }
+    }, [initialReferralCode]);
 
     const [agreed, setAgreed] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -408,7 +419,48 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { o
     return (
         <div style={{ width: '100%' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '36px', color: 'var(--text-primary)', marginBottom: '8px' }}>Create Account</h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '32px' }}>Join our community today.</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '24px' }}>Join our community today.</p>
+
+            {referralCode ? (
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 16px',
+                    background: 'rgba(26, 86, 219, 0.05)',
+                    border: '1.5px dashed var(--primary)',
+                    borderRadius: '12px',
+                    marginBottom: '24px'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '20px' }}>🎁</span>
+                        <div>
+                            <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                Referral Code Applied: <span style={{ color: 'var(--primary)', fontWeight: 800 }}>{referralCode}</span>
+                            </p>
+                            <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-secondary)' }}>
+                                You and your referrer will earn rewards upon signing up!
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setReferralCode('')}
+                        style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'var(--text-muted)',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            fontWeight: 700,
+                            padding: '4px'
+                        }}
+                        title="Remove code"
+                    >
+                        ✕
+                    </button>
+                </div>
+            ) : null}
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
                 {(['buyer', 'seller'] as const).map(type => {
@@ -482,7 +534,7 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { o
                 })}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '32px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '24px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                     <Field label="First Name" value={form.firstName} onChange={set('firstName')} placeholder="Aria" required />
                     <Field label="Last Name" value={form.lastName} onChange={set('lastName')} placeholder="Vance" required />
@@ -508,6 +560,38 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { o
                 <Field label="Confirm Password" type="password" value={form.confirm} onChange={set('confirm')} placeholder="••••••••" required />
             </div>
 
+            {!referralCode && (
+                <div style={{ marginBottom: '24px' }}>
+                    {!showRefInput ? (
+                        <button
+                            type="button"
+                            onClick={() => setShowRefInput(true)}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: 'var(--primary)',
+                                fontSize: '13px',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                padding: 0,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px'
+                            }}
+                        >
+                            🎁 Have a referral code?
+                        </button>
+                    ) : (
+                        <Field 
+                            label="Referral Code (Optional)" 
+                            value={referralCode} 
+                            onChange={v => setReferralCode(v.toUpperCase().trim())} 
+                            placeholder="e.g. J8LJID7X" 
+                        />
+                    )}
+                </div>
+            )}
+
             <label style={{ display: 'flex', gap: '14px', marginBottom: '32px', cursor: 'pointer', fontSize: '14px' }}>
                 <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} />
                 <span>I agree to the Terms and Conditions</span>
@@ -525,7 +609,31 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer' }: { o
                 }
                 setLoading(true); 
                 try {
-                    await register({ username: form.email, email: form.email, password1: form.password, password2: form.password, first_name: form.firstName, last_name: form.lastName, user_type: form.accountType === 'buyer' ? 'BUYER' : 'SELLER', store_name: form.storeName, rc_number: form.rcNumber, phone: form.phone });
+                    const regPayload: any = {
+                        username: form.email,
+                        email: form.email,
+                        password1: form.password,
+                        password2: form.password,
+                        first_name: form.firstName,
+                        last_name: form.lastName,
+                        user_type: form.accountType === 'buyer' ? 'BUYER' : 'SELLER',
+                        store_name: form.storeName,
+                        rc_number: form.rcNumber,
+                        phone: form.phone
+                    };
+                    if (referralCode.trim()) {
+                        regPayload.referral_code = referralCode.trim();
+                    }
+                    await register(regPayload);
+
+                    if (referralCode.trim()) {
+                        try {
+                            await claimReferral(referralCode.trim());
+                        } catch (refErr) {
+                            console.log('Claim referral info:', refErr);
+                        }
+                    }
+
                     toast.success('Registration successful!');
                     onSuccess(form.accountType);
                     setSuccess(true);
@@ -741,24 +849,39 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
 }
 
 /* ── Main Page ──────────────────────────── */
-export default function AuthPage() {
-    const [mode, setMode] = useState<Mode>('login');
-    const [userType, setUserType] = useState('buyer');
+function AuthContent() {
+    const searchParams = useSearchParams();
+    const refParam = searchParams.get('ref') || searchParams.get('referral') || searchParams.get('referral_code') || '';
+    const modeParam = searchParams.get('mode');
+    const typeParam = searchParams.get('type');
+
+    // If referral link or mode=register is clicked, directly show register page
+    const initialMode: Mode = (modeParam === 'register' || modeParam === 'forgot' || modeParam === 'otp' || modeParam === '2fa')
+        ? (modeParam as Mode)
+        : (refParam ? 'register' : (modeParam === 'login' ? 'login' : 'login'));
+
+    const [mode, setMode] = useState<Mode>(initialMode);
+    const [userType, setUserType] = useState(typeParam === 'seller' || typeParam === 'buyer' ? typeParam : 'buyer');
+    const [referralCode, setReferralCode] = useState(refParam);
     const [twoFactorEmail, setTwoFactorEmail] = useState('');
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const params = new URLSearchParams(window.location.search);
-            const m = params.get('mode');
-            const t = params.get('type');
-            if (m === 'register' || m === 'login' || m === 'forgot' || m === 'otp') {
-                setMode(m as Mode);
-            }
-            if (t === 'seller' || t === 'buyer') {
-                setUserType(t);
+        const ref = searchParams.get('ref') || searchParams.get('referral') || searchParams.get('referral_code');
+        const m = searchParams.get('mode');
+        const t = searchParams.get('type');
+        if (ref) {
+            setReferralCode(ref);
+            if (!m) {
+                setMode('register');
             }
         }
-    }, []);
+        if (m === 'register' || m === 'login' || m === 'forgot' || m === 'otp') {
+            setMode(m as Mode);
+        }
+        if (t === 'seller' || t === 'buyer') {
+            setUserType(t);
+        }
+    }, [searchParams]);
 
     const handleSuccess = (type: string) => {
         setUserType(type);
@@ -799,12 +922,20 @@ export default function AuthPage() {
                     <div className="auth-form-inner">
                         {mode === 'login' && <LoginForm onSwitch={() => setMode('register')} onForgot={() => setMode('forgot')} onSuccess={handleSuccess} onTwoFactor={handleTwoFactor} />}
                         {mode === '2fa' && <TwoFactorForm email={twoFactorEmail} onBack={() => setMode('login')} onSuccess={handleSuccess} />}
-                        {mode === 'register' && <RegisterForm onSwitch={() => setMode('login')} onSuccess={handleSuccess} defaultAccountType={userType} />}
+                        {mode === 'register' && <RegisterForm onSwitch={() => setMode('login')} onSuccess={handleSuccess} defaultAccountType={userType} initialReferralCode={referralCode} />}
                         {mode === 'forgot' && <ForgotForm onBack={() => setMode('login')} />}
                         {mode === 'otp' && <OTPForm onBack={() => setMode('login')} userType={userType} />}
                     </div>
                 </div>
             </div>
         </>
+    );
+}
+
+export default function AuthPage() {
+    return (
+        <Suspense fallback={<Loader text="Loading..." subtext="Please wait..." />}>
+            <AuthContent />
+        </Suspense>
     );
 }

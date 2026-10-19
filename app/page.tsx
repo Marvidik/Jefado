@@ -7,7 +7,7 @@ import ProductGrid from '@/components/home/ProductGrid';
 import FullWidthPromo from '@/components/home/FullWidthPromo';
 import BestSellers from '@/components/home/BestSellers';
 import WelcomeModal from '@/components/home/WelcomeModal';
-import PartnerPromo from '@/components/home/PartnerPromo';
+import ReferralPromo from '@/components/home/ReferralPromo';
 
 export default function Home() {
   return (
@@ -22,7 +22,7 @@ export default function Home() {
       <ProductGrid />
       <FullWidthPromo />
       <BestSellers />
-      <PartnerPromo />
+      <ReferralPromo />
     </div>
   );
 }

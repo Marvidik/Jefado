@@ -204,6 +204,7 @@ export default function Navbar() {
                                 { icon: '📞', label: 'Contact', href: '/contact' },
                                 { icon: '📊', label: 'Dashboard', href: '/dashboard' },
                                 { icon: '👤', label: 'Account', href: '/account' },
+                                { icon: '🎁', label: 'Refer & Earn', href: '/referral' },
                                 { icon: '🛒', label: 'Cart', href: '/cart' },
                                 { icon: '🔑', label: 'Sign In', href: '/auth' },
                             ].map(item => {

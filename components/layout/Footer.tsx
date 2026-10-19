@@ -135,6 +135,7 @@ export default function Footer() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {[
                                 { label: 'My Account', href: '/account' },
+                                { label: 'Refer & Earn (₦500)', href: '/referral' },
                                 { label: 'Login / Register', href: '/auth' },
                                 { label: 'Cart', href: '/cart' },
                                 { label: 'Orders', href: '/account?tab=orders' },
