@@ -7,8 +7,9 @@ import { useCart } from '@/context/CartContext';
 import { getProductDetail, getServiceDetail } from '@/services/publicService';
 import { checkoutProduct, checkoutService, verifyPayment } from '@/services/checkoutService';
 import { getAddresses, getProfile } from '@/services/accountService';
+import { getWallet } from '@/services/walletService';
 import { tokenStorage } from '@/services/axiosInstance';
-import { ProductDetail, ServiceDetail, Address } from '@/services/types';
+import { ProductDetail, ServiceDetail, Address, Wallet } from '@/services/types';
 import Loader from '@/components/ui/Loader';
 
 /* ── Types ──────────────────────────────── */
@@ -117,7 +118,7 @@ function SelectField({ label, value, onChange, options = [], required }: {
 }
 
 /* ── Order summary sidebar ──────────────── */
-function OrderSidebar({ items, coupon, setCoupon, couponCode, setCouponCode }: { items: OrderItem[]; coupon: number; setCoupon: (n: number) => void; couponCode: string; setCouponCode: (s: string) => void }) {
+function OrderSidebar({ items, coupon, setCoupon, couponCode, setCouponCode, wallet }: { items: OrderItem[]; coupon: number; setCoupon: (n: number) => void; couponCode: string; setCouponCode: (s: string) => void; wallet?: Wallet | null }) {
     const [error, setError] = useState('');
     const [applied, setApplied] = useState('');
 
@@ -192,8 +193,41 @@ function OrderSidebar({ items, coupon, setCoupon, couponCode, setCouponCode }: {
                 <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '20px', color: 'var(--primary)' }}>₦{total.toFixed(2)}</span>
             </div>
 
+            {/* Wallet Quick Action */}
+            <div style={{ marginTop: '14px', padding: '12px', background: 'var(--surface-2)', borderRadius: 'var(--radius)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '16px' }}>👛</span>
+                    <div>
+                        <p style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Jefedo Wallet</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)' }}>
+                            {wallet ? `Balance: ₦${parseFloat(wallet.balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'Top up balance anytime'}
+                        </p>
+                    </div>
+                </div>
+                <a
+                    href="/account?section=Wallet"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                        padding: '6px 10px',
+                        background: 'var(--primary)',
+                        color: '#fff',
+                        borderRadius: 'var(--radius)',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3px',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
+                    FUND WALLET ↗
+                </a>
+            </div>
+
             {/* Trust */}
-            <div style={{ marginTop: '16px', padding: '12px', background: 'var(--surface-2)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+            <div style={{ marginTop: '14px', padding: '12px', background: 'var(--surface-2)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', marginBottom: '8px' }}>🔒 Secured by SSL encryption</p>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', flexWrap: 'wrap' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ fontSize: '18px' }}>💳</span> Cards</span>
@@ -352,9 +386,10 @@ function ShippingStep({ form, setForm, onNext, isService, isLoggedIn }: {
 
 
 /* ── Step 3: Review & confirm ───────────── */
-function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn }: { items: OrderItem[]; form: FormData; setForm: (f: FormData) => void; onBack: () => void; onPlace: () => void; loading: boolean; isLoggedIn: boolean; }) {
+function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn, wallet, onRefreshWallet }: { items: OrderItem[]; form: FormData; setForm: (f: FormData) => void; onBack: () => void; onPlace: () => void; loading: boolean; isLoggedIn: boolean; wallet: Wallet | null; onRefreshWallet: () => void; }) {
     const [agreed, setAgreed] = useState(false);
     const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+    const isWalletInsufficient = isLoggedIn && form.paymentMethod === 'wallet' && wallet !== null && Number(wallet.balance) < subtotal;
 
     useEffect(() => {
         if (!isLoggedIn && form.paymentMethod === 'wallet') {
@@ -368,22 +403,106 @@ function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn
 
             {/* Payment Method Selection */}
             <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '14px' }}>
-                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', marginBottom: '12px' }}>💳 Payment Method</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', margin: 0 }}>💳 Payment Method</p>
+                    <a
+                        href="/account?section=Wallet"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            color: 'var(--primary)',
+                            background: 'rgba(238, 18, 23, 0.08)',
+                            padding: '4px 10px',
+                            borderRadius: 'var(--radius)',
+                            border: '1px solid rgba(238, 18, 23, 0.2)',
+                            textDecoration: 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            transition: 'all 0.2s',
+                        }}
+                    >
+                        👛 FUND WALLET ↗
+                    </a>
+                </div>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {isLoggedIn && (
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'wallet' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'wallet' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'transparent' }}>
-                            <input
-                                type="radio"
-                                name="paymentMethod"
-                                value="wallet"
-                                checked={form.paymentMethod === 'wallet'}
-                                onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })}
-                                style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }}
-                            />
-                            <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Jefedo Wallet Balance</span>
-                        </label>
+                        <div>
+                            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'wallet' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'wallet' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'var(--surface)', transition: 'all 0.2s' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <input
+                                        type="radio"
+                                        name="paymentMethod"
+                                        value="wallet"
+                                        checked={form.paymentMethod === 'wallet'}
+                                        onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })}
+                                        style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }}
+                                    />
+                                    <div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Jefedo Wallet Balance</span>
+                                            {wallet && (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRefreshWallet(); }}
+                                                    title="Refresh balance"
+                                                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '12px', padding: '0 2px' }}
+                                                >
+                                                    ↻
+                                                </button>
+                                            )}
+                                        </div>
+                                        {wallet && (
+                                            <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                                                Available: <strong style={{ color: Number(wallet.balance) >= subtotal ? 'var(--success)' : 'var(--danger)' }}>₦{parseFloat(wallet.balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                                <a
+                                    href="/account?section=Wallet"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    style={{
+                                        fontSize: '11px',
+                                        fontWeight: 700,
+                                        color: '#fff',
+                                        background: 'var(--primary)',
+                                        borderRadius: 'var(--radius)',
+                                        padding: '6px 12px',
+                                        textDecoration: 'none',
+                                        whiteSpace: 'nowrap',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        boxShadow: '0 2px 6px rgba(238, 18, 23, 0.2)',
+                                    }}
+                                >
+                                    FUND WALLET ↗
+                                </a>
+                            </label>
+
+                            {isWalletInsufficient && (
+                                <div style={{ marginTop: '8px', padding: '10px 14px', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.25)', borderRadius: 'var(--radius)', fontSize: '12px', color: 'var(--danger)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                                    <span>⚠️ Insufficient wallet balance for this order (Needs ₦{(subtotal - Number(wallet.balance)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} more).</span>
+                                    <a
+                                        href="/account?section=Wallet"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ color: 'var(--primary)', fontWeight: 700, textDecoration: 'underline' }}
+                                    >
+                                        FUND WALLET NOW ↗
+                                    </a>
+                                </div>
+                            )}
+                        </div>
                     )}
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'paystack' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'paystack' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'transparent' }}>
+
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px', border: form.paymentMethod === 'paystack' ? '1.5px solid var(--primary)' : '1px solid var(--border)', borderRadius: 'var(--radius)', background: form.paymentMethod === 'paystack' ? 'var(--primary-light, rgba(238,18,23,0.05))' : 'var(--surface)', transition: 'all 0.2s' }}>
                         <input
                             type="radio"
                             name="paymentMethod"
@@ -394,6 +513,17 @@ function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn
                         />
                         <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Paystack (Cards / Bank / USSD)</span>
                     </label>
+
+                    {!isLoggedIn && (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', padding: '10px 14px', background: 'var(--surface)', border: '1px dashed var(--border)', borderRadius: 'var(--radius)', fontSize: '12px', color: 'var(--text-muted)' }}>
+                            <span>Want to pay with wallet balance?</span>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <a href="/auth?returnUrl=/checkout" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'underline' }}>Log In</a>
+                                <span>·</span>
+                                <a href="/account?section=Wallet" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: 700, textDecoration: 'underline' }}>FUND WALLET ↗</a>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -446,23 +576,23 @@ function ReviewStep({ items, form, setForm, onBack, onPlace, loading, isLoggedIn
             <div style={{ display: 'flex', gap: '12px' }}>
                 <button onClick={onBack} style={{ flex: 1, padding: '13px', border: '1.5px solid var(--border)', color: 'var(--text-secondary)', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '14px', cursor: 'pointer', background: 'var(--surface)' }}>← Back</button>
                 <button
-                    disabled={!agreed || loading}
-                    onClick={() => agreed && !loading && onPlace()}
+                    disabled={!agreed || loading || isWalletInsufficient}
+                    onClick={() => agreed && !loading && !isWalletInsufficient && onPlace()}
                     style={{
                         flex: 2,
                         padding: '13px',
-                        background: (agreed && !loading) ? 'var(--success)' : 'var(--border)',
-                        color: (agreed && !loading) ? '#fff' : 'var(--text-muted)',
+                        background: (agreed && !loading && !isWalletInsufficient) ? 'var(--success)' : 'var(--border)',
+                        color: (agreed && !loading && !isWalletInsufficient) ? '#fff' : 'var(--text-muted)',
                         borderRadius: 'var(--radius)',
                         fontFamily: 'var(--font-body)',
                         fontWeight: 800,
                         fontSize: '14px',
-                        cursor: (agreed && !loading) ? 'pointer' : 'not-allowed',
+                        cursor: (agreed && !loading && !isWalletInsufficient) ? 'pointer' : 'not-allowed',
                         transition: 'all 0.2s',
-                        boxShadow: (agreed && !loading) ? '0 4px 20px rgba(34,197,94,0.3)' : 'none'
+                        boxShadow: (agreed && !loading && !isWalletInsufficient) ? '0 4px 20px rgba(34,197,94,0.3)' : 'none'
                     }}
                 >
-                    {loading ? 'Processing Transaction...' : '✓ Place Order'}
+                    {loading ? 'Processing Transaction...' : isWalletInsufficient ? 'Insufficient Balance — Fund Wallet' : '✓ Place Order'}
                 </button>
             </div>
         </div>
@@ -555,6 +685,24 @@ function CheckoutContent() {
     const [verifiedOrder, setVerifiedOrder] = useState<any>(null);
     const [verificationError, setVerificationError] = useState<string>('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [wallet, setWallet] = useState<Wallet | null>(null);
+
+    const refreshWallet = async () => {
+        if (tokenStorage.getAccessToken()) {
+            try {
+                const w = await getWallet();
+                setWallet(w);
+            } catch (e) { }
+        }
+    };
+
+    useEffect(() => {
+        const onFocus = () => {
+            refreshWallet();
+        };
+        window.addEventListener('focus', onFocus);
+        return () => window.removeEventListener('focus', onFocus);
+    }, []);
 
     const type = searchParams.get('type') || (searchParams.get('id') ? 'product' : 'cart');
     const id = searchParams.get('id');
@@ -570,6 +718,9 @@ function CheckoutContent() {
             try {
                 const loggedIn = !!tokenStorage.getAccessToken();
                 setIsLoggedIn(loggedIn);
+                if (loggedIn) {
+                    refreshWallet();
+                }
 
                 if (reference) {
                     setLoadingData(true);
@@ -801,9 +952,31 @@ function CheckoutContent() {
     return (
         <div className="container" style={{ padding: '28px var(--gutter)' }}>
             {/* Header */}
-            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                 <a href="/" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: 'var(--primary)' }}>Jefedo<span style={{ color: 'var(--accent)' }}>.</span></a>
                 <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Secure Checkout</p>
+                <div className="checkout-mobile-wallet-pill" style={{ marginTop: '10px', display: 'none', justifyContent: 'center' }}>
+                    <a
+                        href="/account?section=Wallet"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            background: 'rgba(238, 18, 23, 0.08)',
+                            border: '1px solid rgba(238, 18, 23, 0.25)',
+                            color: 'var(--primary)',
+                            padding: '6px 14px',
+                            borderRadius: '100px',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            textDecoration: 'none',
+                        }}
+                    >
+                        👛 Need to fund wallet? Top up now ↗
+                    </a>
+                </div>
             </div>
 
             <StepBar step={step} isService={isService} />
@@ -815,20 +988,25 @@ function CheckoutContent() {
                 <div style={{ flex: '1 1 65%', minWidth: 0 }}>
                     <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '28px', minWidth: 0 }}>
                         {step === 1 && <ShippingStep form={form} setForm={setForm} onNext={() => setStep(2)} isService={isService} isLoggedIn={isLoggedIn} />}
-                        {step === 2 && <ReviewStep items={items} form={form} setForm={setForm} onBack={() => setStep(1)} onPlace={handlePlaceOrder} loading={loading} isLoggedIn={isLoggedIn} />}
+                        {step === 2 && <ReviewStep items={items} form={form} setForm={setForm} onBack={() => setStep(1)} onPlace={handlePlaceOrder} loading={loading} isLoggedIn={isLoggedIn} wallet={wallet} onRefreshWallet={refreshWallet} />}
                     </div>
 
                 </div>
 
                 {/* Right: order summary */}
                 <div style={{ minWidth: 0 }}>
-                    <OrderSidebar items={items} coupon={coupon} setCoupon={setCoupon} couponCode={couponCode} setCouponCode={setCouponCode} />
+                    <OrderSidebar items={items} coupon={coupon} setCoupon={setCoupon} couponCode={couponCode} setCouponCode={setCouponCode} wallet={wallet} />
                 </div>
             </div>
             <style jsx>{`
                 @media (max-width: 900px) {
                     .checkout-layout {
                         grid-template-columns: 1fr !important;
+                    }
+                }
+                @media (max-width: 768px) {
+                    .checkout-mobile-wallet-pill {
+                        display: flex !important;
                     }
                 }
             `}</style>

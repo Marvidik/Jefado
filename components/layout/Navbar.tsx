@@ -8,7 +8,7 @@ import { tokenStorage } from '@/services/axiosInstance';
 import { useCart } from '@/context/CartContext';
 import { 
     Phone, ShoppingCart, User, Menu, X, Home, ShoppingBag, 
-    Wrench, Tag, Info, LayoutDashboard, Gift, Key, LogOut, ChevronRight 
+    Wrench, Tag, Info, LayoutDashboard, Gift, Key, LogOut, ChevronRight, Wallet 
 } from 'lucide-react';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
 
@@ -139,6 +139,14 @@ export default function Navbar() {
                         ))}
                     </nav>
 
+                    {/* Wallet icon (Fund Wallet) — visible on mobile and desktop */}
+                    <Link href="/account?section=Wallet" title="Fund Wallet" style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', color: 'var(--text-secondary)', transition: 'all 0.2s', flexShrink: 0 }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'var(--primary-light)'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
+                    >
+                        <Wallet size={20} />
+                    </Link>
+
                     {/* Cart icon — always visible (mobile + desktop) */}
                     <Link href="/cart" title="Cart" style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', color: 'var(--text-secondary)', transition: 'all 0.2s', flexShrink: 0 }}
                         onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'var(--primary-light)'; }}
@@ -209,6 +217,7 @@ export default function Navbar() {
                                 { icon: <Phone size={18} />, label: 'Contact', href: '/contact' },
                                 { icon: <LayoutDashboard size={18} />, label: 'Dashboard', href: '/dashboard' },
                                 { icon: <User size={18} />, label: 'Account', href: '/account' },
+                                { icon: <Wallet size={18} />, label: 'Fund Wallet', href: '/account?section=Wallet', badge: 'Top Up' },
                                 { icon: <Gift size={18} />, label: 'Refer & Earn', href: '/referral' },
                                 { icon: <ShoppingCart size={18} />, label: 'Cart', href: '/cart' },
                                 { icon: <Key size={18} />, label: 'Sign In', href: '/auth' },
@@ -228,6 +237,11 @@ export default function Navbar() {
                                     >
                                         <span style={{ display: 'flex', alignItems: 'center', color: hoveredCat === item.label ? 'var(--primary)' : 'var(--text-secondary)' }}>{item.icon}</span>
                                         <span style={{ flex: 1 }}>{item.label}</span>
+                                        {'badge' in item && item.badge && (
+                                            <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--primary)', background: 'rgba(238,18,23,0.1)', padding: '2px 8px', borderRadius: '100px', marginRight: '6px' }}>
+                                                {item.badge}
+                                            </span>
+                                        )}
                                         <ChevronRight size={14} color="var(--text-muted)" />
                                     </Link>
                                 );
