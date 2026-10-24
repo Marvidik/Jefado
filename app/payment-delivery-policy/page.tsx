@@ -1,18 +1,24 @@
 'use client';
 import PolicyLayout from '@/components/ui/PolicyLayout';
+import { 
+    Truck, CreditCard, Package, ShoppingCart, Megaphone, 
+    CheckCircle2, Calendar, AlertTriangle 
+} from 'lucide-react';
 
 export default function PaymentDeliveryPolicyPage() {
     const sections = [
         {
             id: 'initial-payment',
             title: '1. Initial Payment Structure',
-            icon: '💳',
+            icon: <CreditCard size={18} />,
             content: (
                 <div>
                     <p>When placing an order on JEFEDO, the initial payment made by the customer covers:</p>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px', margin: '20px 0', background: 'var(--border-light)', border: '1px solid var(--border)', borderRadius: '16px', padding: '24px' }}>
-                        <h4 style={{ margin: 0, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--text-primary)', fontSize: '15px' }}>📦 Order Payment Structure</h4>
+                        <h4 style={{ margin: 0, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--text-primary)', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Package size={18} color="var(--primary)" /> Order Payment Structure
+                        </h4>
                         <div style={{ width: '100%', height: '1px', background: 'var(--border)' }}></div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
                             <span>1. Cost of Goods</span>
@@ -23,8 +29,8 @@ export default function PaymentDeliveryPolicyPage() {
                             <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Not Included</span>
                         </div>
                         <div style={{ width: '100%', height: '1px', background: 'var(--border)' }}></div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--secondary-dark)', fontWeight: 700 }}>
-                            <span>🛒 Order Status</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--secondary-dark)', fontWeight: 700, alignItems: 'center' }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><ShoppingCart size={15} /> Order Status</span>
                             <span>PENDING VENDOR CONFIRMATION</span>
                         </div>
                     </div>
@@ -38,7 +44,7 @@ export default function PaymentDeliveryPolicyPage() {
         {
             id: 'additional-charges',
             title: '2. Additional Delivery Charges',
-            icon: '🚚',
+            icon: <Truck size={18} />,
             content: (
                 <div>
                     <p>In some specific cases, additional delivery-related costs may arise due to the following variables:</p>
@@ -56,8 +62,8 @@ export default function PaymentDeliveryPolicyPage() {
                         padding: '18px 24px',
                         borderRadius: '0 12px 12px 0'
                     }}>
-                        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-                            📢 <strong>Communication</strong>: If such additional costs occur, they will be clearly communicated to the customer after order confirmation but before final dispatch.
+                        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Megaphone size={16} /> <span><strong>Communication</strong>: If such additional costs occur, they will be clearly communicated to the customer after order confirmation but before final dispatch.</span>
                         </p>
                         <p style={{ margin: '8px 0 0', fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
                             Orders will only proceed once the customer approves and completes any additional required payment.
@@ -69,7 +75,7 @@ export default function PaymentDeliveryPolicyPage() {
         {
             id: 'confirmation-process',
             title: '3. Order Confirmation Process',
-            icon: '✅',
+            icon: <CheckCircle2 size={18} />,
             content: (
                 <div>
                     <p>The standard timeline of an order processing sequence on JEFEDO follows these milestones:</p>
@@ -113,7 +119,7 @@ export default function PaymentDeliveryPolicyPage() {
         {
             id: 'delivery-timeline',
             title: '4. Delivery Timeline',
-            icon: '📅',
+            icon: <Calendar size={18} />,
             content: (
                 <div>
                     <p>Delivery timelines vary and depend closely on multiple parameters:</p>
@@ -131,7 +137,7 @@ export default function PaymentDeliveryPolicyPage() {
         {
             id: 'failed-delivery',
             title: '5. Failed Delivery or Re-delivery',
-            icon: '⚠️',
+            icon: <AlertTriangle size={18} />,
             content: (
                 <div>
                     <p>To avoid delivery complications, please ensure your details are complete and precise. Additional re-delivery charges may apply if delivery fails due to:</p>
@@ -151,7 +157,7 @@ export default function PaymentDeliveryPolicyPage() {
             subtitle="Logistics & Payments"
             description="Understand how payments, shipping fees, additional bulky item charges, and shipping timelines are handled on the JEFEDO marketplace."
             lastUpdated="May 2026"
-            icon="🚚"
+            icon={<Truck size={42} />}
             sections={sections}
         />
     );

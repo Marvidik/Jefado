@@ -50,12 +50,14 @@ export const useToast = () => {
     return context;
 };
 
+import { Check, X, Info, AlertTriangle } from 'lucide-react';
+
 function ToastItem({ toast, onClose }: { toast: Toast, onClose: () => void }) {
     const icons = {
-        success: '✓',
-        error: '✕',
-        info: 'ℹ',
-        warning: '⚠'
+        success: <Check size={14} strokeWidth={3} />,
+        error: <X size={14} strokeWidth={3} />,
+        info: <Info size={14} strokeWidth={3} />,
+        warning: <AlertTriangle size={14} strokeWidth={3} />
     };
 
     const colors = {
@@ -100,8 +102,6 @@ function ToastItem({ toast, onClose }: { toast: Toast, onClose: () => void }) {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                fontSize: '14px', 
-                fontWeight: 800,
                 flexShrink: 0
             }}>
                 {icons[toast.type]}
@@ -110,7 +110,9 @@ function ToastItem({ toast, onClose }: { toast: Toast, onClose: () => void }) {
                 {toast.title && <p style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', margin: '0 0 2px' }}>{toast.title}</p>}
                 <p style={{ fontSize: '13px', color: '#475569', margin: 0, lineHeight: 1.4 }}>{toast.message}</p>
             </div>
-            <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '16px', padding: 0 }}>✕</button>
+            <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
+                <X size={16} />
+            </button>
             <style>{`
                 @keyframes toastSlideIn {
                     from { transform: translateX(100%); opacity: 0; }

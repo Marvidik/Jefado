@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { Search, Home, ShoppingBag, Phone, Shirt, Monitor, Building2, Sparkles, Dumbbell } from 'lucide-react';
 
 export const metadata: Metadata = {
     title: '404 – Page Not Found | Jefedo',
@@ -67,7 +68,7 @@ export default function NotFound() {
             </div>
 
             {/* Emoji */}
-            <div style={{ fontSize: '60px', marginBottom: '24px' }}>🔍</div>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(238,18,23,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', color: 'var(--primary, #EE1217)' }}><Search size={36} /></div>
 
             <h1 style={{
                 fontFamily: 'var(--font-display, system-ui, sans-serif)',
@@ -110,7 +111,7 @@ export default function NotFound() {
                         gap: '8px',
                     }}
                 >
-                    🏠 Go Home
+                    <Home size={16} /> Go Home
                 </Link>
                 <Link
                     href="/products"
@@ -128,7 +129,7 @@ export default function NotFound() {
                         gap: '8px',
                     }}
                 >
-                    🛍️ Browse Shop
+                    <ShoppingBag size={16} /> Browse Shop
                 </Link>
                 <Link
                     href="/contact"
@@ -146,7 +147,7 @@ export default function NotFound() {
                         gap: '8px',
                     }}
                 >
-                    📞 Contact Support
+                    <Phone size={16} /> Contact Support
                 </Link>
             </div>
 
@@ -157,11 +158,11 @@ export default function NotFound() {
                 </p>
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
                     {[
-                        { icon: '🧥', label: 'Fashion', slug: 'fashion' },
-                        { icon: '💻', label: 'Electronics', slug: 'electronics' },
-                        { icon: '🏠', label: 'Home', slug: 'home' },
-                        { icon: '✨', label: 'Beauty', slug: 'beauty' },
-                        { icon: '⚽', label: 'Sports', slug: 'sports' },
+                    { icon: <Shirt size={14} />, label: 'Fashion', slug: 'fashion' },
+                        { icon: <Monitor size={14} />, label: 'Electronics', slug: 'electronics' },
+                        { icon: <Building2 size={14} />, label: 'Home', slug: 'home' },
+                        { icon: <Sparkles size={14} />, label: 'Beauty', slug: 'beauty' },
+                        { icon: <Dumbbell size={14} />, label: 'Sports', slug: 'sports' },
                     ].map(cat => (
                         <Link
                             key={cat.slug}

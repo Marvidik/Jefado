@@ -7,6 +7,7 @@ import { getMyCode, getReferralStats, getReferralHistory, claimReferral } from '
 import { UserProfile, Address, Order, AppNotification, Wallet, Transaction, ReferralStats, ReferralHistory, ReferralCode } from '@/services/types';
 import { useToast } from '@/components/ui/Toast';
 import { tokenStorage } from '@/services/axiosInstance';
+import { User, Package, CreditCard, Gift, Settings, MapPin, Lock, Bell, LogOut, Eye, EyeOff, ShieldCheck, CheckCircle, X } from 'lucide-react';
 
 const NIGERIAN_STATES = ['Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT - Abuja', 'Gombe', 'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'];
 
@@ -290,28 +291,28 @@ export default function AccountPage() {
     );
 
     // Define menu items mapped to mobile style
-    const menuGroups: { title: string; items: { id: string; icon: string; label: string; desc?: string; badge?: number }[] }[] = [
+    const menuGroups: { title: string; items: { id: string; icon: React.ReactNode; label: string; desc?: string; badge?: number }[] }[] = [
         {
             title: "My Activity",
             items: [
-                { id: 'Overview', icon: '👤', label: 'Overview' },
-                { id: 'Orders', icon: '📦', label: 'My Orders', badge: orders.length > 0 ? orders.length : undefined },
+                { id: 'Overview', icon: <User size={18} />, label: 'Overview' },
+                { id: 'Orders', icon: <Package size={18} />, label: 'My Orders', badge: orders.length > 0 ? orders.length : undefined },
             ]
         },
         {
             title: "Financials",
             items: [
-                { id: 'Wallet', icon: '💳', label: 'Wallet & Points', desc: 'Manage your balance' },
-                { id: 'Referral', icon: '🎁', label: 'Refer & Earn', desc: 'Invite friends' },
+                { id: 'Wallet', icon: <CreditCard size={18} />, label: 'Wallet & Points', desc: 'Manage your balance' },
+                { id: 'Referral', icon: <Gift size={18} />, label: 'Refer & Earn', desc: 'Invite friends' },
             ]
         },
         {
             title: "Settings",
             items: [
-                { id: 'Profile', icon: '⚙️', label: 'Personal Information' },
-                { id: 'Addresses', icon: '📍', label: 'Saved Addresses', badge: addresses.length > 0 ? addresses.length : undefined },
-                { id: 'Security', icon: '🔒', label: 'Security & Password' },
-                { id: 'Notifications', icon: '🔔', label: 'Notifications', badge: notifications.filter(n => !n.is_read).length > 0 ? notifications.filter(n => !n.is_read).length : undefined },
+                { id: 'Profile', icon: <Settings size={18} />, label: 'Personal Information' },
+                { id: 'Addresses', icon: <MapPin size={18} />, label: 'Saved Addresses', badge: addresses.length > 0 ? addresses.length : undefined },
+                { id: 'Security', icon: <Lock size={18} />, label: 'Security & Password' },
+                { id: 'Notifications', icon: <Bell size={18} />, label: 'Notifications', badge: notifications.filter(n => !n.is_read).length > 0 ? notifications.filter(n => !n.is_read).length : undefined },
             ]
         }
     ];
@@ -351,7 +352,7 @@ export default function AccountPage() {
 
                 <div className="menu-group" style={{ marginTop: '30px' }}>
                     <button className="menu-item text-danger" onClick={handleLogout}>
-                        <span className="menu-icon">🚪</span>
+                        <span className="menu-icon" style={{ display: 'flex', alignItems: 'center' }}><LogOut size={18} /></span>
                         <div className="menu-text"><span className="menu-label">Log Out</span></div>
                     </button>
                 </div>
@@ -380,17 +381,17 @@ export default function AccountPage() {
                         <div className="card stat-card">
                             <div className="stat-row">
                                 <div className="stat-col" onClick={() => handleNavigate('Orders')}>
-                                    <span className="stat-icon">📦</span>
+                                    <span className="stat-icon" style={{ display: 'flex', justifyContent: 'center' }}><Package size={22} /></span>
                                     <span className="stat-val">{orders.length}</span>
                                     <span className="stat-label">Total Orders</span>
                                 </div>
                                 <div className="stat-col" onClick={() => handleNavigate('Wallet')}>
-                                    <span className="stat-icon">💳</span>
-                                    <span className="stat-val">₦{wallet ? parseFloat(wallet.balance).toLocaleString() : '0.00'}</span>
+                                    <span className="stat-icon" style={{ display: 'flex', justifyContent: 'center' }}><CreditCard size={22} /></span>
+                                    <span className="stat-val">{'₦'}{wallet ? parseFloat(wallet.balance).toLocaleString() : '0.00'}</span>
                                     <span className="stat-label">Wallet Bal</span>
                                 </div>
                                 <div className="stat-col" onClick={() => handleNavigate('Referral')}>
-                                    <span className="stat-icon">🎁</span>
+                                    <span className="stat-icon" style={{ display: 'flex', justifyContent: 'center' }}><Gift size={22} /></span>
                                     <span className="stat-val">{referralStats ? referralStats.total_referrals : 0}</span>
                                     <span className="stat-label">Referrals</span>
                                 </div>
@@ -405,7 +406,7 @@ export default function AccountPage() {
                             {orders.slice(0, 3).map(o => (
                                 <div key={o.id} className="card small-order-card" onClick={() => setViewingOrder(o)}>
                                     <div className="soc-left">
-                                        <div className="soc-icon">📦</div>
+                                        <div className="soc-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}><Package size={20} /></div>
                                         <div>
                                             <p className="soc-title">ORD-{o.id}</p>
                                             <p className="soc-date">{new Date(o.order_date || o.created_at).toLocaleDateString()}</p>
@@ -432,7 +433,7 @@ export default function AccountPage() {
                                     <p style={{ fontWeight: 800, color: 'var(--primary)' }}>ORD-{o.id}</p>
                                     <span className={`status-badge ${o.status.toLowerCase()}`}>{o.status_display || o.status}</span>
                                 </div>
-                                <p style={{ fontSize: '14px', fontWeight: 600 }}>📦 {o.items?.[0]?.product_name || o.items?.[0]?.service_name || o.items?.[0]?.name || 'Item'} {o.items?.length > 1 ? `+ ${o.items.length - 1} other` : ''}</p>
+                                <p style={{ fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}><Package size={14} /> {o.items?.[0]?.product_name || o.items?.[0]?.service_name || o.items?.[0]?.name || 'Item'} {o.items?.length > 1 ? `+ ${o.items.length - 1} other` : ''}</p>
                                 <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>Placed on: {new Date(o.order_date || o.created_at).toLocaleDateString()}</p>
                                 <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <p style={{ fontSize: '18px', fontWeight: 800 }}>₦{parseFloat(o.total_amount).toLocaleString()}</p>
@@ -460,7 +461,7 @@ export default function AccountPage() {
                             <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '10px' }}>
                                 {viewingOrder.items?.map((item: any, idx: number) => (
                                     <div key={idx} style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: idx < viewingOrder.items.length - 1 ? '12px' : 0 }}>
-                                        <div style={{ width: '40px', height: '40px', background: '#fff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>📦</div>
+                                        <div style={{ width: '40px', height: '40px', background: '#fff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: 'var(--primary)', border: '1px solid var(--border)' }}><Package size={18} /></div>
                                         <div style={{ minWidth: 0, flex: 1 }}>
                                             <p style={{ fontSize: '14px', fontWeight: 700, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</p>
                                             <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>Qty: {item.quantity} × ₦{parseFloat(item.price).toLocaleString()}</p>
@@ -605,7 +606,7 @@ export default function AccountPage() {
                                 {addresses.map(a => (
                                     <div key={a.id} className="card" style={{ border: a.is_default ? '2px solid var(--primary)' : '1px solid #eef1f4', marginBottom: '12px' }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                                            <h3 style={{ fontSize: '15px', fontWeight: 800, margin: 0 }}>📍 {a.label}</h3>
+                                            <h3 style={{ fontSize: '15px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}><MapPin size={15} /> {a.label}</h3>
                                             <div style={{ display: 'flex', gap: '8px' }}>
                                                 {a.is_default && <span className="status-badge processing" style={{ background: 'var(--primary)', color: 'white' }}>DEFAULT</span>}
                                                 <button onClick={() => handleDeleteAddress(a.id)} className="text-danger" style={{ background: 'none', border: 'none', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>Delete</button>
@@ -631,7 +632,7 @@ export default function AccountPage() {
                         <div className="card">
                             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
                                 <button onClick={() => setShowPasswords(!showPasswords)} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>
-                                    {showPasswords ? '🙈 Hide' : '👁 Show'} Passwords
+                                    {showPasswords ? <><EyeOff size={13} /> Hide</> : <><Eye size={13} /> Show</>} Passwords
                                 </button>
                             </div>
                             <div className="form-group"><label className="form-label">Current Password</label><input type={showPasswords ? "text" : "password"} className="form-input" value={securityForm.old_password} onChange={e => setSecurityForm({ ...securityForm, old_password: e.target.value })} /></div>
@@ -642,7 +643,7 @@ export default function AccountPage() {
 
                         {/* Two-Factor Authentication */}
                         <div className="card" style={{ marginTop: '20px' }}>
-                            <h3 style={{ margin: '0 0 8px', fontSize: '16px', fontWeight: 800 }}>🔐 Two-Factor Authentication</h3>
+                            <h3 style={{ margin: '0 0 8px', fontSize: '16px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}><ShieldCheck size={18} /> Two-Factor Authentication</h3>
                             <p style={{ color: '#94a3b8', margin: '0 0 20px', fontSize: '13px', lineHeight: 1.6 }}>
                                 Add an extra layer of security to your account. When enabled, you'll need to enter a verification code sent to your email each time you log in.
                             </p>
@@ -661,7 +662,7 @@ export default function AccountPage() {
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         fontSize: '20px', transition: 'all 0.3s ease'
                                     }}>
-                                        {twoFactorEnabled ? '✅' : '🔒'}
+                                        {twoFactorEnabled ? <CheckCircle size={22} color="#16a34a" /> : <Lock size={22} color="#94a3b8" />}
                                     </div>
                                     <div>
                                         <p style={{ fontWeight: 700, margin: '0 0 2px', fontSize: '14px', color: '#1e293b' }}>

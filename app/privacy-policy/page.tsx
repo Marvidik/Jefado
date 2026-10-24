@@ -1,12 +1,16 @@
 'use client';
 import PolicyLayout from '@/components/ui/PolicyLayout';
+import { 
+    Shield, Hand, FolderOpen, Sliders, Users, Lock, 
+    AlertTriangle, Cookie, UserCheck, Hourglass, Bell 
+} from 'lucide-react';
 
 export default function PrivacyPolicyPage() {
     const sections = [
         {
             id: 'introduction',
             title: '1. Introduction',
-            icon: '👋',
+            icon: <Hand size={18} />,
             content: (
                 <div>
                     <p>
@@ -21,7 +25,7 @@ export default function PrivacyPolicyPage() {
         {
             id: 'information-we-collect',
             title: '2. Information We Collect',
-            icon: '📂',
+            icon: <FolderOpen size={18} />,
             content: (
                 <div>
                     <p>We collect various types of information to provide and improve our services to you:</p>
@@ -62,7 +66,7 @@ export default function PrivacyPolicyPage() {
         {
             id: 'how-we-use-your-information',
             title: '3. How We Use Your Information',
-            icon: '⚙️',
+            icon: <Sliders size={18} />,
             content: (
                 <div>
                     <p>Your data is used strictly to enhance your trading experience and keep the platform secure:</p>
@@ -80,7 +84,7 @@ export default function PrivacyPolicyPage() {
         {
             id: 'data-sharing',
             title: '4. Data Sharing',
-            icon: '🤝',
+            icon: <Users size={18} />,
             content: (
                 <div>
                     <p>We do not sell personal data to third parties. We may share necessary information only with:</p>
@@ -98,8 +102,8 @@ export default function PrivacyPolicyPage() {
                         padding: '16px 20px',
                         borderRadius: '0 12px 12px 0'
                     }}>
-                        <p style={{ margin: 0, fontSize: '14px', color: 'var(--secondary-dark)', fontWeight: 600 }}>
-                            🔒 We implement strict non-disclosure agreements with all partner vendors and services to safeguard your personal details.
+                        <p style={{ margin: 0, fontSize: '14px', color: 'var(--secondary-dark)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Lock size={16} /> We implement strict non-disclosure agreements with all partner vendors and services to safeguard your personal details.
                         </p>
                     </div>
                 </div>
@@ -108,7 +112,7 @@ export default function PrivacyPolicyPage() {
         {
             id: 'data-security',
             title: '5. Data Security',
-            icon: '🛡️',
+            icon: <Shield size={18} />,
             content: (
                 <div>
                     <p>
@@ -124,8 +128,8 @@ export default function PrivacyPolicyPage() {
                         padding: '16px 20px',
                         borderRadius: '0 12px 12px 0'
                     }}>
-                        <p style={{ margin: 0, fontSize: '14px', color: 'var(--primary-dark)', fontWeight: 600 }}>
-                            ⚠️ While we do our utmost to secure your data, please be aware that no online system or electronic transmission is 100% secure.
+                        <p style={{ margin: 0, fontSize: '14px', color: 'var(--primary-dark)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <AlertTriangle size={16} /> While we do our utmost to secure your data, please be aware that no online system or electronic transmission is 100% secure.
                         </p>
                     </div>
                 </div>
@@ -134,7 +138,7 @@ export default function PrivacyPolicyPage() {
         {
             id: 'cookies-tracking',
             title: '6. Cookies & Tracking',
-            icon: '🍪',
+            icon: <Cookie size={18} />,
             content: (
                 <div>
                     <p>JEFEDO may use cookies to optimize platform performance and improve your user experience:</p>
@@ -152,7 +156,7 @@ export default function PrivacyPolicyPage() {
         {
             id: 'user-rights',
             title: '7. User Rights',
-            icon: '👤',
+            icon: <UserCheck size={18} />,
             content: (
                 <div>
                     <p>As a JEFEDO user, you possess full control over your personal data. You may request:</p>
@@ -170,7 +174,7 @@ export default function PrivacyPolicyPage() {
         {
             id: 'data-retention',
             title: '8. Data Retention',
-            icon: '⏳',
+            icon: <Hourglass size={18} />,
             content: (
                 <div>
                     <p>
@@ -185,7 +189,7 @@ export default function PrivacyPolicyPage() {
         {
             id: 'updates-to-policy',
             title: '9. Updates to Policy',
-            icon: '📣',
+            icon: <Bell size={18} />,
             content: (
                 <div>
                     <p>
@@ -205,7 +209,7 @@ export default function PrivacyPolicyPage() {
             subtitle="Security & Privacy"
             description="At JEFEDO, we value your privacy and are committed to protecting your personal data while you use our multivendor marketplace platform."
             lastUpdated="May 2026"
-            icon="🛡️"
+            icon={<Shield size={42} />}
             sections={sections}
         />
     );

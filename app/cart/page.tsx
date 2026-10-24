@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useCart, CartItem } from '@/context/CartContext';
+import { Tag, Lock, CreditCard, Building2, Smartphone, CheckCircle, PartyPopper, ShoppingCart, Bookmark, Trash2, Package } from 'lucide-react';
 
 const VALID_COUPONS: Record<string, number> = { SAVE10: 10, JEFEDO20: 20, WELCOME15: 15 };
 
@@ -53,7 +54,7 @@ function OrderSummary({ items, onCheckout }: {
 
             {/* Coupon */}
             <div style={{ marginBottom: '18px' }}>
-                <p style={{ fontSize: '12px', fontWeight: 600, marginBottom: '7px', color: 'var(--text-secondary)' }}>🏷️ Have a coupon?</p>
+                <p style={{ fontSize: '12px', fontWeight: 600, marginBottom: '7px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '5px' }}><Tag size={13} /> Have a coupon?</p>
                 <div style={{ display: 'flex', gap: '6px' }}>
                     <input value={coupon} onChange={e => { setCoupon(e.target.value); setCouponError(''); }}
                         placeholder="Enter code"
@@ -62,16 +63,16 @@ function OrderSummary({ items, onCheckout }: {
                     <button onClick={applyCoupon} style={{ padding: '9px 14px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700, fontSize: '13px', fontFamily: 'var(--font-body)', flexShrink: 0 }}>Apply</button>
                 </div>
                 {couponError && <p style={{ fontSize: '11px', color: 'var(--danger)', marginTop: '4px' }}>{couponError}</p>}
-                {appliedCoupon && <p style={{ fontSize: '11px', color: 'var(--success)', marginTop: '4px', fontWeight: 600 }}>✓ {VALID_COUPONS[appliedCoupon]}% off applied!</p>}
+                {appliedCoupon && <p style={{ fontSize: '11px', color: 'var(--success)', marginTop: '4px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={11} /> {VALID_COUPONS[appliedCoupon]}% off applied!</p>}
                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '5px' }}>Try: SAVE10 · JEFEDO20 · WELCOME15</p>
             </div>
 
             <button onClick={onCheckout} style={{ width: '100%', padding: '14px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '15px', boxShadow: '0 4px 20px rgba(26,86,219,0.3)', marginBottom: '10px' }}>
                 Proceed to Checkout →
             </button>
-            <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)' }}>🔒 Secure SSL checkout</p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '10px', fontSize: '18px' }}>
-                {['💳', '🏦', '📱', '🅿️'].map((ic, i) => <span key={i}>{ic}</span>)}
+            <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><Lock size={11} /> Secure SSL checkout</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '10px', color: 'var(--text-muted)' }}>
+                <CreditCard size={20} /><Building2 size={20} /><Smartphone size={20} />
             </div>
         </div>
     );
@@ -92,7 +93,7 @@ function CartItemRow({ item, onQtyChange, onRemove, onSaveForLater }: {
                     {item.image ? (
                         <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                        <span>{item.emoji}</span>
+                        <Package size={40} color="var(--text-muted)" />
                     )}
                 </div>
 
@@ -109,8 +110,8 @@ function CartItemRow({ item, onQtyChange, onRemove, onSaveForLater }: {
                             <span style={{ padding: '6px 12px', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', minWidth: '32px', textAlign: 'center' }}>{item.qty}</span>
                             <button onClick={() => onQtyChange(item.id, item.qty + 1)} style={{ padding: '6px 12px', fontSize: '16px', background: 'var(--surface-2)' }}>+</button>
                         </div>
-                        <button onClick={() => onSaveForLater(item.id)} style={{ fontSize: '12px', fontWeight: 600, color: 'var(--primary)', fontFamily: 'var(--font-body)' }}>🔖 Save</button>
-                        <button onClick={() => onRemove(item.id)} style={{ fontSize: '12px', fontWeight: 600, color: 'var(--danger)', fontFamily: 'var(--font-body)' }}>🗑 Remove</button>
+                        <button onClick={() => onSaveForLater(item.id)} style={{ fontSize: '12px', fontWeight: 600, color: 'var(--primary)', fontFamily: 'var(--font-body)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}><Bookmark size={12} /> Save</button>
+                        <button onClick={() => onRemove(item.id)} style={{ fontSize: '12px', fontWeight: 600, color: 'var(--danger)', fontFamily: 'var(--font-body)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}><Trash2 size={12} /> Remove</button>
                     </div>
                 </div>
 
@@ -151,7 +152,7 @@ export default function CartPage() {
     if (orderPlaced) return (
         <div style={{ background: 'var(--bg)', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '48px 40px', textAlign: 'center', maxWidth: '480px', width: '100%', animation: 'fadeInUp 0.5s ease' }}>
-                <p style={{ fontSize: '64px', marginBottom: '16px' }}>🎉</p>
+                <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--primary)' }}><PartyPopper size={40} /></div>
                 <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', marginBottom: '10px' }}>Order Confirmed!</h2>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '6px', fontSize: '14px' }}>Your order #JFD-{Math.floor(Math.random() * 90000 + 10000)} has been placed.</p>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '13px' }}>You'll receive a confirmation email shortly.</p>
@@ -163,7 +164,7 @@ export default function CartPage() {
     if (cartItems.length === 0 && savedItems.length === 0) return (
         <div style={{ background: 'var(--bg)', minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ textAlign: 'center' }}>
-                <p style={{ fontSize: '72px', marginBottom: '16px' }}>🛒</p>
+                <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--text-muted)' }}><ShoppingCart size={40} /></div>
                 <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', marginBottom: '10px' }}>Your cart is empty</h2>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>Looks like you haven't added anything yet.</p>
                 <a href="/products" style={{ display: 'inline-block', padding: '12px 28px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '14px' }}>Start Shopping →</a>

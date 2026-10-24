@@ -1,4 +1,5 @@
 'use client';
+import { TrendingUp, Package } from 'lucide-react';
 
 export default function PromoBanners() {
     const banners = [
@@ -7,7 +8,7 @@ export default function PromoBanners() {
             title: 'Master Your Business',
             desc: 'Manage your store, track real-time sales and scale with professional tools.',
             cta: 'Vendor Dashboard',
-            emoji: '📈',
+            icon: <TrendingUp size={80} strokeWidth={1} />,
             bg: 'linear-gradient(135deg, var(--secondary-light) 0%, #dbeafe 100%)',
             titleColor: 'var(--secondary-dark)',
             tagColor: 'var(--secondary)',
@@ -22,7 +23,7 @@ export default function PromoBanners() {
             title: 'Seamless Management',
             desc: 'Monitor your orders from click to delivery and manage your account essentials.',
             cta: 'Manage Account',
-            emoji: '📦',
+            icon: <Package size={80} strokeWidth={1} />,
             bg: 'linear-gradient(135deg, var(--primary-light) 0%, #fee2e2 100%)',
             titleColor: 'var(--primary-dark)',
             tagColor: 'var(--primary)',
@@ -61,7 +62,7 @@ export default function PromoBanners() {
                             <p style={{ fontSize: '14px', color: b.descColor, marginBottom: '24px', lineHeight: 1.5, maxWidth: '240px', fontWeight: 500 }}>{b.desc}</p>
                             <a href={b.href} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 26px', borderRadius: '50px', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '13px', background: b.ctaBg, color: b.ctaColor, border: b.ctaBorder, textDecoration: 'none', transition: 'all 0.3s', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>{b.cta} →</a>
                         </div>
-                        <div className="promo-emoji" style={{ fontSize: '88px', filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.1))', opacity: 1, position: 'relative', zIndex: 1, transform: 'rotate(5deg)' }}>{b.emoji}</div>
+                        <div className="promo-emoji" style={{ filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.1))', opacity: 0.7, position: 'relative', zIndex: 1, transform: 'rotate(5deg)', color: b.tagColor }}>{b.icon}</div>
                     </div>
                 ))}
             </div>

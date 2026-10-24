@@ -5,6 +5,7 @@ import { useToast } from '@/components/ui/Toast';
 import { Icons } from '@/components/dashboard/icons';
 import { getSellerProducts, createSellerProduct, updateSellerProduct, deleteSellerProduct, getPublicCategories } from '@/services/sellerService';
 import { Product, Category } from '@/services/types';
+import { Package, Trash2, Camera, X } from 'lucide-react';
 
 export default function ProductsPage() {
     const { success, error: toastError } = useToast();
@@ -369,7 +370,7 @@ export default function ProductsPage() {
                     <Table cols={['Product', 'Category', 'Stock', 'Price', 'Status', 'Actions']} rows={rows} />
                     {!loading && products.length === 0 && (
                         <div style={{ padding: '60px', textAlign: 'center', color: '#64748b' }}>
-                            <div style={{ fontSize: '40px', marginBottom: '16px' }}>📦</div>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}><Package size={40} color="#94a3b8" /></div>
                             <h3 style={{ fontWeight: 700, color: '#0f172a' }}>Catalog Empty</h3>
                             <p style={{ fontSize: '14px' }}>You haven't added any products to your catalog yet.</p>
                         </div>
@@ -410,6 +411,7 @@ export default function ProductsPage() {
                             <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>Pricing & Inventory</h3>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
                                 <Input type="text" label="Selling Price (₦)" required value={formData.price} onChange={v => setFormData({ ...formData, price: v })} placeholder="0.00" />
+                                <Input type="text" label="Original Price (₦)" value={formData.original} onChange={v => setFormData({ ...formData, original: v })} placeholder="0.00" />
                                 <Input type="number" label="Stock Quantity" required value={formData.stock_qty} onChange={v => setFormData({ ...formData, stock_qty: v })} placeholder="0" />
                             </div>
                         </Card>
@@ -480,7 +482,7 @@ export default function ProductsPage() {
                                                 onMouseEnter={e => e.currentTarget.style.background = '#fca5a5'}
                                                 onMouseLeave={e => e.currentTarget.style.background = '#fee2e2'}
                                             >
-                                                🗑️
+                                                <Trash2 size={16} />
                                             </button>
                                         </div>
                                     ))}
@@ -533,12 +535,12 @@ export default function ProductsPage() {
                                                 setFormData({ ...formData, image: '' }); 
                                                 setSelectedFile(null); 
                                             }}
-                                            style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', zIndex: 10 }}
-                                        >✕</button>
+                                            style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+                                        ><X size={14} /></button>
                                     </>
                                 ) : (
                                     <>
-                                        <span style={{ fontSize: '32px', marginBottom: '8px' }}>📸</span>
+                                        <Camera size={32} style={{ marginBottom: '8px' }} />
                                         <span style={{ fontSize: '14px', fontWeight: 700 }}>{uploading ? 'Uploading...' : 'Main Image'}</span>
                                         <span style={{ fontSize: '11px' }}>Primary product image</span>
                                     </>
@@ -582,8 +584,8 @@ export default function ProductsPage() {
                                                                 else if (num === 3) { setImagePreview3(''); setFormData({ ...formData, image3: '' }); setSelectedFile3(null); }
                                                                 else if (num === 4) { setImagePreview4(''); setFormData({ ...formData, image4: '' }); setSelectedFile4(null); }
                                                             }}
-                                                            style={{ position: 'absolute', top: '6px', right: '6px', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', zIndex: 10 }}
-                                                        >✕</button>
+                                                            style={{ position: 'absolute', top: '6px', right: '6px', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+                                                        ><X size={12} /></button>
                                                     </>
                                                 ) : (
                                                     <span style={{ fontSize: '18px' }}>+</span>

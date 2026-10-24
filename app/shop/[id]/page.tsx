@@ -4,6 +4,7 @@ import ProductCard from '@/components/ui/ProductCard';
 import ServiceCard from '@/components/ui/ServiceCard';
 import { getShopDetail, getShopListings } from '@/services/publicService';
 import { ShopDetail, Product, Service } from '@/services/types';
+import { Star, MapPin, Calendar, Check, X, Smartphone, Phone, MessageSquare } from 'lucide-react';
 
 /* ── Types ──────────────────────────────── */
 interface ShopInfo {
@@ -93,17 +94,17 @@ export default function ShopPage({ params }: { params: Promise<{ id: string }> }
                         <div style={{ flex: 1, minWidth: '240px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                                  <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: 0 }}>{info.store_name}</h1>
-                                 <span style={{ background: 'var(--success)', color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '10px', fontWeight: 700 }}>✓ VERIFIED SHOP</span>
+                                 <span style={{ background: 'var(--success)', color: '#fff', fontSize: '10px', padding: '2px 8px', borderRadius: '10px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><Check size={11} strokeWidth={3} /> VERIFIED SHOP</span>
                              </div>
                              <p style={{ fontSize: '14px', color: 'var(--text-muted)', margin: '0 0 12px', fontWeight: 500 }}>@{info.slug}</p>
                             <div style={{ display: 'flex', gap: '16px', alignItems: 'center', fontSize: '13px', color: 'var(--text-secondary)' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                    <span style={{ color: '#f59e0b', fontSize: '14px' }}>★</span>
+                                    <Star size={14} fill="#f59e0b" color="#f59e0b" />
                                      <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{info.rating || 0}</span>
                                      <span>({(info.review_count || 0).toLocaleString()} reviews)</span>
                                 </div>
-                                <span>📍 {info.location || 'Global'}</span>
-                                <span>🗓️ Joined {(info as any).joined_date ? new Date((info as any).joined_date).getFullYear() : (info.slug ? '2024' : 'Recently')}</span>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} /> {info.location || 'Global'}</span>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> Joined {(info as any).joined_date ? new Date((info as any).joined_date).getFullYear() : (info.slug ? '2024' : 'Recently')}</span>
                             </div>
                         </div>
 
@@ -223,11 +224,13 @@ export default function ShopPage({ params }: { params: Promise<{ id: string }> }
                     >
                         <button 
                             onClick={() => setIsContactModalOpen(false)}
-                            style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--bg)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', fontSize: '18px' }}
-                        >✕</button>
+                            style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--bg)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}
+                        ><X size={18} /></button>
 
                         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                            <div style={{ width: '80px', height: '80px', background: 'var(--primary-light)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', margin: '0 auto 16px' }}>📱</div>
+                            <div style={{ width: '80px', height: '80px', background: 'var(--primary-light)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', margin: '0 auto 16px' }}>
+                                <Smartphone size={36} />
+                            </div>
                             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', color: '#0f172a', marginBottom: '8px' }}>Contact {info.store_name}</h2>
                             <p style={{ fontSize: '14px', color: '#64748b' }}>Choose your preferred communication channel to speak with the merchant.</p>
                         </div>
@@ -240,7 +243,7 @@ export default function ShopPage({ params }: { params: Promise<{ id: string }> }
                                 onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.02)'}
                                 onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                             >
-                                <span style={{ fontSize: '24px' }}>📞</span>
+                                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Phone size={24} /></span>
                                 <div style={{ textAlign: 'left' }}>
                                     <p style={{ fontSize: '11px', fontWeight: 700, opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Voice Terminal</p>
                                     <p style={{ fontSize: '16px', fontWeight: 700 }}>Call {info.phone_number || 'Merchant'}</p>
@@ -256,7 +259,7 @@ export default function ShopPage({ params }: { params: Promise<{ id: string }> }
                                 onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.02)'}
                                 onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                             >
-                                <span style={{ fontSize: '24px' }}>💬</span>
+                                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><MessageSquare size={24} /></span>
                                 <div style={{ textAlign: 'left' }}>
                                     <p style={{ fontSize: '11px', fontWeight: 700, opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Instant Messaging</p>
                                     <p style={{ fontSize: '16px', fontWeight: 700 }}>Chat on WhatsApp</p>

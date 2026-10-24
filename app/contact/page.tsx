@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { Mail, Phone, MapPin, Check, AlertTriangle, Handshake, Truck, Lightbulb, TrendingUp, ShieldCheck, Zap, Gem, Loader2, ArrowUp } from 'lucide-react';
 
 export default function ContactPage() {
     const [sent, setSent] = useState(false);
@@ -82,12 +83,12 @@ export default function ContactPage() {
 
                             <div className="contact-info-list" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                                 {[
-                                    { label: 'Customer Support', val: 'support@jefedo.com', icon: '📩' },
-                                    { label: 'Direct Line', val: '+2347064957209', icon: '📞' },
-                                    { label: 'Headquarters', val: 'No. 10 Jefedo Street, Amafor Nkpor, Idemili LGA, Anambra State, Nigeria.', icon: '📍' }
+                                    { label: 'Customer Support', val: 'support@jefedo.com', icon: <Mail size={26} /> },
+                                    { label: 'Direct Line', val: '+2347064957209', icon: <Phone size={26} /> },
+                                    { label: 'Headquarters', val: 'No. 10 Jefedo Street, Amafor Nkpor, Idemili LGA, Anambra State, Nigeria.', icon: <MapPin size={26} /> }
                                 ].map((item, i) => (
                                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                                        <div className="contact-info-icon" style={{ width: '64px', height: '64px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', backdropFilter: 'blur(10px)' }}>
+                                        <div className="contact-info-icon" style={{ width: '64px', height: '64px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', backdropFilter: 'blur(10px)' }}>
                                             {item.icon}
                                         </div>
                                         <div>
@@ -110,7 +111,7 @@ export default function ContactPage() {
                         }}>
                             {sent ? (
                                 <div style={{ textAlign: 'center', padding: '60px 0' }}>
-                                    <div style={{ width: '100px', height: '100px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px', fontSize: '40px', boxShadow: '0 15px 40px rgba(34,197,94,0.3)' }}>✓</div>
+                                    <div style={{ width: '100px', height: '100px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px', color: '#fff', boxShadow: '0 15px 40px rgba(34,197,94,0.3)' }}><Check size={44} strokeWidth={3} /></div>
                                     <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 800, color: '#fff', marginBottom: '16px' }}>Message Sent!</h2>
                                     <p style={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>Thank you for reaching out. We have received your message and will get back to you shortly.</p>
                                     <button onClick={() => setSent(false)} style={{ marginTop: '48px', background: 'transparent', border: '2px solid rgba(255,255,255,0.2)', color: '#fff', padding: '14px 28px', borderRadius: '14px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.3s' }}
@@ -124,8 +125,8 @@ export default function ContactPage() {
                                     <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '8px' }}>Fill out the form below — whether it&apos;s a general inquiry, support request, or to <strong style={{ color: 'var(--primary)' }}>partner with Jefedo</strong>.</p>
 
                                     {error && (
-                                        <div style={{ background: 'rgba(238,18,23,0.1)', border: '1px solid var(--primary)', color: '#fff', padding: '12px', borderRadius: '12px', fontSize: '13px', marginBottom: '16px' }}>
-                                            ⚠ {error}
+                                        <div style={{ background: 'rgba(238,18,23,0.1)', border: '1px solid var(--primary)', color: '#fff', padding: '12px', borderRadius: '12px', fontSize: '13px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <AlertTriangle size={14} /> {error}
                                         </div>
                                     )}
 
@@ -183,7 +184,7 @@ export default function ContactPage() {
                                             onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
                                             onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                                         >
-                                            {loading ? '⏳ Sending Message…' : 'Send Message →'}
+                                            {loading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Sending Message...</> : <>Send Message <ArrowUp size={16} /></>}
                                         </button>
                                     </form>
                                 </>
@@ -208,13 +209,13 @@ export default function ContactPage() {
                     </p>
                     <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '56px' }}>
                         {[
-                            { icon: '🤝', title: 'Brand Collaborations', desc: 'Reach millions of Nigerian shoppers through co-branded campaigns.' },
-                            { icon: '🚚', title: 'Logistics Partners', desc: 'Join our delivery network and power last-mile fulfilment across Nigeria.' },
-                            { icon: '💡', title: 'Tech & Service Providers', desc: 'Integrate your solutions into the Jefedo ecosystem.' },
-                            { icon: '📈', title: 'Investors', desc: 'Be part of Nigeria&apos;s fastest-growing multi-vendor marketplace.' },
+                            { icon: <Handshake size={32} />, title: 'Brand Collaborations', desc: 'Reach millions of Nigerian shoppers through co-branded campaigns.' },
+                            { icon: <Truck size={32} />, title: 'Logistics Partners', desc: 'Join our delivery network and power last-mile fulfilment across Nigeria.' },
+                            { icon: <Lightbulb size={32} />, title: 'Tech & Service Providers', desc: 'Integrate your solutions into the Jefedo ecosystem.' },
+                            { icon: <TrendingUp size={32} />, title: 'Investors', desc: 'Be part of Nigeria&apos;s fastest-growing multi-vendor marketplace.' },
                         ].map(item => (
                             <div key={item.title} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', padding: '32px 28px', maxWidth: '240px', textAlign: 'left', backdropFilter: 'blur(10px)' }}>
-                                <div style={{ fontSize: '36px', marginBottom: '16px' }}>{item.icon}</div>
+                                <div style={{ color: 'var(--primary)', marginBottom: '16px' }}>{item.icon}</div>
                                 <h4 style={{ fontFamily: 'var(--font-display)', fontSize: '16px', fontWeight: 800, color: '#fff', marginBottom: '10px' }}>{item.title}</h4>
                                 <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.6 }}>{item.desc}</p>
                             </div>
@@ -248,10 +249,10 @@ export default function ContactPage() {
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
                         {[
-                            { title: 'Secure Ecosystem', desc: 'Advanced encryption and escrow systems ensuring every transaction is 100% protected.', icon: '🛡️', color: '#EE1217', bg: '#fef2f2' },
-                            { title: 'Swift Logistics', desc: 'Strategic delivery partnerships across Nigeria for rapid, reliable order fulfillment.', icon: '⚡', color: '#3b82f6', bg: '#eff6ff' },
-                            { title: 'Verified Quality', desc: 'Stringent vendor verification process to ensure only premium products reach your door.', icon: '💎', color: '#f59e0b', bg: '#fffbeb' },
-                            { title: 'Global Scaling', desc: 'Advanced tools designed to help small businesses reach millions of potential customers.', icon: '📈', color: '#22c55e', bg: '#f0fdf4' }
+                            { title: 'Secure Ecosystem', desc: 'Advanced encryption and escrow systems ensuring every transaction is 100% protected.', icon: <ShieldCheck size={36} />, color: '#EE1217', bg: '#fef2f2' },
+                            { title: 'Swift Logistics', desc: 'Strategic delivery partnerships across Nigeria for rapid, reliable order fulfillment.', icon: <Zap size={36} />, color: '#3b82f6', bg: '#eff6ff' },
+                            { title: 'Verified Quality', desc: 'Stringent vendor verification process to ensure only premium products reach your door.', icon: <Gem size={36} />, color: '#f59e0b', bg: '#fffbeb' },
+                            { title: 'Global Scaling', desc: 'Advanced tools designed to help small businesses reach millions of potential customers.', icon: <TrendingUp size={36} />, color: '#22c55e', bg: '#f0fdf4' }
                         ].map(feature => (
                             <div key={feature.title} className="presence-card" style={{
                                 background: '#fff',
@@ -265,7 +266,7 @@ export default function ContactPage() {
                                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                             }}>
                                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: feature.color }}></div>
-                                <div style={{ width: '72px', height: '72px', background: feature.bg, borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', marginBottom: '32px' }}>
+                                <div style={{ width: '72px', height: '72px', background: feature.bg, borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: feature.color, marginBottom: '32px' }}>
                                     {feature.icon}
                                 </div>
                                 <h4 style={{ fontSize: '22px', fontWeight: 800, color: '#1e293b', marginBottom: '16px', fontFamily: 'var(--font-display)' }}>{feature.title}</h4>

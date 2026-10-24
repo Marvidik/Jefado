@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Rocket, Truck } from 'lucide-react';
 
 const slides = [
   {
@@ -14,13 +15,6 @@ const slides = [
     circle: 'rgba(238,18,23,0.15)',
     photo: '/images/g2.png',
     fallback: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&h=700&fit=crop&crop=top&q=80',
-    floats: [
-      { emoji: '💻', top: '6%', left: '64%', size: 54, d: 0 },
-      { emoji: '👗', top: '36%', left: '52%', size: 46, d: 0.35 },
-      { emoji: '👟', top: '66%', left: '56%', size: 42, d: 0.7 },
-      { emoji: '❄️', top: '18%', right: '5%', size: 36, d: 1.0 },
-      { emoji: '🌿', top: '62%', right: '4%', size: 34, d: 1.4 },
-    ],
   },
   {
     tag: 'Shop Smart, Sell Easy',
@@ -33,13 +27,6 @@ const slides = [
     circle: 'rgba(238,18,23,0.15)',
     photo: '/images/goods2.png',
     fallback: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=700&fit=crop&crop=top&q=80',
-    floats: [
-      { emoji: '📱', top: '6%', left: '64%', size: 56, d: 0 },
-      { emoji: '💻', top: '38%', left: '52%', size: 48, d: 0.35 },
-      { emoji: '🎮', top: '66%', left: '56%', size: 42, d: 0.7 },
-      { emoji: '🔊', top: '18%', right: '5%', size: 38, d: 1.0 },
-      { emoji: '⌨️', top: '62%', right: '4%', size: 34, d: 1.4 },
-    ],
   },
   {
     tag: 'Shop Smart, Sell Easy',
@@ -52,13 +39,6 @@ const slides = [
     circle: 'rgba(238,18,23,0.15)',
     photo: '/images/goods3.PNG',
     fallback: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=700&fit=crop&crop=top&q=80',
-    floats: [
-      { emoji: '👗', top: '6%', left: '64%', size: 54, d: 0 },
-      { emoji: '👠', top: '36%', left: '52%', size: 46, d: 0.35 },
-      { emoji: '👜', top: '64%', left: '56%', size: 42, d: 0.7 },
-      { emoji: '💄', top: '18%', right: '5%', size: 36, d: 1.0 },
-      { emoji: '🧣', top: '60%', right: '4%', size: 34, d: 1.4 },
-    ],
   },
 ];
 
@@ -325,10 +305,10 @@ export default function HeroSection() {
 
           {/* Left: text */}
           <div className="hero-text">
-            <span className="hero-tag">🚀 {slide.tag}</span>
+            <span className="hero-tag"><Rocket size={14} /> {slide.tag}</span>
             <h1 className="hero-h1">{slide.headline}</h1>
             <p className="hero-sub">
-              <span style={{ fontSize: '18px', marginTop: '2px', flexShrink: 0 }}>🚚</span>
+              <Truck size={18} style={{ marginTop: '2px', flexShrink: 0 }} />
               {slide.subline}
             </p>
             <div className="hero-ctas" style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: 'fit-content' }}>
@@ -363,25 +343,8 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Right: photo + floats */}
+          {/* Right: photo */}
           <div className="hero-photo-col">
-
-            {/* Floating emojis — hidden on mobile via CSS */}
-            <div className="hero-float-items" style={{ position: 'absolute', inset: 0, zIndex: 4, pointerEvents: 'none' }}>
-              {slide.floats.map((f, i) => (
-                <div key={`${active}-${i}`} style={{
-                  position: 'absolute',
-                  top: f.top,
-                  ...(f.left ? { left: f.left } : {}),
-                  ...(f.right ? { right: f.right } : {}),
-                  fontSize: `${f.size}px`,
-                  filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.25))',
-                  animation: `${i % 2 === 0 ? 'heroFloat' : 'heroFloatR'} ${2.8 + i * 0.3}s ease-in-out infinite`,
-                  animationDelay: `${f.d}s`,
-                  zIndex: 5,
-                }}>{f.emoji}</div>
-              ))}
-            </div>
 
             {/* Hero photo — tries local first, falls back to Unsplash */}
             <img

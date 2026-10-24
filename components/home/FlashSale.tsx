@@ -5,6 +5,7 @@ import ProductCard from '../ui/ProductCard';
 import { ProductSkeleton } from '../ui/Skeleton';
 import { getProducts } from '@/services/publicService';
 import { Product } from '@/services/types';
+import { Zap } from 'lucide-react';
 
 export default function FlashSale() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -31,7 +32,9 @@ export default function FlashSale() {
             <div className="flash-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                     <div>
-                        <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--danger)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2px' }}>⚡ Today&apos;s</p>
+                        <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--danger)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Zap size={13} fill="currentColor" /> Today&apos;s
+                        </p>
                         <h2 className="section-title" style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '26px', color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>Flash Sales</h2>
                     </div>
                     <div style={{ width: '1px', height: '44px', background: 'var(--border)' }} />

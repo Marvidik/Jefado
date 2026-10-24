@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { getProducts } from '@/services/publicService';
 import { Product } from '@/services/types';
 import { Skeleton } from '../ui/Skeleton';
+import { Flame, Star, Trophy, Sparkles, Package } from 'lucide-react';
 
 export default function BestSellers() {
-    const [sections, setSections] = useState<{ title: string; badge: string; products: Product[] }[]>([]);
+    const [sections, setSections] = useState<{ title: string; badge: React.ReactNode; products: Product[] }[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -20,10 +21,10 @@ export default function BestSellers() {
                 ]);
 
                 setSections([
-                    { title: 'Flash Sale Today', badge: '🔥', products: discounted?.results || [] },
-                    { title: 'Best Sellers', badge: '⭐', products: best?.results || [] },
-                    { title: 'Top Rated', badge: '🏆', products: best?.results || [] }, // Reusing for now
-                    { title: 'New Arrivals', badge: '✨', products: arrivals?.results || [] }
+                    { title: 'Flash Sale Today', badge: <Flame size={16} color="var(--primary)" />, products: discounted?.results || [] },
+                    { title: 'Best Sellers', badge: <Star size={16} color="#eab308" fill="#eab308" />, products: best?.results || [] },
+                    { title: 'Top Rated', badge: <Trophy size={16} color="#eab308" />, products: best?.results || [] }, // Reusing for now
+                    { title: 'New Arrivals', badge: <Sparkles size={16} color="var(--secondary)" />, products: arrivals?.results || [] }
                 ]);
             } catch (err) {
                 console.error("Failed to fetch best seller sections", err);
@@ -59,7 +60,7 @@ export default function BestSellers() {
                 ) : sections.map((col) => (
                     <div key={col.title}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '12px', borderBottom: '2px solid var(--primary)', marginBottom: '14px' }}>
-                            <span style={{ fontSize: '16px' }}>{col.badge}</span>
+                            <span style={{ display: 'flex', alignItems: 'center' }}>{col.badge}</span>
                             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>{col.title}</h3>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -73,7 +74,7 @@ export default function BestSellers() {
                                         {p.image ? (
                                             <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         ) : (
-                                            <span style={{ fontSize: '26px' }}>📦</span>
+                                            <Package size={24} color="#94a3b8" />
                                         )}
                                     </div>
                                     <div style={{ flex: 1, minWidth: 0 }}>

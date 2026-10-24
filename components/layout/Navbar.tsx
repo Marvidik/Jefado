@@ -6,6 +6,11 @@ import { CATEGORIES } from '@/lib/data';
 import { logout } from '@/services/authService';
 import { tokenStorage } from '@/services/axiosInstance';
 import { useCart } from '@/context/CartContext';
+import { 
+    Phone, ShoppingCart, User, Menu, X, Home, ShoppingBag, 
+    Wrench, Tag, Info, LayoutDashboard, Gift, Key, LogOut, ChevronRight 
+} from 'lucide-react';
+import { CategoryIcon } from '@/components/ui/CategoryIcon';
 
 const categories = CATEGORIES;
 
@@ -70,7 +75,7 @@ export default function Navbar() {
             <div style={{ background: 'var(--primary-dark)', color: '#fff', padding: '8px 0', fontSize: '13px', fontWeight: 600 }}>
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, overflow: 'hidden' }}>
-                        <span style={{ fontSize: '14px', flexShrink: 0 }}>📞</span>
+                        <Phone size={14} style={{ flexShrink: 0 }} />
                         <a href="https://wa.me/2347064957209" target="_blank" rel="noopener noreferrer" className="nav-top-phone" style={{ color: '#fff', textDecoration: 'none', fontWeight: 800, fontSize: '14px', letterSpacing: '0.5px', transition: 'color 0.2s', whiteSpace: 'nowrap' }}
                             onMouseEnter={e => e.currentTarget.style.color = 'var(--secondary)'}
                             onMouseLeave={e => e.currentTarget.style.color = '#fff'}
@@ -135,11 +140,11 @@ export default function Navbar() {
                     </nav>
 
                     {/* Cart icon — always visible (mobile + desktop) */}
-                    <Link href="/cart" title="Cart" style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', fontSize: '20px', color: 'var(--text-secondary)', transition: 'all 0.2s', flexShrink: 0 }}
+                    <Link href="/cart" title="Cart" style={{ position: 'relative', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', color: 'var(--text-secondary)', transition: 'all 0.2s', flexShrink: 0 }}
                         onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'var(--primary-light)'; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
                     >
-                        🛒
+                        <ShoppingCart size={20} />
                         {cartCount > 0 && (
                             <span style={{ position: 'absolute', top: '1px', right: '1px', background: 'var(--primary)', color: '#fff', fontSize: '8px', fontWeight: 700, width: '14px', height: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 {cartCount}
@@ -155,10 +160,10 @@ export default function Navbar() {
                                 onMouseLeave={e => (e.currentTarget.style.background = 'var(--surface-2)')}
                             >Dashboard</Link>
                         ) : (
-                            <Link href="/account" title="Account" style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', fontSize: '18px', color: 'var(--text-secondary)', transition: 'all 0.2s' }}
+                            <Link href="/account" title="Account" style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', color: 'var(--text-secondary)', transition: 'all 0.2s' }}
                                 onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'var(--primary-light)'; }}
                                 onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
-                            >👤</Link>
+                            ><User size={20} /></Link>
                         )}
                         {isLoggedIn ? (
                             <button onClick={handleLogout} style={{ padding: '7px 14px', background: 'var(--surface-2)', border: '1.5px solid var(--border)', color: 'var(--text-primary)', borderRadius: 'var(--radius)', fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-body)', whiteSpace: 'nowrap', transition: 'all 0.2s', cursor: 'pointer' }}
@@ -175,8 +180,8 @@ export default function Navbar() {
 
                     {/* Mobile hamburger */}
                     <button className="nav-mobile-menu-btn" onClick={() => setSidebarOpen(true)}
-                        style={{ display: 'none', flexShrink: 0, width: '36px', height: '36px', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', border: '1.5px solid var(--border)', fontSize: '18px', color: 'var(--text-primary)' }}
-                    >☰</button>
+                        style={{ display: 'none', flexShrink: 0, width: '36px', height: '36px', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius)', border: '1.5px solid var(--border)', color: 'var(--text-primary)', cursor: 'pointer', background: 'transparent' }}
+                    ><Menu size={20} /></button>
                 </div>
 
 
@@ -189,24 +194,24 @@ export default function Navbar() {
                     <div style={{ position: 'relative', width: '40%', minWidth: '280px', background: 'var(--surface)', height: '100%', overflowY: 'auto', boxShadow: 'var(--shadow-lg)' }}>
                         <div style={{ padding: '18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--primary)' }}>
                             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', color: '#fff' }}>Menu & Categories</span>
-                            <button onClick={() => setSidebarOpen(false)} style={{ fontSize: '22px', color: 'rgba(255,255,255,0.8)', lineHeight: 1 }}>×</button>
+                            <button onClick={() => setSidebarOpen(false)} style={{ color: 'rgba(255,255,255,0.8)', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={20} /></button>
                         </div>
 
                         {/* Main Navigation Section */}
                         <div style={{ padding: '20px 0 10px' }}>
                             <p style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px', padding: '0 18px' }}>Navigation</p>
                             {[
-                                { icon: '🏠', label: 'Home', href: '/' },
-                                { icon: '🛍', label: 'Shop', href: '/products' },
-                                { icon: '⚒️', label: 'Services', href: '/services' },
-                                { icon: '🏷️', label: 'Pricing', href: '/pricing' },
-                                { icon: 'ℹ', label: 'About', href: '/about' },
-                                { icon: '📞', label: 'Contact', href: '/contact' },
-                                { icon: '📊', label: 'Dashboard', href: '/dashboard' },
-                                { icon: '👤', label: 'Account', href: '/account' },
-                                { icon: '🎁', label: 'Refer & Earn', href: '/referral' },
-                                { icon: '🛒', label: 'Cart', href: '/cart' },
-                                { icon: '🔑', label: 'Sign In', href: '/auth' },
+                                { icon: <Home size={18} />, label: 'Home', href: '/' },
+                                { icon: <ShoppingBag size={18} />, label: 'Shop', href: '/products' },
+                                { icon: <Wrench size={18} />, label: 'Services', href: '/services' },
+                                { icon: <Tag size={18} />, label: 'Pricing', href: '/pricing' },
+                                { icon: <Info size={18} />, label: 'About', href: '/about' },
+                                { icon: <Phone size={18} />, label: 'Contact', href: '/contact' },
+                                { icon: <LayoutDashboard size={18} />, label: 'Dashboard', href: '/dashboard' },
+                                { icon: <User size={18} />, label: 'Account', href: '/account' },
+                                { icon: <Gift size={18} />, label: 'Refer & Earn', href: '/referral' },
+                                { icon: <ShoppingCart size={18} />, label: 'Cart', href: '/cart' },
+                                { icon: <Key size={18} />, label: 'Sign In', href: '/auth' },
                             ].map(item => {
                                 const shouldShow =
                                     item.label === 'Sign In' ? !isLoggedIn :
@@ -221,7 +226,9 @@ export default function Navbar() {
                                         onMouseEnter={() => setHoveredCat(item.label)} onMouseLeave={() => setHoveredCat(null)}
                                         style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '13px 18px', background: hoveredCat === item.label ? 'var(--primary-light)' : 'transparent', color: hoveredCat === item.label ? 'var(--primary)' : 'var(--text-primary)', borderLeft: `3px solid ${hoveredCat === item.label ? 'var(--primary)' : 'transparent'}`, fontSize: '14px', fontWeight: 500, borderBottom: '1px solid var(--border-light)', transition: 'all 0.15s' }}
                                     >
-                                        <span>{item.icon}</span><span style={{ flex: 1 }}>{item.label}</span><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>›</span>
+                                        <span style={{ display: 'flex', alignItems: 'center', color: hoveredCat === item.label ? 'var(--primary)' : 'var(--text-secondary)' }}>{item.icon}</span>
+                                        <span style={{ flex: 1 }}>{item.label}</span>
+                                        <ChevronRight size={14} color="var(--text-muted)" />
                                     </Link>
                                 );
                             })}
@@ -229,7 +236,9 @@ export default function Navbar() {
                                 <button onClick={() => { handleLogout(); setSidebarOpen(false); }}
                                     style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: '13px 18px', background: 'transparent', color: 'var(--danger)', border: 'none', borderLeft: '3px solid transparent', fontSize: '14px', fontWeight: 600, borderBottom: '1px solid var(--border-light)', cursor: 'pointer', textAlign: 'left' }}
                                 >
-                                    <span>🚪</span><span style={{ flex: 1 }}>Sign Out</span><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>›</span>
+                                    <span style={{ display: 'flex', alignItems: 'center' }}><LogOut size={18} /></span>
+                                    <span style={{ flex: 1 }}>Sign Out</span>
+                                    <ChevronRight size={14} color="var(--text-muted)" />
                                 </button>
                             )}
                         </div>
@@ -242,7 +251,7 @@ export default function Navbar() {
                                     onMouseEnter={() => setHoveredCat(cat.label)} onMouseLeave={() => setHoveredCat(null)}
                                     style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '13px 18px', background: hoveredCat === cat.label ? 'var(--primary-light)' : 'transparent', color: hoveredCat === cat.label ? 'var(--primary)' : 'var(--text-primary)', borderLeft: `3px solid ${hoveredCat === cat.label ? 'var(--primary)' : 'transparent'}`, fontSize: '14px', fontWeight: 500, borderBottom: '1px solid var(--border-light)', transition: 'all 0.15s' }}
                                 >
-                                    <span>{cat.icon}</span><span style={{ flex: 1 }}>{cat.label}</span><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>›</span>
+                                    <span style={{ display: 'flex', alignItems: 'center', color: hoveredCat === cat.label ? 'var(--primary)' : 'var(--text-secondary)' }}><CategoryIcon slug={cat.slug} size={18} /></span><span style={{ flex: 1 }}>{cat.label}</span><span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>›</span>
                                 </Link>
                             ))}
                         </div>

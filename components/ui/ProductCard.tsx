@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
+import { Heart, Star, Check, ShoppingCart } from 'lucide-react';
 
 interface ProductCardProps {
     id?: number; slug?: string; name: string; price: number | string; 
@@ -51,13 +52,13 @@ export default function ProductCard({
                         {itemIsNew && <span style={{ background: 'var(--success)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px' }}>NEW</span>}
                         {itemIsHot && <span style={{ background: 'var(--accent)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px' }}>HOT</span>}
                     </div>
-                    <button onClick={e => { e.preventDefault(); setWishlisted(!wishlisted); }} style={{ position: 'absolute', top: '8px', right: '8px', width: '30px', height: '30px', background: 'var(--surface)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', boxShadow: 'var(--shadow-sm)' }}>
-                        {wishlisted ? '❤️' : '🤍'}
+                    <button onClick={e => { e.preventDefault(); setWishlisted(!wishlisted); }} style={{ position: 'absolute', top: '8px', right: '8px', width: '30px', height: '30px', background: 'var(--surface)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)', border: 'none', cursor: 'pointer', color: wishlisted ? 'var(--danger)' : 'var(--text-muted)' }}>
+                        <Heart size={15} fill={wishlisted ? 'var(--danger)' : 'none'} />
                     </button>
                 </div>
                 <div style={{ padding: '11px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '5px' }}>
-                        <span style={{ display: 'inline-flex', gap: '1px' }}>{[1, 2, 3, 4, 5].map(i => <span key={i} style={{ fontSize: 12, color: i <= Math.round(rating) ? 'var(--accent)' : 'var(--border)' }}>★</span>)}</span>
+                        <span style={{ display: 'inline-flex', gap: '1px' }}>{[1, 2, 3, 4, 5].map(i => <Star key={i} size={11} fill={i <= Math.round(rating) ? 'var(--accent)' : 'none'} color={i <= Math.round(rating) ? 'var(--accent)' : 'var(--border)'} strokeWidth={2} />)}</span>
                         <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>({itemReviews})</span>
                     </div>
                     <p style={{ fontFamily: 'var(--font-body)', fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '7px', lineHeight: 1.4, height: '2.8em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{name}</p>
@@ -99,7 +100,9 @@ export default function ProductCard({
                         border: 'none'
                     }}
                 >
-                    {itemStock === 0 ? 'Out of Stock' : (added ? '✓ Added!' : '+ Add to Cart')}
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                        {itemStock === 0 ? 'Out of Stock' : added ? <><Check size={13} strokeWidth={3} />Added!</> : <><ShoppingCart size={13} />Add to Cart</>}
+                    </span>
                 </button>
                 </div>
             </div>

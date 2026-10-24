@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { ShieldCheck } from 'lucide-react';
 
 export default function CookieBanner() {
     const [visible, setVisible] = useState(false);
@@ -92,7 +93,7 @@ export default function CookieBanner() {
                         margin: '0 auto 16px',
                         boxShadow: '0 4px 16px rgba(238,18,23,0.15)',
                     }}>
-                        🍪
+                        <ShieldCheck size={28} strokeWidth={1.5} />
                     </div>
 
                     {/* Title */}

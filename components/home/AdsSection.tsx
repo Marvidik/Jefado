@@ -1,3 +1,5 @@
+import { Headphones } from 'lucide-react';
+
 export default function AdsSection() {
     return (
         <section className="container" style={{ padding: '0 var(--gutter) 48px' }}>
@@ -146,7 +148,9 @@ export default function AdsSection() {
                 <div className="ads-bg-glow"></div>
 
                 <div className="ads-content">
-                    <span className="ads-tag">🎧 Shop JEFEDO core products</span>
+                    <span className="ads-tag" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <Headphones size={15} /> Shop JEFEDO core products
+                    </span>
                     <h2 className="ads-title">Escape the noise. It&apos;s time to shop the magic.</h2>
 
                     <div className="ads-highlight">

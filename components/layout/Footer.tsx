@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { MapPin, Mail, Phone, Check, AlertCircle } from 'lucide-react';
 
 export default function Footer() {
     const [email, setEmail] = useState('');
@@ -97,8 +98,8 @@ export default function Footer() {
                                     {loading ? '...' : 'Subscribe'}
                                 </button>
                             </div>
-                            {status === 'success' && <p style={{ position: 'absolute', bottom: '-24px', left: '0', fontSize: '11px', color: 'var(--success)', fontWeight: 700 }}>✓ Subscribed successfully!</p>}
-                            {status === 'error' && <p style={{ position: 'absolute', bottom: '-24px', left: '0', fontSize: '11px', color: 'var(--danger)', fontWeight: 700 }}>⚠ Subscription failed.</p>}
+                            {status === 'success' && <p style={{ position: 'absolute', bottom: '-24px', left: '0', fontSize: '11px', color: 'var(--success)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}><Check size={12} /> Subscribed successfully!</p>}
+                            {status === 'error' && <p style={{ position: 'absolute', bottom: '-24px', left: '0', fontSize: '11px', color: 'var(--danger)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}><AlertCircle size={12} /> Subscription failed.</p>}
                         </form>
                     </div>
 
@@ -108,18 +109,18 @@ export default function Footer() {
                         <div style={{ width: '28px', height: '2.5px', background: 'var(--primary)', marginBottom: '18px', borderRadius: '2px' }} />
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', color: '#cbd5e1', fontSize: '13px', lineHeight: 1.65 }}>
                             <p style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                                <span style={{ fontSize: '16px', flexShrink: 0 }}>📍</span>
+                                <MapPin size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: '3px' }} />
                                 <span>No. 10 Jefedo Street, Amafor Nkpor, Idemili LGA, Anambra State, Nigeria.</span>
                             </p>
                             <p style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                <span style={{ fontSize: '16px', flexShrink: 0 }}>📧</span>
+                                <Mail size={16} color="var(--primary)" style={{ flexShrink: 0 }} />
                                 <a href="mailto:support@jefedo.com" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}
                                     onMouseEnter={e => (e.currentTarget.style.color = 'var(--primary)')}
                                     onMouseLeave={e => (e.currentTarget.style.color = '#cbd5e1')}
                                 >support@jefedo.com</a>
                             </p>
                             <p style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                <span style={{ fontSize: '16px', flexShrink: 0 }}>📞</span>
+                                <Phone size={16} color="var(--primary)" style={{ flexShrink: 0 }} />
                                 <a href="tel:+2347064957209" style={{ color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.2s' }}
                                     onMouseEnter={e => (e.currentTarget.style.color = 'var(--primary)')}
                                     onMouseLeave={e => (e.currentTarget.style.color = '#cbd5e1')}

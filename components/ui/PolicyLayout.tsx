@@ -1,11 +1,12 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
+import { FileText } from 'lucide-react';
 
 interface PolicySection {
     id: string;
     title: string;
-    icon?: string;
-    content: React.ReactNode;
+    icon?: ReactNode;
+    content: ReactNode;
 }
 
 interface PolicyLayoutProps {
@@ -13,7 +14,7 @@ interface PolicyLayoutProps {
     subtitle?: string;
     description: string;
     lastUpdated: string;
-    icon: string;
+    icon?: ReactNode;
     sections: PolicySection[];
 }
 
@@ -96,7 +97,7 @@ export default function PolicyLayout({
 
                     {/* Title & Icon */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px', justifyContent: 'center', flexWrap: 'wrap', maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
-                        <span style={{ fontSize: '48px', filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.15))' }}>{icon}</span>
+                        {icon && <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', filter: 'drop-shadow(0 0 10px rgba(238,18,23,0.3))' }}>{icon}</span>}
                         <h1 style={{
                             fontFamily: 'var(--font-display)',
                             fontWeight: 900,
@@ -180,7 +181,9 @@ export default function PolicyLayout({
                                             boxShadow: isActive ? '0 4px 12px rgba(238,18,23,0.2)' : 'none'
                                         }}
                                     >
-                                        <span style={{ fontSize: '15px' }}>{sec.icon || '📄'}</span>
+                                        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                            {sec.icon || <FileText size={16} />}
+                                        </span>
                                         <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{sec.title}</span>
                                     </button>
                                 );

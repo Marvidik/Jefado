@@ -5,6 +5,7 @@ import { useToast } from '@/components/ui/Toast';
 import { Icons } from '@/components/dashboard/icons';
 import { getSellerServices, createSellerService, updateSellerService, deleteSellerService, getPublicCategories } from '@/services/sellerService';
 import { Service, Category } from '@/services/types';
+import { Wrench, Camera, X } from 'lucide-react';
 
 export default function ServicesManagementPage() {
     const { success, error: toastError } = useToast();
@@ -333,7 +334,7 @@ export default function ServicesManagementPage() {
                     <Table cols={['Service', 'Category', 'Base Price', 'Status', 'Actions']} rows={rows} />
                     {!loading && services.length === 0 && (
                         <div style={{ padding: '60px', textAlign: 'center', color: '#64748b' }}>
-                            <div style={{ fontSize: '40px', marginBottom: '16px' }}>🛠️</div>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}><Wrench size={40} color="#94a3b8" /></div>
                             <h3 style={{ fontWeight: 700, color: '#0f172a' }}>No Services Listed</h3>
                             <p style={{ fontSize: '14px' }}>Begin by listing your professional services for Jefedo clients.</p>
                         </div>
@@ -412,12 +413,12 @@ export default function ServicesManagementPage() {
                                                 setFormData({ ...formData, image: '' }); 
                                                 setSelectedFile(null); 
                                             }}
-                                            style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', zIndex: 10 }}
-                                        >✕</button>
+                                            style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+                                        ><X size={14} /></button>
                                     </>
                                 ) : (
                                     <>
-                                        <span style={{ fontSize: '32px', marginBottom: '8px' }}>📸</span>
+                                        <Camera size={32} style={{ marginBottom: '8px' }} />
                                         <span style={{ fontSize: '14px', fontWeight: 700 }}>{uploading ? 'Uploading...' : 'Main Image'}</span>
                                         <span style={{ fontSize: '11px' }}>Primary service image</span>
                                     </>
@@ -461,8 +462,8 @@ export default function ServicesManagementPage() {
                                                                 else if (num === 3) { setImagePreview3(''); setFormData({ ...formData, image3: '' }); setSelectedFile3(null); }
                                                                 else if (num === 4) { setImagePreview4(''); setFormData({ ...formData, image4: '' }); setSelectedFile4(null); }
                                                             }}
-                                                            style={{ position: 'absolute', top: '6px', right: '6px', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', zIndex: 10 }}
-                                                        >✕</button>
+                                                            style={{ position: 'absolute', top: '6px', right: '6px', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+                                                        ><X size={12} /></button>
                                                     </>
                                                 ) : (
                                                     <span style={{ fontSize: '18px' }}>+</span>
@@ -474,7 +475,7 @@ export default function ServicesManagementPage() {
                             </div>
 
                             <div style={{ marginTop: '16px' }}>
-                                <Input label="Secondary Visual (Emoji)" value={formData.emoji} onChange={v => setFormData({ ...formData, emoji: v })} placeholder="✂️" />
+                                <Input label="Secondary Visual / Tag" value={formData.emoji} onChange={v => setFormData({ ...formData, emoji: v })} placeholder="e.g. Pro, Design, Repair" />
                             </div>
                         </Card>
 

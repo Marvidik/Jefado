@@ -5,6 +5,7 @@ import { login, verifyLoginOtp, register, verifyEmail, requestPasswordReset, com
 import { claimReferral } from '@/services/referralService';
 import { useToast } from '@/components/ui/Toast';
 import Loader from '@/components/ui/Loader';
+import { Eye, EyeOff, Sparkles, Lock, Gift, Check, X } from 'lucide-react';
 
 type Mode = 'login' | 'register' | 'forgot' | 'otp' | '2fa';
 
@@ -43,8 +44,8 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
                     }}
                 />
                 {isPwd && (
-                    <button type="button" onClick={() => setShown(!shown)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '17px', color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer', lineHeight: 1 }}>
-                        {shown ? '🙈' : '👁️'}
+                    <button type="button" onClick={() => setShown(!shown)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {shown ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                 )}
             </div>
@@ -106,8 +107,8 @@ function AuthPanel({ mode }: { mode: Mode }) {
                 zIndex: 2
             }} />
             <div style={{ position: 'relative', zIndex: 10, maxWidth: '500px', animation: 'fadeInUp 0.8s ease' }}>
-                <div style={{ display: 'inline-flex', padding: '6px 12px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '20px', color: '#fff', fontSize: '12px', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '24px' }}>
-                    ✨ Global Marketplace 2026
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '20px', color: '#fff', fontSize: '12px', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '24px' }}>
+                    <Sparkles size={14} /> Global Marketplace 2026
                 </div>
                 <h2 style={{ 
                     fontFamily: 'var(--font-display)', 
@@ -189,7 +190,13 @@ function LoginForm({ onSwitch, onForgot, onSuccess, onTwoFactor }: { onSwitch: (
                     toast.success('Successfully logged in!');
                     onSuccess(uType.toLowerCase());
                 } catch (err: any) {
-                    toast.error(err.non_field_errors?.[0] || err.detail || 'Login failed.');
+                    const errMsg = (typeof err?.message === 'string' && err.message)
+                        || (typeof err?.detail === 'string' && err.detail)
+                        || (typeof err?.data?.message === 'string' && err.data.message)
+                        || (typeof err?.response?.data?.message === 'string' && err.response.data.message)
+                        || err?.non_field_errors?.[0]
+                        || 'Unable to log in with provided credentials.';
+                    toast.error(errMsg);
                 } finally {
                     setLoading(false);
                 }
@@ -301,8 +308,10 @@ function TwoFactorForm({ email, onBack, onSuccess }: { email: string; onBack: ()
                     width: '72px', height: '72px', borderRadius: '50%', 
                     background: 'linear-gradient(135deg, rgba(26,86,219,0.1) 0%, rgba(238,18,23,0.08) 100%)', 
                     display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                    margin: '0 auto 20px', fontSize: '32px'
-                }}>🔐</div>
+                    margin: '0 auto 20px'
+                }}>
+                    <Lock size={32} color="var(--primary)" />
+                </div>
             </div>
 
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '32px', color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-1.5px', textAlign: 'center' }}>Two-Factor Verification</h2>
@@ -402,7 +411,7 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer', initi
 
     if (success) return (
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-            <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '34px', boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}>✓</div>
+            <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: '#fff', boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}><Check size={36} /></div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', marginBottom: '10px' }}>Account created!</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '28px', fontSize: '14px' }}>Welcome to the platform, {form.firstName}!</p>
             <button 
@@ -433,7 +442,7 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer', initi
                     marginBottom: '24px'
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '20px' }}>🎁</span>
+                        <Gift size={20} color="var(--primary)" />
                         <div>
                             <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
                                 Referral Code Applied: <span style={{ color: 'var(--primary)', fontWeight: 800 }}>{referralCode}</span>
@@ -451,13 +460,14 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer', initi
                             border: 'none',
                             color: 'var(--text-muted)',
                             cursor: 'pointer',
-                            fontSize: '14px',
-                            fontWeight: 700,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             padding: '4px'
                         }}
                         title="Remove code"
                     >
-                        ✕
+                        <X size={16} />
                     </button>
                 </div>
             ) : null}
@@ -579,7 +589,7 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer', initi
                                 gap: '6px'
                             }}
                         >
-                            🎁 Have a referral code?
+                            <Gift size={15} /> Have a referral code?
                         </button>
                     ) : (
                         <Field 
@@ -638,7 +648,12 @@ function RegisterForm({ onSwitch, onSuccess, defaultAccountType = 'buyer', initi
                     onSuccess(form.accountType);
                     setSuccess(true);
                 } catch (err: any) { 
-                    const errMsg = err.non_field_errors?.[0] || err.detail || err.message || Object.values(err).flat()[0] as string || 'Registration failed.';
+                    const errMsg = (typeof err?.message === 'string' && err.message)
+                        || (typeof err?.detail === 'string' && err.detail)
+                        || (typeof err?.data?.message === 'string' && err.data.message)
+                        || (typeof err?.response?.data?.message === 'string' && err.response.data.message)
+                        || err?.non_field_errors?.[0]
+                        || 'Registration failed.';
                     toast.error(errMsg); 
                 } finally { 
                     setLoading(false); 
@@ -701,7 +716,7 @@ function OTPForm({ onBack, userType }: { onBack: () => void; userType: string })
 
     if (success) return (
         <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-            <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '34px' }}>✓</div>
+            <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: '#fff' }}><Check size={36} /></div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', marginBottom: '10px' }}>Email Verified</h3>
             <p style={{ color: 'var(--text-muted)', marginBottom: '28px' }}>Your email has been successfully verified.</p>
             <a href={userType === 'seller' ? "/dashboard" : "/"} style={{ display: 'inline-block', padding: '12px 32px', background: 'var(--primary)', color: '#fff', borderRadius: 'var(--radius)', fontWeight: 700 }}>
@@ -783,7 +798,7 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
     if (success) {
         return (
             <div style={{ textAlign: 'center' }}>
-                <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '34px', color: '#fff', boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}>✓</div>
+                <div style={{ width: '72px', height: '72px', background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: '#fff', boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}><Check size={36} /></div>
                 <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '24px', marginBottom: '12px' }}>Password Reset!</h3>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Your password has been updated successfully. You can now log in with your new credentials.</p>
                 <button onClick={onBack} style={{ width: '100%', padding: '18px', background: 'var(--primary)', color: '#fff', borderRadius: '14px', fontWeight: 800, cursor: 'pointer' }}>Back to Login</button>

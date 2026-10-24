@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Rocket, Store, ShoppingBag } from 'lucide-react';
 
 export default function WelcomeModal() {
     const [isVisible, setIsVisible] = useState(false);
@@ -94,7 +95,9 @@ export default function WelcomeModal() {
 
                 <div style={{ padding: '40px 32px' }}>
                     <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚀</div>
+                        <div style={{ width: '72px', height: '72px', borderRadius: '20px', background: 'linear-gradient(135deg, rgba(238,18,23,0.1) 0%, rgba(238,18,23,0.05) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--primary)' }}>
+                            <Rocket size={36} />
+                        </div>
                         <h2 style={{
                             fontFamily: 'var(--font-display)',
                             fontWeight: 800,
@@ -127,9 +130,9 @@ export default function WelcomeModal() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '24px',
+                                color: 'var(--primary)',
                                 boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
-                            }}>🏪</div>
+                            }}><Store size={24} /></div>
                             <div>
                                 <h4 style={{ fontWeight: 700, color: 'var(--primary)', marginBottom: '4px' }}>Start Selling</h4>
                                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
@@ -156,9 +159,9 @@ export default function WelcomeModal() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '24px',
+                                color: 'var(--accent)',
                                 boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
-                            }}>🛍️</div>
+                            }}><ShoppingBag size={24} /></div>
                             <div>
                                 <h4 style={{ fontWeight: 700, color: 'var(--accent)', marginBottom: '4px' }}>Expert Purchasing</h4>
                                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>

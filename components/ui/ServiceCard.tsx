@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Service } from '@/services/types';
+import { Heart, Star, Wrench } from 'lucide-react';
 
 export default function ServiceCard({ id, slug, name, price, rating, review_count, provider, emoji, image, category }: any) {
     const [wishlisted, setWishlisted] = useState(false);
@@ -15,19 +16,21 @@ export default function ServiceCard({ id, slug, name, price, rating, review_coun
                     {image ? (
                         <img src={image} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                        <span style={{ fontSize: '48px' }}>{emoji || '🛠️'}</span>
+                        <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                            <Wrench size={32} />
+                        </div>
                     )}
                     <div style={{ position: 'absolute', top: '12px', left: '12px' }}>
                         <span style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{category}</span>
                     </div>
-                    <button onClick={e => { e.preventDefault(); setWishlisted(!wishlisted); }} style={{ position: 'absolute', top: '12px', right: '12px', width: '32px', height: '32px', background: 'var(--surface)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', boxShadow: 'var(--shadow-sm)', border: 'none', cursor: 'pointer' }}>
-                        {wishlisted ? '❤️' : '🤍'}
+                    <button onClick={e => { e.preventDefault(); setWishlisted(!wishlisted); }} style={{ position: 'absolute', top: '12px', right: '12px', width: '32px', height: '32px', background: 'var(--surface)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)', border: 'none', cursor: 'pointer', color: wishlisted ? 'var(--danger)' : 'var(--text-muted)' }}>
+                        <Heart size={15} fill={wishlisted ? 'var(--danger)' : 'none'} />
                     </button>
                 </div>
 
                 <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                        <span style={{ color: 'var(--secondary)', fontSize: '14px' }}>★</span>
+                        <Star size={14} fill="var(--secondary)" color="var(--secondary)" />
                         <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{rating}</span>
                         <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>({review_count || 0})</span>
                     </div>

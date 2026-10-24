@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { CATEGORIES } from '@/lib/data';
+import { CategoryIcon } from '@/components/ui/CategoryIcon';
 
 const categories = CATEGORIES;
 
@@ -21,8 +22,10 @@ export default function CategoryStrip() {
                     <Link key={cat.label} href={`/products?category=${cat.slug}`} onClick={() => setActive(cat.label)}
                         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '16px 8px', background: active === cat.label ? 'var(--primary)' : 'var(--surface)', color: active === cat.label ? '#fff' : 'var(--text-primary)', border: `1.5px solid ${active === cat.label ? 'var(--primary)' : 'var(--border)'}`, borderRadius: 'var(--radius-lg)', cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'var(--font-body)', textDecoration: 'none' }}
                     >
-                        <span style={{ fontSize: '28px' }}>{cat.icon}</span>
-                        <span style={{ fontSize: '11px', fontWeight: 500, textAlign: 'center', lineHeight: 1.3 }}>{cat.label}</span>
+                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: active === cat.label ? 'rgba(255,255,255,0.2)' : 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: active === cat.label ? '#fff' : 'var(--primary)' }}>
+                            <CategoryIcon slug={cat.slug} size={22} />
+                        </div>
+                        <span style={{ fontSize: '11px', fontWeight: 600, textAlign: 'center', lineHeight: 1.3 }}>{cat.label}</span>
                     </Link>
                 ))}
             </div>

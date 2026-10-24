@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Handshake } from 'lucide-react';
 
 export default function PartnerPromo() {
     return (
@@ -99,8 +100,8 @@ export default function PartnerPromo() {
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}>
-                        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '100px' }}>
-                            🤝
+                        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'rgba(255,255,255,0.5)' }}>
+                            <Handshake size={80} strokeWidth={1.5} />
                         </div>
                     </div>
                 </div>

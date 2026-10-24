@@ -1,12 +1,16 @@
 'use client';
 import PolicyLayout from '@/components/ui/PolicyLayout';
+import { 
+    ClipboardList, Clock, CheckCircle2, XCircle, CreditCard, 
+    Store, Banknote, FileText, Camera, PenTool, Hash, Ban 
+} from 'lucide-react';
 
 export default function RefundPolicyPage() {
     const sections = [
         {
             id: 'overview',
             title: '1. Overview',
-            icon: '📋',
+            icon: <ClipboardList size={18} />,
             content: (
                 <div>
                     <p>
@@ -21,7 +25,7 @@ export default function RefundPolicyPage() {
         {
             id: 'refund-eligibility',
             title: '2. Refund Eligibility',
-            icon: '⏱️',
+            icon: <Clock size={18} />,
             content: (
                 <div>
                     <p>Refunds are strictly bound by a time-sensitive window to maintain operational clarity for vendors:</p>
@@ -47,16 +51,16 @@ export default function RefundPolicyPage() {
                             textTransform: 'uppercase',
                             letterSpacing: '1px'
                         }}>Time Limit</span>
-                        <p style={{ margin: 0, fontWeight: 700, color: 'var(--text-primary)', fontSize: '16px', lineHeight: 1.6 }}>
-                            ⏱️ A refund may only be requested within 24 hours after order completion.
+                        <p style={{ margin: 0, fontWeight: 700, color: 'var(--text-primary)', fontSize: '16px', lineHeight: 1.6, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Clock size={18} color="var(--primary)" /> A refund may only be requested within 24 hours after order completion.
                         </p>
                         <p style={{ margin: '10px 0 0', fontSize: '14px', color: 'var(--text-secondary)' }}>
                             An order is marked complete after the customer confirms receipt or when our logistics partners mark the delivery as completed in the system.
                         </p>
                     </div>
                     
-                    <p style={{ fontWeight: 800, color: 'var(--text-primary)', marginTop: '20px' }}>
-                        🚫 After this 24-hour window, all transactions are considered final and non-refundable.
+                    <p style={{ fontWeight: 800, color: 'var(--text-primary)', marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Ban size={18} color="var(--primary)" /> After this 24-hour window, all transactions are considered final and non-refundable.
                     </p>
                 </div>
             )
@@ -64,7 +68,7 @@ export default function RefundPolicyPage() {
         {
             id: 'conditions-approval',
             title: '3. Conditions for Refund Approval',
-            icon: '✔️',
+            icon: <CheckCircle2 size={18} />,
             content: (
                 <div>
                     <p>Refunds may only be approved under the following specific conditions:</p>
@@ -75,21 +79,23 @@ export default function RefundPolicyPage() {
                         <li><strong>Duplicate payment or system billing error</strong> that led to double-charging.</li>
                     </ul>
 
-                    <h4 style={{ color: 'var(--text-primary)', fontSize: '15px', fontWeight: 800, marginBottom: '16px' }}>📝 All refund requests MUST include:</h4>
+                    <h4 style={{ color: 'var(--text-primary)', fontSize: '15px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <FileText size={16} /> All refund requests MUST include:
+                    </h4>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
                         <div style={{ background: 'var(--border-light)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                            <span style={{ fontSize: '24px' }}>🆔</span>
-                            <h5 style={{ margin: '8px 0 4px', fontWeight: 800, color: 'var(--text-primary)' }}>Order ID</h5>
+                            <div style={{ display: 'inline-flex', padding: '8px', background: 'rgba(238, 18, 23, 0.1)', color: 'var(--primary)', borderRadius: '10px', marginBottom: '8px' }}><Hash size={24} /></div>
+                            <h5 style={{ margin: '4px 0', fontWeight: 800, color: 'var(--text-primary)' }}>Order ID</h5>
                             <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Unique transaction tag</p>
                         </div>
                         <div style={{ background: 'var(--border-light)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                            <span style={{ fontSize: '24px' }}>📸</span>
-                            <h5 style={{ margin: '8px 0 4px', fontWeight: 800, color: 'var(--text-primary)' }}>Evidence Proof</h5>
+                            <div style={{ display: 'inline-flex', padding: '8px', background: 'rgba(238, 18, 23, 0.1)', color: 'var(--primary)', borderRadius: '10px', marginBottom: '8px' }}><Camera size={24} /></div>
+                            <h5 style={{ margin: '4px 0', fontWeight: 800, color: 'var(--text-primary)' }}>Evidence Proof</h5>
                             <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Photos/videos showing issues</p>
                         </div>
                         <div style={{ background: 'var(--border-light)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                            <span style={{ fontSize: '24px' }}>✍️</span>
-                            <h5 style={{ margin: '8px 0 4px', fontWeight: 800, color: 'var(--text-primary)' }}>Issue Description</h5>
+                            <div style={{ display: 'inline-flex', padding: '8px', background: 'rgba(238, 18, 23, 0.1)', color: 'var(--primary)', borderRadius: '10px', marginBottom: '8px' }}><PenTool size={24} /></div>
+                            <h5 style={{ margin: '4px 0', fontWeight: 800, color: 'var(--text-primary)' }}>Issue Description</h5>
                             <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Detailed explanation of case</p>
                         </div>
                     </div>
@@ -99,7 +105,7 @@ export default function RefundPolicyPage() {
         {
             id: 'non-refundable-cases',
             title: '4. Non-Refundable Cases',
-            icon: '❌',
+            icon: <XCircle size={18} />,
             content: (
                 <div>
                     <p>Refunds will <strong>NOT</strong> be granted in the following situations:</p>
@@ -127,7 +133,7 @@ export default function RefundPolicyPage() {
         {
             id: 'refund-processing',
             title: '5. Refund Processing',
-            icon: '💳',
+            icon: <CreditCard size={18} />,
             content: (
                 <div>
                     <p>Once approved, the refund will be processed back via our standard pipelines:</p>
@@ -142,7 +148,7 @@ export default function RefundPolicyPage() {
         {
             id: 'vendor-responsibility',
             title: '6. Vendor Responsibility',
-            icon: '🏬',
+            icon: <Store size={18} />,
             content: (
                 <div>
                     <p>Each registered vendor on JEFEDO is responsible for ensuring:</p>
@@ -162,7 +168,7 @@ export default function RefundPolicyPage() {
             subtitle="Disputes & Refunds"
             description="At JEFEDO, we aim to ensure smooth transactions between buyers and vendors on our platform. Read our structured policy regarding refund eligibility."
             lastUpdated="May 2026"
-            icon="💰"
+            icon={<Banknote size={42} />}
             sections={sections}
         />
     );
